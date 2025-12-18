@@ -4,9 +4,15 @@
 
 ## Executive Summary
 
+
+
 **Project Name:** implementation-studio
 
+
+
 **Purpose:** A comprehensive, production-grade learning platform that teaches engineers how to deploy software into real-world customer environments with constraints. Combines educational content with reusable infrastructure modules that can accelerate actual customer engagements.
+
+
 
 **Primary Audiences:**
 
@@ -18,33 +24,63 @@
 
 - Engineers preparing for SE roles
 
+
+
 **Differentiator:** Unlike tutorials that teach tools in isolation, this platform teaches deployment scenarios with real constraints (air-gapped networks, private clusters, firewall restrictions) that enterprise and defense customers actually have.
+
+
 
 **Repository:** github.com/WBHankins93/implementation-studio
 
+
+
 ---
+
+
 
 ## Project Context
 
+
+
 ### Background
+
+
 
 This project extends the pattern established by DevOps-Studio (github.com/WBHankins93/DevOps-Studio), which provides production-grade DevOps learning labs. While DevOps-Studio teaches infrastructure tools (Terraform, Kubernetes, CI/CD), implementation-studio teaches the customer implementation lifecycle - getting software deployed and operational in constrained, enterprise environments.
 
+
+
 ### Target Use Cases
+
+
 
 1. **Learning Tool:** Engineers work through labs to understand deployment patterns they'll encounter in customer environments
 
+
+
 2. **Accelerator:** SEs and implementation engineers use the modules and templates as starting points for real customer engagements
+
+
 
 3. **Reference Architecture:** Teams use documented patterns to inform their own deployment strategies
 
+
+
 4. **Knowledge Sharing:** Open-source resource that establishes the author as a thought leader in the SE/implementation space
+
+
 
 ### Technical Context
 
+
+
 **Cloud Platform:** GCP (primary), AWS (future expansion)
 
+
+
 **Kubernetes Distribution:** GKE (managed), Kind (local testing)
+
+
 
 **Reference Application:** Argo Workflows - chosen because:
 
@@ -58,806 +94,206 @@ This project extends the pattern established by DevOps-Studio (github.com/WBHank
 
 - Common in ML/data engineering contexts
 
+
+
 **Infrastructure as Code:** Terraform with reusable modules
+
+
 
 ---
 
-## Repository Structure
+
+
+## Architecture Overview
+
+
+
+### High-Level Structure
+
+
 
 ```
 implementation-studio/
 
-├── README.md                              # Project overview, philosophy, quick start
+├── docs/                    # Platform documentation + SE guides
 
-├── CONTRIBUTING.md                        # Contribution guidelines, validation process
+├── modules/                 # Reusable Terraform & Kubernetes modules
 
-├── LICENSE                                # MIT License
+├── labs/                    # 9 hands-on learning labs
 
-├── .gitignore
+├── reference-app/           # Argo Workflows sample workloads
 
-│
-
-├── .github/
-
-│   └── workflows/
-
-│       ├── validate-terraform.yml         # Terraform fmt, validate, tflint
-
-│       ├── validate-manifests.yml         # kubeval, kustomize build
-
-│       └── markdown-lint.yml              # Documentation quality
-
-│
-
-├── docs/
-
-│   ├── getting-started.md                 # Prerequisites, tool installation, first steps
-
-│   ├── reference-application.md           # Why Argo Workflows, what it represents
-
-│   ├── learning-paths.md                  # Recommended progression through labs
-
-│   ├── testing-strategy.md                 # What's validated locally vs cloud, transparency
-
-│   ├── cost-management.md                 # GCP cost estimates, optimization strategies
-
-│   │
-
-│   └── for-ses/                           # SE-specific guidance
-
-│       ├── using-in-engagements.md        # How to adapt labs for real customers
-
-│       ├── discovery-frameworks.md         # Technical discovery question frameworks
-
-│       ├── scoping-pocs.md                 # How to scope and deliver POCs
-
-│       └── customer-handoff.md             # Transitioning to customer operations
-
-│
-
-├── modules/                               # Reusable Terraform modules
-
-│   ├── README.md                          # Module usage guide
-
-│   │
-
-│   ├── gcp/
-
-│   │   ├── gke-cluster/
-
-│   │   │   ├── main.tf
-
-│   │   │   ├── variables.tf
-
-│   │   │   ├── outputs.tf
-
-│   │   │   ├── versions.tf
-
-│   │   │   └── README.md
-
-│   │   │
-
-│   │   ├── vpc-standard/                  # Public + private subnets, NAT, standard config
-
-│   │   │   ├── main.tf
-
-│   │   │   ├── variables.tf
-
-│   │   │   ├── outputs.tf
-
-│   │   │   └── README.md
-
-│   │   │
-
-│   │   ├── vpc-private/                   # Fully private, no external IPs
-
-│   │   │   ├── main.tf
-
-│   │   │   ├── variables.tf
-
-│   │   │   ├── outputs.tf
-
-│   │   │   └── README.md
-
-│   │   │
-
-│   │   ├── artifact-registry/             # Standard container registry
-
-│   │   │   ├── main.tf
-
-│   │   │   ├── variables.tf
-
-│   │   │   ├── outputs.tf
-
-│   │   │   └── README.md
-
-│   │   │
-
-│   │   ├── airgap-registry/               # Registry for air-gapped scenarios
-
-│   │   │   ├── main.tf
-
-│   │   │   ├── variables.tf
-
-│   │   │   ├── outputs.tf
-
-│   │   │   └── README.md
-
-│   │   │
-
-│   │   ├── private-service-connect/       # Private connectivity patterns
-
-│   │   │   ├── main.tf
-
-│   │   │   ├── variables.tf
-
-│   │   │   ├── outputs.tf
-
-│   │   │   └── README.md
-
-│   │   │
-
-│   │   └── firewall-rules/                # Common firewall configurations
-
-│   │       ├── main.tf
-
-│   │       ├── variables.tf
-
-│   │       ├── outputs.tf
-
-│   │       └── README.md
-
-│   │
-
-│   └── kubernetes/
-
-│       ├── argo-workflows/                # Argo Workflows deployment
-
-│       │   ├── helm-values.yaml
-
-│       │   ├── kustomization.yaml
-
-│       │   └── README.md
-
-│       │
-
-│       ├── argo-workflows-airgap/         # Offline Argo deployment
-
-│       │   ├── helm-values.yaml
-
-│       │   ├── images.txt                 # Required images for mirroring
-
-│       │   ├── package-charts.sh          # Script to package for offline use
-
-│       │   └── README.md
-
-│       │
-
-│       ├── ingress-nginx/                 # Ingress controller
-
-│       │   ├── helm-values.yaml
-
-│       │   ├── kustomization.yaml
-
-│       │   └── README.md
-
-│       │
-
-│       ├── ingress-internal/              # Internal-only ingress
-
-│       │   ├── helm-values.yaml
-
-│       │   └── README.md
-
-│       │
-
-│       ├── network-policies/              # Common network policy patterns
-
-│       │   ├── deny-all.yaml
-
-│       │   ├── namespace-isolation.yaml
-
-│       │   ├── allow-ingress.yaml
-
-│       │   ├── allow-egress-dns.yaml
-
-│       │   └── README.md
-
-│       │
-
-│       ├── rbac-patterns/                 # RBAC configurations
-
-│       │   ├── namespace-admin.yaml
-
-│       │   ├── read-only.yaml
-
-│       │   ├── deployment-only.yaml
-
-│       │   └── README.md
-
-│       │
-
-│       └── resource-quotas/               # Multi-tenant resource management
-
-│           ├── standard-quota.yaml
-
-│           ├── limited-quota.yaml
-
-│           └── README.md
-
-│
-
-├── labs/
-
-│   │
-
-│   ├── 01-standard-deployment/
-
-│   │   ├── README.md                      # Learning objectives, detailed walkthrough
-
-│   │   ├── VALIDATION-STATUS.md           # Transparency on testing status
-
-│   │   ├── main.tf
-
-│   │   ├── variables.tf
-
-│   │   ├── outputs.tf
-
-│   │   ├── terraform.tfvars.example
-
-│   │   │
-
-│   │   ├── manifests/
-
-│   │   │   ├── namespace.yaml
-
-│   │   │   ├── argo-workflows/
-
-│   │   │   └── sample-workflow.yaml
-
-│   │   │
-
-│   │   ├── scripts/
-
-│   │   │   ├── setup.sh
-
-│   │   │   ├── deploy-argo.sh
-
-│   │   │   ├── validate.sh
-
-│   │   │   └── cleanup.sh
-
-│   │   │
-
-│   │   └── docs/
-
-│   │       ├── architecture.md
-
-│   │       ├── step-by-step.md
-
-│   │       └── troubleshooting.md
-
-│   │
-
-│   ├── 02-airgapped-deployment/
-
-│   │   ├── README.md
-
-│   │   ├── VALIDATION-STATUS.md
-
-│   │   │
-
-│   │   ├── preparation/                   # Done with internet access
-
-│   │   │   ├── mirror-images.sh           # Pull and save images
-
-│   │   │   ├── package-helm.sh            # Package Helm charts
-
-│   │   │   ├── bundle-manifests.sh        # Create deployment bundle
-
-│   │   │   └── create-transfer-package.sh # Final package for transfer
-
-│   │   │
-
-│   │   ├── deployment/                    # Done in air-gapped environment
-
-│   │   │   ├── load-images.sh             # Load images into local registry
-
-│   │   │   ├── deploy-registry.yaml       # Local registry for air-gapped cluster
-
-│   │   │   ├── deploy-argo.sh
-
-│   │   │   └── validate.sh
-
-│   │   │
-
-│   │   ├── local-simulation/              # Kind-based air-gap simulation
-
-│   │   │   ├── kind-config.yaml           # Kind cluster without external access
-
-│   │   │   ├── setup-airgap-sim.sh
-
-│   │   │   └── README.md
-
-│   │   │
-
-│   │   ├── manifests/
-
-│   │   │   └── (modified for private registry)
-
-│   │   │
-
-│   │   └── docs/
-
-│   │       ├── architecture.md
-
-│   │       ├── image-mirroring-guide.md
-
-│   │       ├── offline-helm-guide.md
-
-│   │       ├── update-strategies.md       # Patching without internet
-
-│   │       └── troubleshooting.md
-
-│   │
-
-│   ├── 03-private-network-deployment/
-
-│   │   ├── README.md
-
-│   │   ├── VALIDATION-STATUS.md
-
-│   │   ├── main.tf                        # Uses vpc-private module
-
-│   │   ├── variables.tf
-
-│   │   ├── outputs.tf
-
-│   │   │
-
-│   │   ├── manifests/
-
-│   │   │   ├── internal-ingress.yaml
-
-│   │   │   └── network-policies/
-
-│   │   │
-
-│   │   ├── scripts/
-
-│   │   │   ├── setup.sh
-
-│   │   │   ├── test-connectivity.sh
-
-│   │   │   └── cleanup.sh
-
-│   │   │
-
-│   │   └── docs/
-
-│   │       ├── architecture.md
-
-│   │       ├── private-gke-patterns.md
-
-│   │       ├── bastion-access.md
-
-│   │       └── troubleshooting.md
-
-│   │
-
-│   ├── 04-firewall-restricted-deployment/
-
-│   │   ├── README.md
-
-│   │   ├── VALIDATION-STATUS.md
-
-│   │   ├── main.tf
-
-│   │   ├── variables.tf
-
-│   │   ├── outputs.tf
-
-│   │   │
-
-│   │   ├── firewall-configs/
-
-│   │   │   ├── strict-egress.tf
-
-│   │   │   ├── allowlist-example.tf
-
-│   │   │   └── proxy-config/
-
-│   │   │
-
-│   │   ├── manifests/
-
-│   │   │   ├── proxy-configmap.yaml
-
-│   │   │   └── modified-deployments/
-
-│   │   │
-
-│   │   └── docs/
-
-│   │       ├── architecture.md
-
-│   │       ├── working-with-security-teams.md
-
-│   │       ├── egress-requirements.md     # What endpoints your app needs
-
-│   │       └── troubleshooting.md
-
-│   │
-
-│   ├── 05-poc-sprint/
-
-│   │   ├── README.md
-
-│   │   ├── VALIDATION-STATUS.md
-
-│   │   │
-
-│   │   ├── templates/
-
-│   │   │   ├── poc-scope-document.md      # Template for scoping
-
-│   │   │   ├── success-criteria.md         # Defining "done"
-
-│   │   │   ├── daily-standup-format.md
-
-│   │   │   └── final-report-template.md
-
-│   │   │
-
-│   │   ├── minimal-deployment/            # Stripped down, fast deployment
-
-│   │   │   ├── main.tf
-
-│   │   │   ├── quick-deploy.sh
-
-│   │   │   └── demo-workflow.yaml
-
-│   │   │
-
-│   │   ├── demo-prep/
-
-│   │   │   ├── demo-script.md             # What to show, in what order
-
-│   │   │   ├── backup-demo.md             # When live demo fails
-
-│   │   │   └── common-questions.md
-
-│   │   │
-
-│   │   └── docs/
-
-│   │       ├── scoping-guide.md
-
-│   │       ├── timeline-management.md
-
-│   │       ├── stakeholder-communication.md
-
-│   │       └── lessons-learned.md
-
-│   │
-
-│   ├── 06-multi-tenant-deployment/
-
-│   │   ├── README.md
-
-│   │   ├── VALIDATION-STATUS.md
-
-│   │   ├── main.tf
-
-│   │   ├── variables.tf
-
-│   │   ├── outputs.tf
-
-│   │   │
-
-│   │   ├── tenant-onboarding/
-
-│   │   │   ├── create-tenant.sh
-
-│   │   │   ├── tenant-namespace.yaml
-
-│   │   │   ├── tenant-rbac.yaml
-
-│   │   │   ├── tenant-quotas.yaml
-
-│   │   │   └── tenant-network-policy.yaml
-
-│   │   │
-
-│   │   ├── manifests/
-
-│   │   │   ├── namespace-isolation/
-
-│   │   │   ├── shared-services/
-
-│   │   │   └── tenant-templates/
-
-│   │   │
-
-│   │   └── docs/
-
-│   │       ├── architecture.md
-
-│   │       ├── isolation-strategies.md
-
-│   │       ├── resource-management.md
-
-│   │       ├── tenant-lifecycle.md
-
-│   │       └── troubleshooting.md
-
-│   │
-
-│   ├── 07-integration-patterns/
-
-│   │   ├── README.md
-
-│   │   ├── VALIDATION-STATUS.md
-
-│   │   │
-
-│   │   ├── auth-integration/
-
-│   │   │   ├── oauth-proxy/
-
-│   │   │   ├── saml-example/
-
-│   │   │   └── ldap-example/
-
-│   │   │
-
-│   │   ├── database-connectivity/
-
-│   │   │   ├── cloud-sql-proxy/
-
-│   │   │   ├── external-database/
-
-│   │   │   └── connection-pooling/
-
-│   │   │
-
-│   │   ├── api-gateway/
-
-│   │   │   ├── kong-example/
-
-│   │   │   └── gcp-api-gateway/
-
-│   │   │
-
-│   │   ├── service-mesh/
-
-│   │   │   ├── istio-basics/
-
-│   │   │   └── traffic-management/
-
-│   │   │
-
-│   │   └── docs/
-
-│   │       ├── architecture.md
-
-│   │       ├── auth-patterns.md
-
-│   │       ├── data-connectivity.md
-
-│   │       ├── discovery-questions.md     # What to ask about integrations
-
-│   │       └── troubleshooting.md
-
-│   │
-
-│   ├── 08-handoff-runbooks/
-
-│   │   ├── README.md
-
-│   │   ├── VALIDATION-STATUS.md
-
-│   │   │
-
-│   │   ├── runbook-templates/
-
-│   │   │   ├── deployment-runbook.md
-
-│   │   │   ├── incident-response.md
-
-│   │   │   ├── scaling-guide.md
-
-│   │   │   ├── backup-restore.md
-
-│   │   │   └── upgrade-procedure.md
-
-│   │   │
-
-│   │   ├── monitoring-setup/
-
-│   │   │   ├── prometheus-rules/
-
-│   │   │   ├── grafana-dashboards/
-
-│   │   │   │   ├── cluster-overview.json
-
-│   │   │   │   ├── argo-workflows.json
-
-│   │   │   │   └── application-health.json
-
-│   │   │   └── alerting-rules/
-
-│   │   │
-
-│   │   ├── knowledge-transfer/
-
-│   │   │   ├── training-agenda.md
-
-│   │   │   ├── hands-on-exercises.md
-
-│   │   │   └── certification-checklist.md
-
-│   │   │
-
-│   │   └── docs/
-
-│   │       ├── what-production-ready-means.md
-
-│   │       ├── documentation-standards.md
-
-│   │       ├── handoff-checklist.md
-
-│   │       └── support-model-options.md
-
-│   │
-
-│   └── 09-troubleshooting-scenarios/
-
-│       ├── README.md
-
-│       ├── VALIDATION-STATUS.md
-
-│       │
-
-│       ├── scenarios/
-
-│       │   ├── network-connectivity/
-
-│       │   │   ├── scenario.md            # The problem
-
-│       │   │   ├── symptoms.md            # What you observe
-
-│       │   │   ├── diagnosis.md           # How to investigate
-
-│       │   │   ├── resolution.md          # How to fix
-
-│       │   │   └── simulate.sh            # Script to create the problem
-
-│       │   │
-
-│       │   ├── resource-exhaustion/
-
-│       │   │   ├── scenario.md
-
-│       │   │   ├── symptoms.md
-
-│       │   │   ├── diagnosis.md
-
-│       │   │   ├── resolution.md
-
-│       │   │   └── simulate.sh
-
-│       │   │
-
-│       │   ├── permission-denied/
-
-│       │   │   └── (same structure)
-
-│       │   │
-
-│       │   ├── image-pull-failures/
-
-│       │   │   └── (same structure)
-
-│       │   │
-
-│       │   ├── dns-resolution/
-
-│       │   │   └── (same structure)
-
-│       │   │
-
-│       │   └── certificate-issues/
-
-│       │       └── (same structure)
-
-│       │
-
-│       ├── diagnostic-tools/
-
-│       │   ├── connectivity-check.sh
-
-│       │   ├── resource-inspector.sh
-
-│       │   ├── log-collector.sh
-
-│       │   └── cluster-health.sh
-
-│       │
-
-│       └── docs/
-
-│           ├── systematic-debugging.md
-
-│           ├── common-patterns.md
-
-│           └── escalation-guide.md
-
-│
-
-├── reference-app/
-
-│   ├── README.md                          # What Argo Workflows represents
-
-│   │
-
-│   ├── workflows/
-
-│   │   ├── hello-world.yaml               # Simplest possible workflow
-
-│   │   ├── multi-step.yaml                # Sequential steps
-
-│   │   ├── parallel-jobs.yaml             # Parallel execution
-
-│   │   ├── compute-intensive.yaml         # CPU-heavy simulation stand-in
-
-│   │   ├── data-pipeline.yaml             # Input -> process -> output
-
-│   │   └── failure-handling.yaml          # Retries, error handling
-
-│   │
-
-│   ├── workflow-templates/
-
-│   │   ├── base-job.yaml
-
-│   │   └── simulation-pattern.yaml
-
-│   │
-
-│   └── scripts/
-
-│       ├── submit-workflow.sh
-
-│       ├── watch-workflow.sh
-
-│       ├── get-results.sh
-
-│       └── cleanup-completed.sh
-
-│
-
-└── tools/
-
-    ├── validate-local.sh                  # Test Kubernetes manifests locally
-
-    ├── validate-terraform.sh              # Terraform validation
-
-    ├── cost-estimate.sh                   # GCP cost estimation
-
-    ├── cleanup-all.sh                     # Emergency cleanup
-
-    ├── package-for-transfer.sh            # Create offline deployment package
-
-    └── kind-setup.sh                      # Local Kind cluster for testing
+└── tools/                   # Validation, setup, and cleanup scripts
 
 ```
 
+
+
+### Component Relationships
+
+
+
+```
+┌─────────────────────────────────────────────────────────────────────┐
+│                        implementation-studio                         │
+├─────────────────────────────────────────────────────────────────────┤
+│                                                                     │
+│  ┌─────────────┐    ┌─────────────────────────────────────────┐    │
+│  │    docs/    │    │              modules/                    │    │
+│  ├─────────────┤    ├─────────────────────────────────────────┤    │
+│  │ getting-    │    │  gcp/                 kubernetes/        │    │
+│  │ started     │    │  ├── gke-cluster      ├── argo-workflows │    │
+│  │ learning-   │    │  ├── vpc-standard     ├── argo-airgap    │    │
+│  │ paths       │    │  ├── vpc-private      ├── ingress-nginx  │    │
+│  │ for-ses/    │    │  ├── artifact-reg     ├── network-policy │    │
+│  │  └── POC    │    │  ├── airgap-registry  ├── rbac-patterns  │    │
+│  │  └── disc   │    │  ├── firewall-rules   └── resource-quota │    │
+│  │  └── handoff│    │  └── private-connect                     │    │
+│  └─────────────┘    └─────────────────────────────────────────┘    │
+│         │                            │                              │
+│         │                            ▼                              │
+│         │           ┌─────────────────────────────────────────┐    │
+│         │           │               labs/                      │    │
+│         │           ├─────────────────────────────────────────┤    │
+│         │           │  FOUNDATION         CUSTOMER SCENARIOS   │    │
+│         │           │  01-standard-deploy 05-poc-sprint        │    │
+│         │           │  02-airgapped       06-multi-tenant      │    │
+│         │           │                     07-integration       │    │
+│         │           │  NETWORK CONSTRAINTS                     │    │
+│         │           │  03-private-network OPERATIONAL          │    │
+│         │           │  04-firewall-restrict 08-handoff-runbook │    │
+│         └──────────▶│                     09-troubleshooting   │    │
+│                     └─────────────────────────────────────────┘    │
+│                                          │                          │
+│                                          ▼                          │
+│  ┌─────────────┐              ┌─────────────────────┐              │
+│  │   tools/    │              │   reference-app/    │              │
+│  ├─────────────┤              ├─────────────────────┤              │
+│  │ validate-   │              │ Argo Workflows       │              │
+│  │ local.sh    │◀────────────▶│ sample workloads    │              │
+│  │ kind-setup  │              │ simulating compute  │              │
+│  │ cleanup-all │              │ job patterns        │              │
+│  └─────────────┘              └─────────────────────┘              │
+│                                                                     │
+└─────────────────────────────────────────────────────────────────────┘
+```
+
+
+
+### Module Design
+
+
+
+Modules are designed for reuse both within labs AND in real customer engagements:
+
+
+
+**GCP Modules** (`modules/gcp/`)
+
+| Module | Purpose |
+
+|--------|---------|
+
+| `gke-cluster` | Standard GKE with configurable options |
+
+| `vpc-standard` | Public + private subnets, NAT gateway |
+
+| `vpc-private` | Fully private, no external IPs |
+
+| `artifact-registry` | Container registry |
+
+| `airgap-registry` | Registry for disconnected environments |
+
+| `firewall-rules` | Common firewall configurations |
+
+| `private-service-connect` | Private GCP service access |
+
+
+
+**Kubernetes Modules** (`modules/kubernetes/`)
+
+| Module | Purpose |
+
+|--------|---------|
+
+| `argo-workflows` | Standard Argo deployment |
+
+| `argo-workflows-airgap` | Offline-ready Argo (images list, packaging scripts) |
+
+| `ingress-nginx` | Public ingress controller |
+
+| `ingress-internal` | Internal-only ingress |
+
+| `network-policies` | Isolation patterns (deny-all, namespace isolation) |
+
+| `rbac-patterns` | Permission templates (namespace-admin, read-only) |
+
+| `resource-quotas` | Multi-tenant resource limits |
+
+
+
+### Lab Structure Pattern
+
+
+
+Each lab follows a consistent internal structure:
+
+
+
+```
+labs/XX-lab-name/
+
+├── README.md                 # Learning objectives, walkthrough
+
+├── VALIDATION-STATUS.md      # Testing transparency
+
+├── main.tf                   # Infrastructure (imports from modules/)
+
+├── variables.tf
+
+├── outputs.tf
+
+├── manifests/                # Kubernetes resources
+
+├── scripts/                  # setup.sh, validate.sh, cleanup.sh
+
+└── docs/                     # architecture.md, troubleshooting.md
+
+```
+
+
+
+### Reference Application
+
+
+
+Argo Workflows serves as the reference application, with sample workloads in `reference-app/workflows/`:
+
+- `hello-world.yaml` - Simplest workflow
+
+- `multi-step.yaml` - Sequential execution
+
+- `parallel-jobs.yaml` - Parallel execution  
+
+- `compute-intensive.yaml` - CPU-heavy (simulation stand-in)
+
+- `data-pipeline.yaml` - Input -> process -> output
+
+- `failure-handling.yaml` - Retries, error handling
+
+
+
 ---
+
+
 
 ## Lab Specifications
 
+
+
 ### Lab 01: Standard GKE Deployment
+
+
 
 **Learning Objectives:**
 
@@ -871,6 +307,8 @@ implementation-studio/
 
 - Understand the baseline that all other labs modify
 
+
+
 **What Gets Deployed:**
 
 - GCP VPC with public and private subnets
@@ -882,6 +320,8 @@ implementation-studio/
 - Ingress-nginx controller
 
 - Sample workflows demonstrating the reference application
+
+
 
 **Prerequisites:**
 
@@ -895,15 +335,27 @@ implementation-studio/
 
 - Helm 3
 
+
+
 **Estimated Time:** 1-2 hours
+
+
 
 **Estimated Cost:** $5-10 if destroyed within a few hours
 
+
+
 **Validation Status:** Kubernetes manifests testable locally; GCP infrastructure requires cloud deployment
+
+
 
 ---
 
+
+
 ### Lab 02: Air-Gapped Deployment
+
+
 
 **Learning Objectives:**
 
@@ -917,6 +369,8 @@ implementation-studio/
 
 - Plan update/patch strategies for isolated environments
 
+
+
 **What Gets Deployed:**
 
 - Kind cluster configured to simulate air-gap (no external network)
@@ -927,6 +381,8 @@ implementation-studio/
 
 - Sample workflows using local registry
 
+
+
 **Key Techniques:**
 
 - `docker save` / `docker load` for image transfer
@@ -936,6 +392,8 @@ implementation-studio/
 - Registry mirroring strategies
 
 - Manifest modification for private registries
+
+
 
 **Prerequisites:**
 
@@ -949,15 +407,27 @@ implementation-studio/
 
 - ~10GB disk space for images
 
+
+
 **Estimated Time:** 2-3 hours
+
+
 
 **Estimated Cost:** $0 (fully local)
 
+
+
 **Validation Status:** Fully testable locally - this IS the target environment
+
+
 
 ---
 
+
+
 ### Lab 03: Private Network Deployment
+
+
 
 **Learning Objectives:**
 
@@ -971,6 +441,8 @@ implementation-studio/
 
 - Understand VPN/Interconnect patterns (conceptual)
 
+
+
 **What Gets Deployed:**
 
 - GCP VPC with private-only subnets
@@ -983,21 +455,35 @@ implementation-studio/
 
 - Argo Workflows accessible only from within VPC
 
+
+
 **Prerequisites:**
 
 - Same as Lab 01
 
 - Understanding of Lab 01 baseline
 
+
+
 **Estimated Time:** 2-3 hours
+
+
 
 **Estimated Cost:** $8-15 if destroyed within a few hours
 
+
+
 **Validation Status:** Kubernetes manifests testable locally; GCP infrastructure requires cloud deployment
+
+
 
 ---
 
+
+
 ### Lab 04: Firewall-Restricted Deployment
+
+
 
 **Learning Objectives:**
 
@@ -1011,6 +497,8 @@ implementation-studio/
 
 - Implement allowlist-based network policies
 
+
+
 **What Gets Deployed:**
 
 - GKE cluster with strict egress firewall rules
@@ -1020,6 +508,8 @@ implementation-studio/
 - Network policies enforcing egress restrictions
 
 - Argo Workflows configured for proxy usage
+
+
 
 **Key Techniques:**
 
@@ -1031,15 +521,27 @@ implementation-studio/
 
 - Working with customer security teams (process documentation)
 
+
+
 **Estimated Time:** 2-3 hours
+
+
 
 **Estimated Cost:** $5-10 if destroyed within a few hours
 
+
+
 **Validation Status:** Partial - network policies testable locally, GCP firewall rules require cloud
+
+
 
 ---
 
+
+
 ### Lab 05: The POC Sprint
+
+
 
 **Learning Objectives:**
 
@@ -1053,6 +555,8 @@ implementation-studio/
 
 - Document outcomes for stakeholders
 
+
+
 **What Gets Deployed:**
 
 - Minimal GKE cluster (or Kind for zero-cost option)
@@ -1060,6 +564,8 @@ implementation-studio/
 - Argo Workflows with pre-configured demo workflows
 
 - Demo script and presentation materials
+
+
 
 **Key Deliverables:**
 
@@ -1071,15 +577,27 @@ implementation-studio/
 
 - Final report template
 
+
+
 **Estimated Time:** 1-2 hours (deployment) + templates
+
+
 
 **Estimated Cost:** $0-5 depending on cloud vs local
 
+
+
 **Validation Status:** Fully testable - templates and local deployment
+
+
 
 ---
 
+
+
 ### Lab 06: Multi-Tenant Deployment
+
+
 
 **Learning Objectives:**
 
@@ -1093,6 +611,8 @@ implementation-studio/
 
 - Manage tenant lifecycle (onboarding, offboarding)
 
+
+
 **What Gets Deployed:**
 
 - GKE cluster (or Kind)
@@ -1105,6 +625,8 @@ implementation-studio/
 
 - Argo Workflows per tenant
 
+
+
 **Key Techniques:**
 
 - Namespace isolation strategies
@@ -1115,15 +637,27 @@ implementation-studio/
 
 - RBAC scoping
 
+
+
 **Estimated Time:** 2-3 hours
+
+
 
 **Estimated Cost:** $0-10 depending on cloud vs local
 
+
+
 **Validation Status:** Fully testable locally with Kind
+
+
 
 ---
 
+
+
 ### Lab 07: Integration Patterns
+
+
 
 **Learning Objectives:**
 
@@ -1135,6 +669,8 @@ implementation-studio/
 
 - Understand service mesh basics for external traffic
 
+
+
 **What Gets Deployed:**
 
 - GKE cluster with Argo Workflows
@@ -1144,6 +680,8 @@ implementation-studio/
 - Cloud SQL proxy for database connectivity
 
 - Example API gateway configuration
+
+
 
 **Key Techniques:**
 
@@ -1155,15 +693,27 @@ implementation-studio/
 
 - Service mesh traffic management (Istio basics)
 
+
+
 **Estimated Time:** 3-4 hours
+
+
 
 **Estimated Cost:** $10-20 if using cloud database
 
+
+
 **Validation Status:** Partial - some patterns testable locally, cloud services require deployment
+
+
 
 ---
 
+
+
 ### Lab 08: Handoff and Runbooks
+
+
 
 **Learning Objectives:**
 
@@ -1177,6 +727,8 @@ implementation-studio/
 
 - Execute knowledge transfer
 
+
+
 **What Gets Deployed:**
 
 - Prometheus + Grafana stack
@@ -1186,6 +738,8 @@ implementation-studio/
 - Alerting rules for common issues
 
 - Documentation templates
+
+
 
 **Key Deliverables:**
 
@@ -1199,15 +753,27 @@ implementation-studio/
 
 - Handoff checklist
 
+
+
 **Estimated Time:** 2-3 hours
+
+
 
 **Estimated Cost:** $0-5 depending on where deployed
 
+
+
 **Validation Status:** Dashboards and rules testable locally; full stack testable in Kind
+
+
 
 ---
 
+
+
 ### Lab 09: Troubleshooting Scenarios
+
+
 
 **Learning Objectives:**
 
@@ -1218,6 +784,8 @@ implementation-studio/
 - Document and communicate issues clearly
 
 - Build pattern recognition for common problems
+
+
 
 **Scenarios Covered:**
 
@@ -1233,6 +801,8 @@ implementation-studio/
 
 6. Certificate/TLS problems
 
+
+
 **What Gets Deployed:**
 
 - Kind cluster
@@ -1240,6 +810,8 @@ implementation-studio/
 - Scripts that intentionally create each problem
 
 - Diagnostic tool collection
+
+
 
 **Key Techniques:**
 
@@ -1251,17 +823,61 @@ implementation-studio/
 
 - Network troubleshooting
 
+
+
 **Estimated Time:** 2-4 hours (all scenarios)
+
+
 
 **Estimated Cost:** $0 (fully local)
 
+
+
 **Validation Status:** Fully testable locally
+
+
 
 ---
 
+
+
 ## Timeline
 
+
+
+### Summary
+
+
+
+| Phase | Focus | Labs | Hours | Cumulative |
+
+|-------|-------|------|-------|------------|
+
+| 1 | Foundation | Lab 02 (Air-Gapped) | 20-25 | 20-25 |
+
+| 2 | Cloud Foundation | Lab 01 (Standard) | 18-22 | 38-47 |
+
+| 3 | Network Constraints | Labs 03, 04 | 18-22 | 56-69 |
+
+| 4 | Customer Scenarios | Labs 05, 06 | 16-20 | 72-89 |
+
+| 5 | Integration/Operations | Labs 07, 08 | 20-24 | 92-113 |
+
+| 6 | Troubleshooting/Polish | Lab 09 + Polish | 16-20 | 108-133 |
+
+
+
+**Total Estimated Hours:** 108-133 hours (~3-4 weeks at focused pace)
+
+
+
+---
+
+
+
 ### Phase 1: Foundation (Week 1)
+
+
 
 **Objectives:**
 
@@ -1272,6 +888,8 @@ implementation-studio/
 - Lab 02 (Air-Gapped) complete and validated
 
 - Reference application (Argo) packaged
+
+
 
 **Deliverables:**
 
@@ -1291,6 +909,8 @@ implementation-studio/
 
 - [ ] modules/kubernetes/argo-workflows-airgap/
 
+
+
 **Why Lab 02 First:**
 
 - Fully testable locally (no cloud costs)
@@ -1301,35 +921,43 @@ implementation-studio/
 
 - Air-gapped prep work informs other labs
 
-**Daily Breakdown:**
 
-Day 1-2:
 
-- Repository structure
+**Hour Breakdown:** ~20-25 hours total
 
-- Core README and documentation
 
-- Reference app workflows
 
-Day 3-4:
+| Task | Hours |
 
-- Lab 02 preparation scripts (image mirroring, chart packaging)
+|------|-------|
 
-- Kind-based air-gap simulation
+| Repository structure and scaffolding | 2 |
 
-- Local registry setup
+| Core README and getting-started docs | 2 |
 
-Day 5-7:
+| Reference app workflows (Argo samples) | 2 |
 
-- Lab 02 deployment scripts
+| Lab 02 preparation scripts (image mirroring, chart packaging) | 4 |
 
-- Lab 02 documentation and troubleshooting
+| Kind-based air-gap simulation setup | 3 |
 
-- Validation and polish
+| Local registry configuration | 2 |
+
+| Lab 02 deployment scripts | 3 |
+
+| Lab 02 documentation and troubleshooting | 3 |
+
+| Validation and polish | 2 |
+
+
 
 ---
 
+
+
 ### Phase 2: Cloud Foundation (Week 2)
+
+
 
 **Objectives:**
 
@@ -1338,6 +966,8 @@ Day 5-7:
 - Lab 01 (Standard Deployment) complete
 
 - Lab structure validated and documented
+
+
 
 **Deliverables:**
 
@@ -1355,35 +985,43 @@ Day 5-7:
 
 - [ ] VALIDATION-STATUS.md template established
 
-**Daily Breakdown:**
 
-Day 1-2:
 
-- GCP VPC module
+**Hour Breakdown:** ~18-22 hours total
 
-- GCP GKE module
 
-- Module documentation
 
-Day 3-4:
+| Task | Hours |
 
-- Artifact Registry module
+|------|-------|
 
-- Kubernetes modules (Argo, ingress)
+| GCP VPC module | 3 |
 
-- Integration testing (local manifest validation)
+| GCP GKE module | 4 |
 
-Day 5-7:
+| Artifact Registry module | 2 |
 
-- Lab 01 assembly
+| Module documentation | 2 |
 
-- Lab 01 documentation
+| Kubernetes modules (Argo, ingress) | 3 |
 
-- Learning paths documentation
+| Local manifest validation | 2 |
+
+| Lab 01 assembly | 2 |
+
+| Lab 01 documentation | 2 |
+
+| Learning paths documentation | 2 |
+
+
 
 ---
 
+
+
 ### Phase 3: Network Constraints (Week 3)
+
+
 
 **Objectives:**
 
@@ -1392,6 +1030,8 @@ Day 5-7:
 - Firewall patterns documented
 
 - Labs 03 and 04 complete
+
+
 
 **Deliverables:**
 
@@ -1407,35 +1047,43 @@ Day 5-7:
 
 - [ ] Lab 04 (Firewall Restricted) complete
 
-**Daily Breakdown:**
 
-Day 1-2:
 
-- Private VPC module
+**Hour Breakdown:** ~18-22 hours total
 
-- Private GKE configuration
 
-- Bastion host pattern
 
-Day 3-4:
+| Task | Hours |
 
-- Firewall rules module
+|------|-------|
 
-- Proxy configuration patterns
+| Private VPC module | 3 |
 
-- Network policies
+| Private GKE configuration | 3 |
 
-Day 5-7:
+| Bastion host pattern | 2 |
 
-- Lab 03 assembly and documentation
+| Firewall rules module | 3 |
 
-- Lab 04 assembly and documentation
+| Proxy configuration patterns | 2 |
 
-- Cross-lab validation
+| Network policies module | 2 |
+
+| Lab 03 assembly and documentation | 3 |
+
+| Lab 04 assembly and documentation | 3 |
+
+| Cross-lab validation | 1 |
+
+
 
 ---
 
+
+
 ### Phase 4: Customer Scenarios (Week 4)
+
+
 
 **Objectives:**
 
@@ -1444,6 +1092,8 @@ Day 5-7:
 - Multi-tenant patterns documented
 
 - Labs 05 and 06 complete
+
+
 
 **Deliverables:**
 
@@ -1455,35 +1105,43 @@ Day 5-7:
 
 - [ ] docs/for-ses/discovery-frameworks.md
 
-**Daily Breakdown:**
 
-Day 1-2:
 
-- POC templates (scope, success criteria, report)
+**Hour Breakdown:** ~16-20 hours total
 
-- Demo preparation materials
 
-- Minimal deployment scripts
 
-Day 3-4:
+| Task | Hours |
 
-- Multi-tenant namespace patterns
+|------|-------|
 
-- RBAC and quota configurations
+| POC templates (scope, success criteria, report) | 3 |
 
-- Network policy isolation
+| Demo preparation materials | 2 |
 
-Day 5-7:
+| Minimal deployment scripts | 2 |
 
-- Lab 05 assembly and documentation
+| Multi-tenant namespace patterns | 3 |
 
-- Lab 06 assembly and documentation
+| RBAC and quota configurations | 2 |
 
-- SE-specific documentation
+| Network policy isolation | 2 |
+
+| Lab 05 assembly and documentation | 3 |
+
+| Lab 06 assembly and documentation | 3 |
+
+| SE-specific documentation | 2 |
+
+
 
 ---
 
+
+
 ### Phase 5: Integration and Operations (Week 5)
+
+
 
 **Objectives:**
 
@@ -1492,6 +1150,8 @@ Day 5-7:
 - Operational readiness patterns established
 
 - Labs 07 and 08 complete
+
+
 
 **Deliverables:**
 
@@ -1505,33 +1165,41 @@ Day 5-7:
 
 - [ ] docs/for-ses/customer-handoff.md
 
-**Daily Breakdown:**
 
-Day 1-2:
 
-- Auth integration patterns (OAuth proxy)
+**Hour Breakdown:** ~20-24 hours total
 
-- Database connectivity patterns
 
-Day 3-4:
 
-- Monitoring stack setup
+| Task | Hours |
 
-- Grafana dashboard creation
+|------|-------|
 
-- Alerting rules
+| Auth integration patterns (OAuth proxy) | 4 |
 
-Day 5-7:
+| Database connectivity patterns | 3 |
 
-- Lab 07 assembly and documentation
+| Monitoring stack setup | 3 |
 
-- Lab 08 assembly and documentation
+| Grafana dashboard creation | 3 |
 
-- Runbook templates
+| Alerting rules | 2 |
+
+| Lab 07 assembly and documentation | 4 |
+
+| Lab 08 assembly and documentation | 3 |
+
+| Runbook templates | 2 |
+
+
 
 ---
 
+
+
 ### Phase 6: Troubleshooting and Polish (Week 6)
+
+
 
 **Objectives:**
 
@@ -1540,6 +1208,8 @@ Day 5-7:
 - All documentation polished
 
 - Project ready for public release
+
+
 
 **Deliverables:**
 
@@ -1555,35 +1225,45 @@ Day 5-7:
 
 - [ ] Final validation pass
 
-**Daily Breakdown:**
 
-Day 1-2:
 
-- Troubleshooting scenarios (network, resources)
+**Hour Breakdown:** ~16-20 hours total
 
-- Diagnostic scripts
 
-Day 3-4:
 
-- Troubleshooting scenarios (permissions, images, DNS, certs)
+| Task | Hours |
 
-- Scenario simulation scripts
+|------|-------|
 
-Day 5-7:
+| Troubleshooting scenarios (network, resources) | 3 |
 
-- Documentation review and polish
+| Troubleshooting scenarios (permissions, images) | 3 |
 
-- GitHub Actions setup
+| Troubleshooting scenarios (DNS, certs) | 2 |
 
-- Final testing and validation
+| Diagnostic scripts | 2 |
 
-- Release preparation
+| Scenario simulation scripts | 2 |
+
+| Documentation review and polish | 2 |
+
+| GitHub Actions setup | 2 |
+
+| Final testing and validation | 2 |
+
+
 
 ---
 
+
+
 ## Testing Strategy
 
+
+
 ### What Can Be Tested Locally
+
+
 
 **Fully Local (Kind/Minikube):**
 
@@ -1601,6 +1281,8 @@ Day 5-7:
 
 - Air-gapped deployment (this IS the target)
 
+
+
 **Tools:**
 
 - `kubeval` - Validate manifests against schemas
@@ -1613,7 +1295,11 @@ Day 5-7:
 
 - `kubectl apply --dry-run=server` - Server-side validation (requires cluster)
 
+
+
 ### What Requires Cloud Deployment
+
+
 
 **GCP-Specific:**
 
@@ -1629,6 +1315,8 @@ Day 5-7:
 
 - Cloud SQL connectivity
 
+
+
 **Terraform Validation:**
 
 - `terraform fmt` - Format checking
@@ -1639,52 +1327,95 @@ Day 5-7:
 
 - `terraform plan` - Requires GCP credentials but doesn't deploy
 
+
+
 ### Validation Status Documentation
+
+
 
 Each lab includes a `VALIDATION-STATUS.md` file:
 
+
+
 ```markdown
+
 # Validation Status
+
+
 
 ## Components
 
+
+
 | Component | Validation Method | Status | Notes |
+
 |-----------|------------------|--------|-------|
+
 | Kubernetes manifests | kubeval, dry-run | ✅ Validated | |
+
 | Helm charts | helm template | ✅ Validated | |
+
 | Network policies | Kind deployment | ✅ Validated | |
+
 | Terraform modules | terraform validate | ✅ Validated | |
+
 | GCP resources | Requires deployment | ⚠️ Reviewed | Not deployed to GCP |
 
+
+
 ## How to Validate
+
+
 
 ### Local Validation
 
 ```bash
+
 ./scripts/validate-local.sh
+
 ```
+
+
 
 ### Cloud Validation
 
 ```bash
+
 # Requires GCP project and credentials
+
 ./scripts/validate-cloud.sh
+
 ```
 
+
+
 ## Community Validation
+
+
 
 If you've deployed this lab successfully, please:
 
 1. Open an issue confirming successful deployment
+
 2. Note your GCP region and any modifications made
+
 3. Update this file via PR if appropriate
+
 ```
+
+
 
 ---
 
+
+
 ## Quality Standards
 
+
+
 ### Code Standards
+
+
 
 **Terraform:**
 
@@ -1698,6 +1429,8 @@ If you've deployed this lab successfully, please:
 
 - Examples provided
 
+
+
 **Kubernetes Manifests:**
 
 - Valid against target API version
@@ -1707,6 +1440,8 @@ If you've deployed this lab successfully, please:
 - Labels consistent across resources
 
 - Namespace-scoped where appropriate
+
+
 
 **Shell Scripts:**
 
@@ -1718,7 +1453,11 @@ If you've deployed this lab successfully, please:
 
 - Usage documentation
 
+
+
 ### Documentation Standards
+
+
 
 **Every Lab README Includes:**
 
@@ -1740,6 +1479,8 @@ If you've deployed this lab successfully, please:
 
 9. Time estimate
 
+
+
 **Writing Style:**
 
 - Direct and practical
@@ -1752,11 +1493,19 @@ If you've deployed this lab successfully, please:
 
 - Production-focused, not academic
 
+
+
 ---
+
+
 
 ## Success Criteria
 
+
+
 ### Project Success
+
+
 
 1. **Completeness:** All 9 labs documented and functional
 
@@ -1768,7 +1517,11 @@ If you've deployed this lab successfully, please:
 
 5. **Reusability:** Modules can be imported into real projects
 
+
+
 ### Individual Lab Success
+
+
 
 A lab is "complete" when:
 
@@ -1786,11 +1539,19 @@ A lab is "complete" when:
 
 - [ ] Time estimate is realistic
 
+
+
 ---
+
+
 
 ## Risk Mitigation
 
+
+
 ### Risk: Untested GCP Infrastructure
+
+
 
 **Mitigation:**
 
@@ -1802,7 +1563,11 @@ A lab is "complete" when:
 
 - Labs prioritize locally-testable content where possible
 
+
+
 ### Risk: Scope Creep
+
+
 
 **Mitigation:**
 
@@ -1814,7 +1579,11 @@ A lab is "complete" when:
 
 - Weekly milestone check-ins
 
+
+
 ### Risk: Argo Workflows Complexity
+
+
 
 **Mitigation:**
 
@@ -1826,11 +1595,19 @@ A lab is "complete" when:
 
 - Can substitute simpler app if needed
 
+
+
 ---
+
+
 
 ## Future Expansion (Post-MVP)
 
+
+
 Not in scope for initial release, but potential additions:
+
+
 
 1. **AWS Track:** Parallel labs for EKS deployment
 
@@ -1848,11 +1625,19 @@ Not in scope for initial release, but potential additions:
 
 8. **Video Walkthroughs:** Recorded lab completions
 
+
+
 ---
+
+
 
 ## Appendix: Key Decisions
 
+
+
 ### Why GCP First?
+
+
 
 - Target role (Antaris) uses GCP
 
@@ -1862,7 +1647,11 @@ Not in scope for initial release, but potential additions:
 
 - Skills transfer to AWS after patterns understood
 
+
+
 ### Why Argo Workflows?
+
+
 
 - Kubernetes-native (deployment IS the lesson)
 
@@ -1874,7 +1663,11 @@ Not in scope for initial release, but potential additions:
 
 - Active community and documentation
 
+
+
 ### Why Terraform over Pulumi/CDK?
+
+
 
 - Broader industry adoption
 
@@ -1884,7 +1677,11 @@ Not in scope for initial release, but potential additions:
 
 - Easier for contributors to understand
 
+
+
 ### Why Kind for Local Testing?
+
+
 
 - Closest to real Kubernetes
 
@@ -1894,13 +1691,23 @@ Not in scope for initial release, but potential additions:
 
 - Free and fast to create/destroy
 
+
+
 ---
+
+
 
 ## Contact and Ownership
 
+
+
 **Project Owner:** Ben Hankins
 
+
+
 **Repository:** github.com/WBHankins93/implementation-studio
+
+
 
 **Related Projects:**
 
@@ -1910,10 +1717,14 @@ Not in scope for initial release, but potential additions:
 
 - terraform-infra-platform: github.com/WBHankins93/terraform-infra-platform
 
+
+
 ---
+
+
 
 *Blueprint Version: 1.0*
 
-*Created: December 2025*
+*Created: December 2024*
 
-*Last Updated: December 2025*
+*Last Updated: December 2024*
