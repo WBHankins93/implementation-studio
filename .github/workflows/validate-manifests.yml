@@ -1,0 +1,57 @@
+name: Validate Kubernetes Manifests
+
+on:
+  push:
+    branches: [ main ]
+    paths:
+      - '**/*.yaml'
+      - '**/*.yml'
+      - '**/kustomization.yaml'
+  pull_request:
+    branches: [ main ]
+    paths:
+      - '**/*.yaml'
+      - '**/*.yml'
+      - '**/kustomization.yaml'
+
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      
+      - name: Setup kubectl
+        uses: azure/setup-kubectl@v3
+        with:
+          version: 'latest'
+      
+      - name: Setup kubeval
+        run: |
+          wget https://github.com/instrumenta/kubeval/releases/latest/download/kubeval-linux-amd64.tar.gz
+          tar xf kubeval-linux-amd64.tar.gz
+          sudo mv kubeval /usr/local/bin
+      
+      - name: Validate YAML files
+        run: |
+          find . -name "*.yaml" -o -name "*.yml" | grep -v node_modules | while read file; do
+            # Skip non-Kubernetes YAML files
+            if grep -q "kind:\|apiVersion:" "$file" 2>/dev/null; then
+              echo "Validating $file"
+              kubeval "$file" --strict || exit 1
+            fi
+          done
+      
+      - name: Setup kustomize
+        run: |
+          curl -s "https://raw.githubusercontent.com/kubernetes-sigs/kustomize/master/hack/install_kustomize.sh" | bash
+          sudo mv kustomize /usr/local/bin
+      
+      - name: Validate kustomize
+        run: |
+          find . -name "kustomization.yaml" | while read file; do
+            echo "Validating kustomize: $file"
+            cd "$(dirname "$file")"
+            kustomize build . > /dev/null || exit 1
+            cd - > /dev/null
+          done
+
