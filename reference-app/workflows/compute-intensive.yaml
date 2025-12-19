@@ -1,0 +1,28 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Workflow
+metadata:
+  generateName: compute-intensive-
+  namespace: argo
+spec:
+  entrypoint: compute-job
+  templates:
+    - name: compute-job
+      container:
+        image: alpine:latest
+        command: [sh, -c]
+        args: 
+          - |
+            echo "Starting compute-intensive simulation..."
+            # Simulate CPU-intensive work
+            for i in $(seq 1 1000000); do
+              echo $i > /dev/null
+            done
+            echo "Compute job complete"
+        resources:
+          requests:
+            cpu: "1000m"
+            memory: "512Mi"
+          limits:
+            cpu: "2000m"
+            memory: "1Gi"
+

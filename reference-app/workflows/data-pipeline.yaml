@@ -1,0 +1,59 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Workflow
+metadata:
+  generateName: data-pipeline-
+  namespace: argo
+spec:
+  entrypoint: pipeline
+  templates:
+    - name: pipeline
+      steps:
+        - - name: generate-data
+            template: generate
+        - - name: process-data
+            template: process
+            arguments:
+              artifacts:
+                - name: input-data
+                  from: "{{steps.generate-data.outputs.artifacts.data}}"
+        - - name: store-results
+            template: store
+            arguments:
+              artifacts:
+                - name: processed-data
+                  from: "{{steps.process-data.outputs.artifacts.data}}"
+    
+    - name: generate
+      container:
+        image: alpine:latest
+        command: [sh, -c]
+        args: ["echo 'Sample data: $(date)' > /tmp/data.txt && cat /tmp/data.txt"]
+      outputs:
+        artifacts:
+          - name: data
+            path: /tmp/data.txt
+    
+    - name: process
+      inputs:
+        artifacts:
+          - name: input-data
+            path: /tmp/input.txt
+      container:
+        image: alpine:latest
+        command: [sh, -c]
+        args: ["cat /tmp/input.txt && echo 'Processed: $(date)' > /tmp/output.txt && cat /tmp/output.txt"]
+      outputs:
+        artifacts:
+          - name: data
+            path: /tmp/output.txt
+    
+    - name: store
+      inputs:
+        artifacts:
+          - name: processed-data
+            path: /tmp/input.txt
+      container:
+        image: alpine:latest
+        command: [sh, -c]
+        args: ["echo 'Storing results:' && cat /tmp/input.txt"]
+

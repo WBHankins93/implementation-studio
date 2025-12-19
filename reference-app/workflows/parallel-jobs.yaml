@@ -1,0 +1,53 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Workflow
+metadata:
+  generateName: parallel-jobs-
+  namespace: argo
+spec:
+  entrypoint: parallel-example
+  templates:
+    - name: parallel-example
+      steps:
+        - - name: task1
+            template: worker
+            arguments:
+              parameters:
+                - name: task-id
+                  value: "1"
+          - name: task2
+            template: worker
+            arguments:
+              parameters:
+                - name: task-id
+                  value: "2"
+          - name: task3
+            template: worker
+            arguments:
+              parameters:
+                - name: task-id
+                  value: "3"
+        - - name: aggregate
+            template: echo
+            arguments:
+              parameters:
+                - name: message
+                  value: "All parallel tasks completed"
+    
+    - name: worker
+      inputs:
+        parameters:
+          - name: task-id
+      container:
+        image: alpine:latest
+        command: [sh, -c]
+        args: ["echo 'Task {{inputs.parameters.task-id}} processing...' && sleep 5 && echo 'Task {{inputs.parameters.task-id}} complete'"]
+    
+    - name: echo
+      inputs:
+        parameters:
+          - name: message
+      container:
+        image: alpine:latest
+        command: [sh, -c]
+        args: ["echo '{{inputs.parameters.message}}'"]
+

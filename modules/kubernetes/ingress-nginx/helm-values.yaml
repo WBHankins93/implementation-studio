@@ -1,0 +1,55 @@
+# Ingress NGINX Helm Values
+# Standard public ingress configuration
+
+controller:
+  # Replica count
+  replicaCount: 2
+  
+  # Resource limits
+  resources:
+    limits:
+      cpu: 500m
+      memory: 512Mi
+    requests:
+      cpu: 100m
+      memory: 128Mi
+  
+  # Service configuration
+  service:
+    type: LoadBalancer
+    annotations:
+      cloud.google.com/load-balancer-type: "External"
+  
+  # Metrics
+  metrics:
+    enabled: true
+    serviceMonitor:
+      enabled: false
+  
+  # Admission webhooks
+  admissionWebhooks:
+    enabled: true
+  
+  # Pod disruption budget
+  podDisruptionBudget:
+    enabled: true
+    minAvailable: 1
+  
+  # Autoscaling
+  autoscaling:
+    enabled: false
+    minReplicas: 2
+    maxReplicas: 5
+
+# Default backend
+defaultBackend:
+  enabled: true
+  replicaCount: 1
+  resources:
+    limits:
+      cpu: 100m
+      memory: 64Mi
+    requests:
+      cpu: 50m
+      memory: 32Mi
+

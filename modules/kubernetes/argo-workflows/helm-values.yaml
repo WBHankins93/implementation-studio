@@ -1,0 +1,68 @@
+# Argo Workflows Helm Values
+# Standard deployment configuration
+
+controller:
+  # Resource limits
+  resources:
+    limits:
+      cpu: 500m
+      memory: 512Mi
+    requests:
+      cpu: 100m
+      memory: 128Mi
+  
+  # Metrics
+  metricsConfig:
+    enabled: true
+  
+  # Workflow controller settings
+  workflow:
+    # Workflow TTL
+    ttlStrategy:
+      secondsAfterCompletion: 86400  # 24 hours
+      secondsAfterSuccess: 86400
+      secondsAfterFailure: 604800    # 7 days
+  
+  # Persistence
+  persistence:
+    archive: true
+    accessMode: ReadWriteOnce
+    size: 10Gi
+
+workflow-controller:
+  # Resource limits
+  resources:
+    limits:
+      cpu: 500m
+      memory: 512Mi
+    requests:
+      cpu: 100m
+      memory: 128Mi
+
+server:
+  # Enable UI
+  enabled: true
+  
+  # Resource limits
+  resources:
+    limits:
+      cpu: 200m
+      memory: 256Mi
+    requests:
+      cpu: 100m
+      memory: 128Mi
+  
+  # Ingress configuration (to be set by lab)
+  ingress:
+    enabled: false
+
+# Service account
+serviceAccount:
+  create: true
+
+# Security context
+securityContext:
+  runAsNonRoot: true
+  runAsUser: 8737
+  fsGroup: 8737
+

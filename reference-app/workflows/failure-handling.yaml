@@ -1,0 +1,45 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Workflow
+metadata:
+  generateName: failure-handling-
+  namespace: argo
+spec:
+  entrypoint: retry-example
+  templates:
+    - name: retry-example
+      steps:
+        - - name: flaky-task
+            template: flaky-service
+            retryStrategy:
+              limit: 3
+              retryPolicy: "Always"
+        - - name: success-handler
+            template: echo
+            arguments:
+              parameters:
+                - name: message
+                  value: "Task succeeded after retries"
+    
+    - name: flaky-service
+      container:
+        image: alpine:latest
+        command: [sh, -c]
+        args: 
+          - |
+            # Simulate flaky service (fails 50% of the time)
+            if [ $((RANDOM % 2)) -eq 0 ]; then
+              echo "Task failed (simulated)"
+              exit 1
+            else
+              echo "Task succeeded"
+            fi
+    
+    - name: echo
+      inputs:
+        parameters:
+          - name: message
+      container:
+        image: alpine:latest
+        command: [sh, -c]
+        args: ["echo '{{inputs.parameters.message}}'"]
+
