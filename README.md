@@ -141,6 +141,7 @@ Argo Workflows serves as the reference application. [Learn more →](./docs/refe
 
 ### Project Management
 - [Timeline](./docs/timeline.md) - Development phases and milestones
+- [Roadmap](./docs/roadmap.md) - Improvement roadmap and ADR planning
 - [Quality Standards](./docs/quality-standards.md) - Code and documentation standards
 - [Success Criteria](./docs/success-criteria.md) - Project and lab completion criteria
 
