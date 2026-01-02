@@ -1,0 +1,8 @@
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: argo
+  labels:
+    name: argo
+    lab: "07-integration-patterns"
+

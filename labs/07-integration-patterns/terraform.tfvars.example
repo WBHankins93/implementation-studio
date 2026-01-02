@@ -1,0 +1,32 @@
+# Integration Patterns Lab Configuration
+# Copy this file to terraform.tfvars and fill in your values
+
+project_id = "your-gcp-project-id"
+cluster_name = "integration-patterns"
+region = "us-central1"
+
+# Network configuration
+public_subnet_cidr  = "10.0.1.0/24"
+private_subnet_cidr = "10.0.2.0/24"
+
+# Cluster configuration
+node_count     = 2
+machine_type   = "e2-medium"
+min_node_count = 1
+max_node_count = 5
+
+# Cloud SQL (optional - set to true to create database for examples)
+create_cloud_sql = false
+# db_username = "appuser"
+# db_password = "your-secure-password"  # Generate a strong password
+
+# Optional: Enable VPA
+enable_vpa = false
+
+# Optional: Resource labels
+resource_labels = {
+  environment = "learning"
+  managed-by  = "terraform"
+  lab         = "07-integration-patterns"
+}
+

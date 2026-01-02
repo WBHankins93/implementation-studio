@@ -1,0 +1,134 @@
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: database
+---
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: cloud-sql-proxy
+  namespace: database
+  annotations:
+    iam.gke.io/gcp-service-account: "cloud-sql-proxy@PROJECT_ID.iam.gserviceaccount.com"
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: cloud-sql-proxy
+  namespace: database
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: cloud-sql-proxy
+  template:
+    metadata:
+      labels:
+        app: cloud-sql-proxy
+    spec:
+      serviceAccountName: cloud-sql-proxy
+      containers:
+      - name: cloud-sql-proxy
+        image: gcr.io/cloud-sql-connectors/cloud-sql-proxy:latest
+        args:
+        - "--address=0.0.0.0"
+        - "--port=5432"
+        - "PROJECT_ID:REGION:INSTANCE_NAME"
+        ports:
+        - containerPort: 5432
+          name: postgres
+        resources:
+          requests:
+            cpu: "100m"
+            memory: "128Mi"
+          limits:
+            cpu: "200m"
+            memory: "256Mi"
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: cloud-sql-proxy
+  namespace: database
+spec:
+  selector:
+    app: cloud-sql-proxy
+  ports:
+  - port: 5432
+    targetPort: 5432
+    name: postgres
+  type: ClusterIP
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: app-db-config
+  namespace: database
+data:
+  DATABASE_HOST: "cloud-sql-proxy.database.svc.cluster.local"
+  DATABASE_PORT: "5432"
+  DATABASE_NAME: "appdb"
+  # DATABASE_USER and DATABASE_PASSWORD should be in Secret
+---
+apiVersion: v1
+kind: Secret
+metadata:
+  name: app-db-credentials
+  namespace: database
+type: Opaque
+stringData:
+  username: "appuser"
+  password: "CHANGE_ME"  # Use actual password from Cloud SQL
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: app-with-db
+  namespace: database
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: app-with-db
+  template:
+    metadata:
+      labels:
+        app: app-with-db
+    spec:
+      containers:
+      - name: app
+        image: postgres:14-alpine
+        env:
+        - name: DB_HOST
+          valueFrom:
+            configMapKeyRef:
+              name: app-db-config
+              key: DATABASE_HOST
+        - name: DB_PORT
+          valueFrom:
+            configMapKeyRef:
+              name: app-db-config
+              key: DATABASE_PORT
+        - name: DB_NAME
+          valueFrom:
+            configMapKeyRef:
+              name: app-db-config
+              key: DATABASE_NAME
+        - name: DB_USER
+          valueFrom:
+            secretKeyRef:
+              name: app-db-credentials
+              key: username
+        - name: DB_PASSWORD
+          valueFrom:
+            secretKeyRef:
+              name: app-db-credentials
+              key: password
+        command:
+        - sh
+        - -c
+        - |
+          echo "Connecting to database at $DB_HOST:$DB_PORT"
+          psql -h $DB_HOST -p $DB_PORT -U $DB_USER -d $DB_NAME -c "SELECT version();" || echo "Connection test"
+          sleep 3600
+

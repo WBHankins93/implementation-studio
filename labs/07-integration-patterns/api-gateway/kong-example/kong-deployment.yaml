@@ -1,0 +1,127 @@
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: kong
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: kong-config
+  namespace: kong
+data:
+  kong.yml: |
+    _format_version: "3.0"
+    services:
+    - name: argo-workflows
+      url: http://argo-workflows-server.argo.svc.cluster.local:2746
+      routes:
+      - name: argo-workflows-route
+        paths:
+        - /argo
+        strip_path: true
+      plugins:
+      - name: rate-limiting
+        config:
+          minute: 100
+          hour: 1000
+      - name: cors
+        config:
+          origins:
+          - "*"
+          methods:
+          - GET
+          - POST
+          - PUT
+          - DELETE
+          - OPTIONS
+          headers:
+          - Accept
+          - Authorization
+          - Content-Type
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: kong
+  namespace: kong
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: kong
+  template:
+    metadata:
+      labels:
+        app: kong
+    spec:
+      containers:
+      - name: kong
+        image: kong:latest
+        env:
+        - name: KONG_DATABASE
+          value: "off"  # DB-less mode
+        - name: KONG_DECLARATIVE_CONFIG
+          value: "/etc/kong/kong.yml"
+        - name: KONG_PROXY_ACCESS_LOG
+          value: /dev/stdout
+        - name: KONG_ADMIN_ACCESS_LOG
+          value: /dev/stdout
+        - name: KONG_PROXY_ERROR_LOG
+          value: /dev/stderr
+        - name: KONG_ADMIN_ERROR_LOG
+          value: /dev/stderr
+        - name: KONG_ADMIN_LISTEN
+          value: "0.0.0.0:8001"
+        ports:
+        - containerPort: 8000
+          name: proxy
+        - containerPort: 8443
+          name: proxy-ssl
+        - containerPort: 8001
+          name: admin
+        volumeMounts:
+        - name: kong-config
+          mountPath: /etc/kong
+        resources:
+          requests:
+            cpu: "200m"
+            memory: "256Mi"
+          limits:
+            cpu: "500m"
+            memory: "512Mi"
+      volumes:
+      - name: kong-config
+        configMap:
+          name: kong-config
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: kong-proxy
+  namespace: kong
+spec:
+  type: LoadBalancer
+  selector:
+    app: kong
+  ports:
+  - port: 80
+    targetPort: 8000
+    name: proxy
+  - port: 443
+    targetPort: 8443
+    name: proxy-ssl
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: kong-admin
+  namespace: kong
+spec:
+  type: ClusterIP
+  selector:
+    app: kong
+  ports:
+  - port: 8001
+    targetPort: 8001
+    name: admin
+
