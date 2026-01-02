@@ -1,0 +1,33 @@
+# Kind cluster configuration for air-gap simulation
+# This creates a cluster that cannot access external networks
+# Network policies will be applied to block all egress traffic
+
+kind: Cluster
+apiVersion: kind.x-k8s.io/v1alpha4
+name: airgap-simulation
+networking:
+  # Disable default CNI to prevent external access
+  disableDefaultCNI: false
+  # Use custom podSubnet to isolate
+  podSubnet: "10.244.0.0/16"
+  serviceSubnet: "10.96.0.0/12"
+nodes:
+- role: control-plane
+  kubeadmConfigPatches:
+  - |
+    kind: InitConfiguration
+    nodeRegistration:
+      kubeletExtraArgs:
+        node-ip: "10.0.0.1"
+  - |
+    kind: ClusterConfiguration
+    networking:
+      podSubnet: "10.244.0.0/16"
+- role: worker
+  kubeadmConfigPatches:
+  - |
+    kind: JoinConfiguration
+    nodeRegistration:
+      kubeletExtraArgs:
+        node-ip: "10.0.0.2"
+

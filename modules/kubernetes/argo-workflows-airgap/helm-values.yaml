@@ -1,0 +1,93 @@
+# Argo Workflows Helm Values for Air-Gapped Deployment
+# Modified for private container registry
+
+controller:
+  # Resource limits
+  resources:
+    limits:
+      cpu: 500m
+      memory: 512Mi
+    requests:
+      cpu: 100m
+      memory: 128Mi
+  
+  # Metrics
+  metricsConfig:
+    enabled: true
+  
+  # Workflow controller settings
+  workflow:
+    # Workflow TTL
+    ttlStrategy:
+      secondsAfterCompletion: 86400  # 24 hours
+      secondsAfterSuccess: 86400
+      secondsAfterFailure: 604800    # 7 days
+  
+  # Persistence
+  persistence:
+    archive: true
+    accessMode: ReadWriteOnce
+    size: 10Gi
+
+  # IMPORTANT: Image configuration for private registry
+  # These will be overridden during deployment to use local registry
+  image:
+    repository: local-registry:5000/argoproj/workflow-controller
+    tag: v3.5.5
+    pullPolicy: IfNotPresent
+
+workflow-controller:
+  # Resource limits
+  resources:
+    limits:
+      cpu: 500m
+      memory: 512Mi
+    requests:
+      cpu: 100m
+      memory: 128Mi
+
+  # IMPORTANT: Image configuration for private registry
+  image:
+    repository: local-registry:5000/argoproj/workflow-controller
+    tag: v3.5.5
+    pullPolicy: IfNotPresent
+
+server:
+  # Enable UI
+  enabled: true
+  
+  # Resource limits
+  resources:
+    limits:
+      cpu: 200m
+      memory: 256Mi
+    requests:
+      cpu: 100m
+      memory: 128Mi
+  
+  # IMPORTANT: Image configuration for private registry
+  image:
+    repository: local-registry:5000/argoproj/workflow-controller
+    tag: v3.5.5
+    pullPolicy: IfNotPresent
+
+  # Ingress configuration (disabled for air-gap, use port-forward)
+  ingress:
+    enabled: false
+
+# Service account
+serviceAccount:
+  create: true
+
+# Security context
+securityContext:
+  runAsNonRoot: true
+  runAsUser: 8737
+  fsGroup: 8737
+
+# Executor configuration
+executor:
+  image: local-registry:5000/argoproj/argoexec
+  tag: v3.5.5
+  pullPolicy: IfNotPresent
+

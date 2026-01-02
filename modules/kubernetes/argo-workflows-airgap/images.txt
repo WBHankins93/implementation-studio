@@ -1,0 +1,28 @@
+# Argo Workflows Required Images for Air-Gapped Deployment
+# This file lists all container images required for Argo Workflows offline deployment
+# Format: image:tag
+# Use this list with preparation/mirror-images.sh to pull and save all images
+
+# Argo Workflows Controller
+quay.io/argoproj/workflow-controller:v3.5.5
+quay.io/argoproj/argocli:v3.5.5
+
+# Argo Workflows Server (UI)
+quay.io/argoproj/workflow-controller:v3.5.5
+
+# Argo Executor
+quay.io/argoproj/argoexec:v3.5.5
+
+# Note: The workflow-controller image is used for both controller and server
+# The argocli image is used for CLI operations
+
+# Additional images that may be needed depending on workflow types:
+# These are examples - actual requirements depend on your workflows
+
+# Common base images for workflows (add as needed):
+# alpine:latest
+# busybox:latest
+# docker/whalesay:latest
+
+# To add more images, append to this file and re-run mirror-images.sh
+
