@@ -1,0 +1,33 @@
+# Copy this file to terraform.tfvars and fill in your values
+
+project_id = "your-gcp-project-id"
+cluster_name = "implementation-studio-private"
+region = "us-central1"
+
+# Network configuration
+private_subnet_cidr   = "10.0.1.0/24"
+management_subnet_cidr = "10.0.2.0/24"
+master_ipv4_cidr_block = "172.16.0.0/28"  # Must not overlap with subnets
+
+# Cluster configuration
+node_count     = 2
+machine_type   = "e2-medium"
+min_node_count = 1
+max_node_count = 5
+
+# Bastion configuration
+bastion_machine_type = "e2-micro"
+# Restrict this to your IP in production!
+bastion_authorized_networks = ["0.0.0.0/0"]
+enable_bastion_nat = false  # Set to true if bastion needs internet access
+
+# Optional: Enable VPA
+enable_vpa = false
+
+# Optional: Resource labels
+resource_labels = {
+  environment = "learning"
+  managed-by  = "terraform"
+  lab         = "03-private-network"
+}
+

@@ -1,0 +1,23 @@
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: argo-workflows-ui
+  namespace: argo
+  annotations:
+    kubernetes.io/ingress.class: nginx
+    nginx.ingress.kubernetes.io/ssl-redirect: "false"
+    # Internal-only ingress
+    networking.gke.io/load-balancer-type: "Internal"
+spec:
+  rules:
+    - host: argo-workflows.internal
+      http:
+        paths:
+          - path: /
+            pathType: Prefix
+            backend:
+              service:
+                name: argo-workflows-server
+                port:
+                  number: 2746
+
