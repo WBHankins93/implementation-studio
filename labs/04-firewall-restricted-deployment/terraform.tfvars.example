@@ -1,0 +1,45 @@
+# Copy this file to terraform.tfvars and fill in your values
+
+project_id = "your-gcp-project-id"
+cluster_name = "implementation-studio-firewall"
+region = "us-central1"
+
+# Network configuration
+public_subnet_cidr  = "10.0.1.0/24"
+private_subnet_cidr = "10.0.2.0/24"
+proxy_subnet_cidr   = "10.0.3.0/24"
+
+# Cluster configuration
+node_count     = 2
+machine_type   = "e2-medium"
+min_node_count = 1
+max_node_count = 5
+
+# Proxy configuration
+proxy_machine_type = "e2-micro"
+proxy_port         = 3128
+
+# Firewall configuration
+enable_strict_egress = true
+allow_gcp_services   = true
+
+# Optional: Allow specific external endpoints (if not using proxy)
+# allowed_external_endpoints = {
+#   "docker-hub" = {
+#     protocol    = "tcp"
+#     ports       = ["443"]
+#     cidr        = "0.0.0.0/0"
+#     description = "Docker Hub registry"
+#   }
+# }
+
+# Optional: Enable VPA
+enable_vpa = false
+
+# Optional: Resource labels
+resource_labels = {
+  environment = "learning"
+  managed-by  = "terraform"
+  lab         = "04-firewall-restricted"
+}
+

@@ -98,9 +98,9 @@ Detailed specifications for all 9 labs in Implementation Studio.
 
 ---
 
-## Lab 04: Firewall-Restricted Deployment
+## Lab 04: Firewall-Restricted Deployment ✅
 
-**Status:** Planned  
+**Status:** Complete  
 **Time:** 2-3 hours | **Cost:** $5-10
 
 **Learning Objectives:**

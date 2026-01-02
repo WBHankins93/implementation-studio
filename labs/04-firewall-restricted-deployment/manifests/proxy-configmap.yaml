@@ -1,0 +1,13 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: proxy-config
+  namespace: argo
+data:
+  HTTP_PROXY: "http://PROXY_INTERNAL_IP:3128"
+  HTTPS_PROXY: "http://PROXY_INTERNAL_IP:3128"
+  http_proxy: "http://PROXY_INTERNAL_IP:3128"
+  https_proxy: "http://PROXY_INTERNAL_IP:3128"
+  NO_PROXY: "localhost,127.0.0.1,.svc,.svc.cluster.local,.cluster.local"
+  no_proxy: "localhost,127.0.0.1,.svc,.svc.cluster.local,.cluster.local"
+

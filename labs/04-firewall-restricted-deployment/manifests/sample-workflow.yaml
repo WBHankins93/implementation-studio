@@ -1,0 +1,25 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Workflow
+metadata:
+  generateName: firewall-test-
+  namespace: argo
+spec:
+  entrypoint: test-connectivity
+  templates:
+    - name: test-connectivity
+      container:
+        image: curlimages/curl:latest
+        command: [sh, -c]
+        args:
+          - |
+            echo "Testing connectivity through proxy..."
+            echo "HTTP_PROXY: $HTTP_PROXY"
+            echo "HTTPS_PROXY: $HTTPS_PROXY"
+            echo "NO_PROXY: $NO_PROXY"
+            echo ""
+            echo "Testing external connectivity..."
+            curl -v https://www.google.com || echo "Failed to connect"
+            echo ""
+            echo "Testing internal connectivity (should work without proxy)..."
+            curl -v http://kubernetes.default.svc.cluster.local || echo "Failed to connect"
+

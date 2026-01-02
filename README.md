@@ -60,7 +60,7 @@ Unlike tutorials that teach tools in isolation, this platform focuses on the **c
 | 01 | Standard GKE Deployment | ✅ Complete | 1-2h | $5-10 | Production-ready GKE cluster baseline | [View Lab →](./labs/01-standard-deployment/README.md) |
 | 02 | Air-Gapped Deployment | ✅ Complete | 2-3h | $0 | Deploy without internet access | [View Lab →](./labs/02-airgapped-deployment/README.md) |
 | 03 | Private Network Deployment | ✅ Complete | 2-3h | $8-15 | Private clusters and bastion hosts | [View Lab →](./labs/03-private-network-deployment/README.md) |
-| 04 | Firewall-Restricted Deployment | 📋 Planned | 2-3h | $5-10 | Work within strict egress rules | [View Lab →](./labs/04-firewall-restricted-deployment/README.md) |
+| 04 | Firewall-Restricted Deployment | ✅ Complete | 2-3h | $5-10 | Work within strict egress rules | [View Lab →](./labs/04-firewall-restricted-deployment/README.md) |
 | 05 | The POC Sprint | 📋 Planned | 1-2h | $0-5 | Scope and deliver proof of concepts | [View Lab →](./labs/05-poc-sprint/README.md) |
 | 06 | Multi-Tenant Deployment | 📋 Planned | 2-3h | $0-10 | Namespace isolation and RBAC | [View Lab →](./labs/06-multi-tenant-deployment/README.md) |
 | 07 | Integration Patterns | 📋 Planned | 3-4h | $10-20 | Auth, databases, API gateways | [View Lab →](./labs/07-integration-patterns/README.md) |
