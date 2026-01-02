@@ -65,7 +65,7 @@ Unlike tutorials that teach tools in isolation, this platform focuses on the **c
 | 06 | Multi-Tenant Deployment | ✅ Complete | 2-3h | $0-10 | Namespace isolation and RBAC | [View Lab →](./labs/06-multi-tenant-deployment/README.md) |
 | 07 | Integration Patterns | ✅ Complete | 3-4h | $10-20 | Auth, databases, API gateways | [View Lab →](./labs/07-integration-patterns/README.md) |
 | 08 | Handoff and Runbooks | ✅ Complete | 2-3h | $0-5 | Production documentation and monitoring | [View Lab →](./labs/08-handoff-runbooks/README.md) |
-| 09 | Troubleshooting Scenarios | 📋 Planned | 2-4h | $0 | Systematic debugging methodology | [View Lab →](./labs/09-troubleshooting-scenarios/README.md) |
+| 09 | Troubleshooting Scenarios | ✅ Complete | 2-4h | $0 | Systematic debugging methodology | [View Lab →](./labs/09-troubleshooting-scenarios/README.md) |
 
 **Each lab includes:**
 - Comprehensive README with learning objectives
