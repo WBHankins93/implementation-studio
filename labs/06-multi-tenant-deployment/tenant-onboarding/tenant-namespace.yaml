@@ -1,0 +1,9 @@
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: "{{TENANT_NAME}}"
+  labels:
+    name: "{{TENANT_NAME}}"
+    tenant: "{{TENANT_NAME}}"
+    managed-by: "multi-tenant-lab"
+

@@ -1,0 +1,39 @@
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: namespace-admin
+  namespace: "{{NAMESPACE}}"
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: Role
+metadata:
+  name: namespace-admin
+  namespace: "{{NAMESPACE}}"
+rules:
+- apiGroups: [""]
+  resources: ["*"]
+  verbs: ["*"]
+- apiGroups: ["apps"]
+  resources: ["*"]
+  verbs: ["*"]
+- apiGroups: ["networking.k8s.io"]
+  resources: ["*"]
+  verbs: ["*"]
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: RoleBinding
+metadata:
+  name: namespace-admin
+  namespace: "{{NAMESPACE}}"
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: Role
+  name: namespace-admin
+subjects:
+- kind: ServiceAccount
+  name: namespace-admin
+  namespace: "{{NAMESPACE}}"
+- kind: User
+  name: "{{USER}}"
+  apiGroup: rbac.authorization.k8s.io
+

@@ -1,0 +1,16 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Workflow
+metadata:
+  name: tenant-workflow-example
+  namespace: "{{TENANT_NAME}}"
+  labels:
+    tenant: "{{TENANT_NAME}}"
+spec:
+  entrypoint: hello-tenant
+  templates:
+    - name: hello-tenant
+      container:
+        image: docker/whalesay:latest
+        command: [cowsay]
+        args: ["Hello from {{TENANT_NAME}}!"]
+

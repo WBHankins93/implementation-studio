@@ -1,0 +1,17 @@
+# Multi-Tenant Deployment Configuration
+# Copy this file to terraform.tfvars and configure
+
+# Choose deployment option
+use_gcp = false  # Set to true for GCP, false for Kind (local, free)
+
+# If using GCP:
+# project_id = "your-gcp-project-id"
+# region = "us-central1"
+# public_subnet_cidr = "10.0.1.0/24"
+# private_subnet_cidr = "10.0.2.0/24"
+# node_count = 2
+# machine_type = "e2-medium"
+
+# If using Kind:
+cluster_name = "multi-tenant-cluster"
+
