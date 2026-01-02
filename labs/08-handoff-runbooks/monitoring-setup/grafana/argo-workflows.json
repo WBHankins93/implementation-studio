@@ -1,0 +1,65 @@
+{
+  "dashboard": {
+    "title": "Argo Workflows",
+    "tags": ["argo", "workflows"],
+    "timezone": "browser",
+    "schemaVersion": 16,
+    "version": 1,
+    "refresh": "30s",
+    "panels": [
+      {
+        "id": 1,
+        "title": "Workflow Status",
+        "type": "graph",
+        "targets": [
+          {
+            "expr": "sum(rate(argo_workflows_count[5m])) by (phase)",
+            "legendFormat": "{{phase}}"
+          }
+        ],
+        "gridPos": {"h": 8, "w": 12, "x": 0, "y": 0}
+      },
+      {
+        "id": 2,
+        "title": "Workflow Duration",
+        "type": "graph",
+        "targets": [
+          {
+            "expr": "histogram_quantile(0.95, sum(rate(argo_workflows_workflow_duration_seconds_bucket[5m])) by (le))",
+            "legendFormat": "p95"
+          },
+          {
+            "expr": "histogram_quantile(0.50, sum(rate(argo_workflows_workflow_duration_seconds_bucket[5m])) by (le))",
+            "legendFormat": "p50"
+          }
+        ],
+        "gridPos": {"h": 8, "w": 12, "x": 12, "y": 0}
+      },
+      {
+        "id": 3,
+        "title": "Failed Workflows",
+        "type": "graph",
+        "targets": [
+          {
+            "expr": "sum(rate(argo_workflows_count{phase=\"Failed\"}[5m]))",
+            "legendFormat": "Failed"
+          }
+        ],
+        "gridPos": {"h": 8, "w": 12, "x": 0, "y": 8}
+      },
+      {
+        "id": 4,
+        "title": "Active Workflows",
+        "type": "stat",
+        "targets": [
+          {
+            "expr": "sum(argo_workflows_count{phase=\"Running\"})",
+            "legendFormat": "Active"
+          }
+        ],
+        "gridPos": {"h": 8, "w": 12, "x": 12, "y": 8}
+      }
+    ]
+  }
+}
+
