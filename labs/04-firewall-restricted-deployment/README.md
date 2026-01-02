@@ -114,6 +114,47 @@ See [Step-by-Step Documentation](./docs/step-by-step.md) for detailed instructio
 - **Ingress NGINX Controller** for external access
 - Sample workflow manifest
 
+## About Squid Proxy
+
+This lab uses **Squid**, an open-source HTTP/HTTPS proxy server, to provide controlled external access for applications running in firewall-restricted environments.
+
+### What is Squid?
+
+Squid is a caching proxy server that acts as an intermediary between clients (your GKE pods) and the internet. In this lab, we use it primarily as a **forwarding proxy** to enable applications to access external services despite strict firewall rules.
+
+### How It Works
+
+```
+GKE Pod (no external IP)
+   │
+   │ HTTP_PROXY=http://proxy:3128
+   ▼
+Squid Proxy Server
+   │
+   │ (has external IP)
+   ▼
+Internet
+```
+
+**Key Benefits:**
+- **Single Point of Control**: All external traffic flows through one controlled server
+- **Centralized Logging**: All egress requests are logged for security audits
+- **Simplified Firewall Rules**: Allow traffic to proxy, deny everything else
+- **Security Monitoring**: Easy to monitor and filter external access
+
+### In This Lab
+
+- **Location**: Dedicated VM in proxy subnet (10.0.3.0/24)
+- **Port**: 3128 (standard Squid port)
+- **Configuration**: Minimal setup focused on forwarding (not caching)
+- **Access**: Only from VPC internal network (GKE nodes)
+
+### Learn More
+
+- [Squid Official Documentation](http://www.squid-cache.org/Doc/)
+- [Squid Configuration Guide](http://www.squid-cache.org/Doc/config/)
+- [Squid on Wikipedia](https://en.wikipedia.org/wiki/Squid_(software))
+
 ## Key Concepts
 
 ### Strict Egress Control
