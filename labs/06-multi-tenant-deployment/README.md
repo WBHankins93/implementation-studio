@@ -75,6 +75,15 @@ terraform output get_credentials_command
 
 See [Step-by-Step Documentation](./docs/step-by-step.md) for detailed instructions.
 
+## About the Manifests Folder
+
+The `manifests/` folder contains **static Kubernetes manifests** that are applied directly:
+
+- **`shared-services/`**: Contains the shared services namespace and network policy that all tenants can access. These are applied once for the entire cluster.
+- **`tenant-templates/`**: Contains template workflows that can be customized and deployed per tenant.
+
+**Important:** Tenant-specific resources (namespaces, RBAC, quotas, network policies) are **not** in the manifests folder. Instead, they are created dynamically by the `create-tenant.sh` script using templates from `tenant-onboarding/`. The reusable network policy patterns are in `modules/kubernetes/network-policies/`.
+
 ## What Gets Deployed
 
 ### Infrastructure
