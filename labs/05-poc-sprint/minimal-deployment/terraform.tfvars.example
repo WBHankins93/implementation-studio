@@ -1,0 +1,18 @@
+# Minimal POC Configuration
+# Copy this file to terraform.tfvars and fill in your values
+
+project_id = "your-gcp-project-id"
+cluster_name = "poc-cluster"
+region = "us-central1"
+
+# Minimal network configuration
+public_subnet_cidr  = "10.0.1.0/24"
+private_subnet_cidr = "10.0.2.0/24"
+
+# Minimal cluster (1 node, small instance)
+node_count     = 1
+machine_type   = "e2-small"
+
+# Optional: Create registry (set to false to use public images)
+create_registry = false
+

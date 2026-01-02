@@ -1,0 +1,38 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Workflow
+metadata:
+  name: demo-multistep-workflow
+  namespace: argo
+  labels:
+    demo: "true"
+    complexity: "medium"
+spec:
+  entrypoint: multi-step-demo
+  templates:
+    - name: multi-step-demo
+      steps:
+        - - name: step1
+            template: prepare
+        - - name: step2
+            template: process
+        - - name: step3
+            template: complete
+    
+    - name: prepare
+      container:
+        image: curlimages/curl:latest
+        command: [sh, -c]
+        args: ["echo 'Step 1: Preparing data...' && sleep 2 && echo 'Preparation complete'"]
+    
+    - name: process
+      container:
+        image: curlimages/curl:latest
+        command: [sh, -c]
+        args: ["echo 'Step 2: Processing data...' && sleep 3 && echo 'Processing complete'"]
+    
+    - name: complete
+      container:
+        image: curlimages/curl:latest
+        command: [sh, -c]
+        args: ["echo 'Step 3: Workflow complete!' && echo 'All steps executed successfully'"]
+

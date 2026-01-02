@@ -1,0 +1,49 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Workflow
+metadata:
+  name: demo-parallel-workflow
+  namespace: argo
+  labels:
+    demo: "true"
+    complexity: "advanced"
+spec:
+  entrypoint: parallel-demo
+  templates:
+    - name: parallel-demo
+      steps:
+        - - name: task1
+            template: task
+            arguments:
+              parameters:
+                - name: task-name
+                  value: "Task 1"
+          - name: task2
+            template: task
+            arguments:
+              parameters:
+                - name: task-name
+                  value: "Task 2"
+          - name: task3
+            template: task
+            arguments:
+              parameters:
+                - name: task-name
+                  value: "Task 3"
+        - - name: aggregate
+            template: aggregate
+    
+    - name: task
+      inputs:
+        parameters:
+          - name: task-name
+      container:
+        image: curlimages/curl:latest
+        command: [sh, -c]
+        args: ["echo '{{inputs.parameters.task-name}} running in parallel...' && sleep 5 && echo '{{inputs.parameters.task-name}} complete'"]
+    
+    - name: aggregate
+      container:
+        image: curlimages/curl:latest
+        command: [sh, -c]
+        args: ["echo 'All parallel tasks completed!' && echo 'Aggregating results...'"]
+

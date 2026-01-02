@@ -1,0 +1,17 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Workflow
+metadata:
+  name: demo-simple-workflow
+  namespace: argo
+  labels:
+    demo: "true"
+    complexity: "simple"
+spec:
+  entrypoint: hello-world
+  templates:
+    - name: hello-world
+      container:
+        image: docker/whalesay:latest
+        command: [cowsay]
+        args: ["Hello! This is a simple POC workflow demonstration."]
+
