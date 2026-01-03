@@ -16,6 +16,16 @@ Infrastructure modules for Google Cloud Platform:
 - `firewall-rules` - Common firewall configurations
 - `private-service-connect` - Private GCP service access
 
+### AWS Modules (`aws/`)
+
+Infrastructure modules for Amazon Web Services:
+
+- `eks-cluster` - Standard EKS cluster with configurable options
+- `vpc` - Public + private subnets, NAT gateway
+- `vpc-private` - Fully private, no external IPs, VPC endpoints
+- `ecr` - Elastic Container Registry
+- `security-groups` - Security groups for EKS nodes with strict egress control
+
 ### Kubernetes Modules (`kubernetes/`)
 
 Kubernetes deployment patterns and configurations:
@@ -35,12 +45,23 @@ Kubernetes deployment patterns and configurations:
 Labs import modules using standard Terraform module syntax:
 
 ```hcl
+# GCP Example
 module "gke_cluster" {
   source = "../../modules/gcp/gke-cluster"
   
   project_id     = var.project_id
   cluster_name   = var.cluster_name
   region         = var.region
+  # ... other variables
+}
+
+# AWS Example
+module "eks_cluster" {
+  source = "../../modules/aws/eks-cluster"
+  
+  cluster_name = var.cluster_name
+  region       = var.region
+  subnet_ids   = module.vpc.private_subnet_ids
   # ... other variables
 }
 ```
