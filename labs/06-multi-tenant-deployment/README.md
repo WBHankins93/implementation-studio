@@ -10,13 +10,39 @@ By completing this lab, you will:
 - Implement network policies for tenant isolation
 - Manage tenant lifecycle (onboarding, offboarding)
 - Understand multi-tenant architecture patterns
+- Experience multi-cloud deployment patterns (Kind, GCP, AWS)
 
 ## Prerequisites
 
+### Common Prerequisites
 - `kubectl` installed
-- Kind installed (for local deployment) OR
-- GCP project with billing enabled (for GCP deployment)
 - Basic understanding of Kubernetes namespaces, RBAC, and network policies
+
+### Kind (Local) Prerequisites
+- Kind installed (for local deployment)
+
+### GCP Prerequisites
+- GCP project with billing enabled
+- `gcloud` CLI configured with appropriate permissions
+- Terraform >= 1.5
+
+### AWS Prerequisites
+- AWS account with appropriate permissions
+- `aws` CLI configured (`aws configure`)
+- Terraform >= 1.5
+
+## Cloud Provider Selection
+
+This lab supports **three deployment options**:
+
+1. **Kind (Local)** - Free, local Kubernetes cluster (recommended for learning)
+2. **GCP (GKE)** - Google Kubernetes Engine
+3. **AWS (EKS)** - Amazon Elastic Kubernetes Service
+
+Choose your provider by setting `cloud_provider` in `terraform.tfvars`:
+- `cloud_provider = "kind"` - Local Kind cluster (free, recommended)
+- `cloud_provider = "gcp"` - GKE cluster on Google Cloud Platform
+- `cloud_provider = "aws"` - EKS cluster on Amazon Web Services
 
 ## Architecture
 
@@ -37,6 +63,7 @@ See [Architecture Documentation](./docs/architecture.md) for detailed diagrams.
 ```bash
 cd labs/06-multi-tenant-deployment
 
+# Ensure cloud_provider = "kind" in terraform.tfvars (default)
 # Setup Kind cluster
 ./scripts/setup.sh
 
@@ -58,7 +85,7 @@ kubectl apply -f manifests/shared-services/
 ```bash
 cd labs/06-multi-tenant-deployment
 cp terraform.tfvars.example terraform.tfvars
-# Edit terraform.tfvars: set use_gcp = true and project_id
+# Edit terraform.tfvars: set cloud_provider = "gcp" and project_id
 
 # Deploy infrastructure
 terraform init
@@ -67,8 +94,32 @@ terraform apply
 
 # Get credentials
 terraform output get_credentials_command
+eval $(terraform output -raw get_credentials_command)
 
 # Create shared services and tenants (same as Option 1)
+kubectl apply -f manifests/shared-services/
+./tenant-onboarding/create-tenant.sh tenant-a standard
+```
+
+### Option 3: AWS Deployment
+
+```bash
+cd labs/06-multi-tenant-deployment
+cp terraform.tfvars.example terraform.tfvars
+# Edit terraform.tfvars: set cloud_provider = "aws" and region
+
+# Deploy infrastructure
+terraform init
+terraform plan
+terraform apply
+
+# Get credentials
+terraform output get_credentials_command
+eval $(terraform output -raw get_credentials_command)
+
+# Create shared services and tenants (same as Option 1)
+kubectl apply -f manifests/shared-services/
+./tenant-onboarding/create-tenant.sh tenant-a standard
 ```
 
 ## Step-by-Step Guide
@@ -88,7 +139,7 @@ The `manifests/` folder contains **static Kubernetes manifests** that are applie
 
 ### Infrastructure
 
-- **Kubernetes Cluster**: Kind (local) or GKE (cloud)
+- **Kubernetes Cluster**: Kind (local), GKE (GCP), or EKS (AWS)
 - **Shared Services Namespace**: Common services for all tenants
 - **Tenant Namespaces**: Isolated namespaces per tenant
 
@@ -99,69 +150,35 @@ The `manifests/` folder contains **static Kubernetes manifests** that are applie
 - **Limit Range**: Default resource requests/limits
 - **Network Policy**: Isolation from other tenants
 - **RBAC**: Tenant-specific roles and bindings
-- **Service Account**: For tenant applications
-
-## Key Concepts
-
-### Namespace Isolation
-
-Each tenant gets their own namespace, providing:
-- Logical separation
-- Resource boundaries
-- RBAC scoping
-- Network policy targets
-
-### Resource Quotas
-
-Prevent one tenant from consuming all resources:
-- CPU limits per namespace
-- Memory limits per namespace
-- Object count limits (deployments, services, etc.)
-
-### Network Policies
-
-Enforce network-level isolation:
-- No cross-tenant communication
-- Access to shared services only
-- DNS access for all tenants
-
-### RBAC Patterns
-
-Different permission levels:
-- **Namespace Admin**: Full control within namespace
-- **Read-Only**: View-only access
-- **Deployment-Only**: Can deploy apps, not manage infrastructure
-
-## Tenant Lifecycle
-
-### Onboarding
-
-```bash
-./tenant-onboarding/create-tenant.sh <tenant-name> [quota-type] [user-email]
-```
-
-This creates:
-- Namespace with labels
-- Resource quota and limits
-- Network policy
-- RBAC roles and bindings
-
-### Offboarding
-
-```bash
-kubectl delete namespace <tenant-name>
-```
-
-**Note:** Ensure tenant data is backed up before deletion!
+- **Service Account**: Tenant service account
 
 ## Estimated Time
 
-2-3 hours (depending on number of tenants created)
+2-3 hours (depending on deployment option and tenant creation)
 
 ## Estimated Cost
 
-**Local (Kind)**: $0 (fully local)
-**GCP**: $0-10 if resources are destroyed within a few hours
+- **Kind (Local)**: $0 (fully local)
+- **GCP**: $0-10 depending on usage and how quickly resources are destroyed
+- **AWS**: $0-15 depending on usage and how quickly resources are destroyed
+
+**Cost breakdown (if using cloud):**
+- Cluster management: $0.10/hour (AWS only, GCP is free)
+- Nodes: ~$0.05-0.10/hour per node
+- Other resources: minimal
+
+**Tip**: Use Kind for learning - it's free and perfect for multi-tenant patterns!
+
+## Provider Comparison
+
+| Feature | Kind | GCP GKE | AWS EKS |
+|---------|------|---------|---------|
+| **Cost** | Free | Free control plane | $0.10/hour control plane |
+| **Setup Time** | < 1 minute | 5-10 minutes | 10-15 minutes |
+| **Network Policies** | ✅ Supported | ✅ Supported | ✅ Supported (VPC CNI) |
+| **RBAC** | ✅ Supported | ✅ Supported | ✅ Supported |
+| **Resource Quotas** | ✅ Supported | ✅ Supported | ✅ Supported |
+| **Best For** | Learning, testing | Production GCP | Production AWS |
 
 ## Validation
 
@@ -171,39 +188,33 @@ See [VALIDATION-STATUS.md](./VALIDATION-STATUS.md) for validation details.
 
 See [Troubleshooting Guide](./docs/troubleshooting.md) for common issues and solutions.
 
-## Documentation
-
-- [Architecture](./docs/architecture.md) - Multi-tenant architecture patterns
-- [Isolation Strategies](./docs/isolation-strategies.md) - How isolation works
-- [Tenant Lifecycle](./docs/tenant-lifecycle.md) - Onboarding and offboarding
-- [Resource Management](./docs/resource-management.md) - Quotas and limits
-- [Step-by-Step Guide](./docs/step-by-step.md) - Detailed walkthrough
-- [Troubleshooting](./docs/troubleshooting.md) - Common issues and solutions
-
 ## Cleanup
 
 To destroy all resources:
 
+**Kind:**
 ```bash
-./scripts/cleanup.sh
+kind delete cluster --name multi-tenant-cluster
 ```
 
-**Warning:** This will delete all tenant namespaces and their data!
+**GCP/AWS:**
+```bash
+terraform destroy
+```
 
 ## Next Steps
 
 After completing this lab:
 
 1. Review the Kubernetes modules in `modules/kubernetes/`
-2. Understand different isolation strategies
-3. Practice tenant onboarding and offboarding
-4. Experiment with different quota levels
+2. Understand how namespace isolation works
+3. Experiment with different tenant quota levels
+4. Try creating tenants with different isolation levels
 5. Proceed to Lab 07: Integration Patterns
 
 ## Additional Resources
 
 - [Kubernetes Namespaces](https://kubernetes.io/docs/concepts/overview/working-with-objects/namespaces/)
-- [RBAC Authorization](https://kubernetes.io/docs/reference/access-authn-authz/rbac/)
-- [Resource Quotas](https://kubernetes.io/docs/concepts/policy/resource-quotas/)
+- [Kubernetes RBAC](https://kubernetes.io/docs/reference/access-authn-authz/rbac/)
 - [Network Policies](https://kubernetes.io/docs/concepts/services-networking/network-policies/)
-
+- [Resource Quotas](https://kubernetes.io/docs/concepts/policy/resource-quotas/)

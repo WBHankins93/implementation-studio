@@ -1,5 +1,5 @@
 #!/bin/bash
-# Setup script for Lab 06: Multi-Tenant Deployment
+# Setup script for Lab 06: Multi-Tenant Deployment (Kind, GCP, or AWS)
 
 set -euo pipefail
 
@@ -14,42 +14,37 @@ echo "📋 Checking prerequisites..."
 
 command -v kubectl >/dev/null 2>&1 || { echo "❌ kubectl is required but not installed." >&2; exit 1; }
 
+# Detect cloud provider from terraform.tfvars or use default
+CLOUD_PROVIDER="kind"
 if [ -f "$LAB_DIR/terraform.tfvars" ]; then
-  USE_GCP=$(grep -E '^use_gcp\s*=' "$LAB_DIR/terraform.tfvars" | cut -d'=' -f2 | tr -d ' "' || echo "false")
-  
-  if [ "$USE_GCP" = "true" ]; then
-    command -v terraform >/dev/null 2>&1 || { echo "❌ terraform is required for GCP deployment" >&2; exit 1; }
-    command -v gcloud >/dev/null 2>&1 || { echo "❌ gcloud CLI is required for GCP deployment" >&2; exit 1; }
-    command -v helm >/dev/null 2>&1 || { echo "❌ helm is required" >&2; exit 1; }
-  else
-    command -v kind >/dev/null 2>&1 || { echo "❌ kind is required for local deployment" >&2; exit 1; }
-  fi
+  CLOUD_PROVIDER=$(grep -E '^cloud_provider\s*=' "$LAB_DIR/terraform.tfvars" | sed 's/.*=\s*"\(.*\)".*/\1/' | tr -d ' ' || echo "kind")
+fi
+
+echo "☁️  Cloud Provider: $CLOUD_PROVIDER"
+echo ""
+
+# Provider-specific prerequisites
+if [ "$CLOUD_PROVIDER" = "gcp" ]; then
+  command -v terraform >/dev/null 2>&1 || { echo "❌ terraform is required for GCP deployment" >&2; exit 1; }
+  command -v gcloud >/dev/null 2>&1 || { echo "❌ gcloud CLI is required for GCP deployment" >&2; exit 1; }
+  echo "✅ GCP prerequisites met"
+elif [ "$CLOUD_PROVIDER" = "aws" ]; then
+  command -v terraform >/dev/null 2>&1 || { echo "❌ terraform is required for AWS deployment" >&2; exit 1; }
+  command -v aws >/dev/null 2>&1 || { echo "❌ aws CLI is required for AWS deployment" >&2; exit 1; }
+  echo "✅ AWS prerequisites met"
+elif [ "$CLOUD_PROVIDER" = "kind" ]; then
+  command -v kind >/dev/null 2>&1 || { echo "❌ kind is required for local deployment" >&2; exit 1; }
+  echo "✅ Kind prerequisites met"
 else
-  echo "⚠️  terraform.tfvars not found, assuming Kind deployment"
+  echo "⚠️  Unknown cloud provider: $CLOUD_PROVIDER (assuming Kind)"
   command -v kind >/dev/null 2>&1 || { echo "❌ kind is required for local deployment" >&2; exit 1; }
 fi
 
 echo "✅ All prerequisites met"
 echo ""
 
-# Setup cluster
-if [ -f "$LAB_DIR/terraform.tfvars" ]; then
-  USE_GCP=$(grep -E '^use_gcp\s*=' "$LAB_DIR/terraform.tfvars" | cut -d'=' -f2 | tr -d ' "' || echo "false")
-else
-  USE_GCP="false"
-fi
-
-if [ "$USE_GCP" = "true" ]; then
-  echo "☁️  Setting up GCP cluster..."
-  cd "$LAB_DIR"
-  terraform init
-  echo ""
-  echo "Next steps:"
-  echo "1. Review terraform.tfvars"
-  echo "2. Run: terraform plan"
-  echo "3. Run: terraform apply"
-  echo "4. Get credentials: terraform output get_credentials_command"
-else
+# Setup cluster based on provider
+if [ "$CLOUD_PROVIDER" = "kind" ]; then
   echo "🐳 Setting up Kind cluster..."
   CLUSTER_NAME=$(grep -E '^cluster_name\s*=' "$LAB_DIR/terraform.tfvars" 2>/dev/null | cut -d'=' -f2 | tr -d ' "' || echo "multi-tenant-cluster")
   
@@ -77,7 +72,35 @@ EOF
   echo ""
   echo "Next steps:"
   echo "1. Create shared services: kubectl apply -f manifests/shared-services/"
-  echo "2. Create tenants: ./tenant-onboarding/create-tenant.sh tenant-a"
+  echo "2. Create tenants: ./tenant-onboarding/create-tenant.sh tenant-a standard"
   echo "3. Validate: ./scripts/validate.sh"
+  
+elif [ "$CLOUD_PROVIDER" = "gcp" ] || [ "$CLOUD_PROVIDER" = "aws" ]; then
+  echo "☁️  Setting up $CLOUD_PROVIDER cluster..."
+  cd "$LAB_DIR"
+  
+  # Check for terraform.tfvars
+  if [ ! -f "$LAB_DIR/terraform.tfvars" ]; then
+    echo "⚠️  terraform.tfvars not found"
+    echo "   Copy terraform.tfvars.example to terraform.tfvars and configure:"
+    echo "   cp terraform.tfvars.example terraform.tfvars"
+    echo ""
+    read -p "Continue anyway? (y/N): " -r
+    if [[ ! $REPLY =~ ^[Yy]$ ]]; then
+      exit 1
+    fi
+  fi
+  
+  terraform init
+  echo ""
+  echo "✅ Setup complete!"
+  echo ""
+  echo "Next steps:"
+  echo "1. Review terraform.tfvars"
+  echo "2. Run: terraform plan"
+  echo "3. Run: terraform apply"
+  echo "4. Get credentials: terraform output get_credentials_command"
+  echo "5. Create shared services: kubectl apply -f manifests/shared-services/"
+  echo "6. Create tenants: ./tenant-onboarding/create-tenant.sh tenant-a standard"
+  echo "7. Validate: ./scripts/validate.sh"
 fi
-

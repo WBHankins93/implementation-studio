@@ -2,7 +2,7 @@
 
 ## Overview
 
-Lab 06 demonstrates multi-tenant Kubernetes deployment patterns using namespace-based isolation, RBAC, resource quotas, and network policies.
+Lab 06 demonstrates multi-tenant Kubernetes deployment patterns using namespace-based isolation, RBAC, resource quotas, and network policies. These patterns work on **any Kubernetes cluster** - Kind (local), GCP GKE, or AWS EKS.
 
 ## Multi-Tenant Architecture
 

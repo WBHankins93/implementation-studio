@@ -5,33 +5,73 @@
 Before starting, ensure you have:
 
 ```bash
-# Check tools
+# Check common tools (required for all providers)
 kubectl version --client
+terraform version  # If using cloud provider
+```
+
+### Kind-Specific Prerequisites
+
+```bash
 kind version  # If using Kind
-# OR
+```
+
+### GCP-Specific Prerequisites
+
+```bash
 gcloud version  # If using GCP
-terraform version  # If using GCP
+```
+
+### AWS-Specific Prerequisites
+
+```bash
+aws --version  # If using AWS
+aws sts get-caller-identity  # Verify AWS credentials
 ```
 
 ## Phase 1: Cluster Setup (10-15 minutes)
 
 ### Step 1: Choose Deployment Option
 
+This lab supports three deployment options:
+
 **Option A: Local (Kind) - Recommended for Learning**
+- Free and fast
+- No cloud account needed
+- Perfect for learning multi-tenant patterns
 
-```bash
-# Kind is free and fast
-# No cloud account needed
+**Option B: GCP (GKE)**
+- Requires GCP account
+- More realistic environment
+- Free control plane
+
+**Option C: AWS (EKS)**
+- Requires AWS account
+- Production-ready environment
+- Control plane costs $0.10/hour
+
+### Step 2: Configure Provider
+
+Edit `terraform.tfvars`:
+
+```hcl
+# For Kind (local)
+cloud_provider = "kind"
+cluster_name = "multi-tenant-cluster"
+
+# For GCP
+cloud_provider = "gcp"
+project_id = "your-project-id"
+region = "us-central1"
+
+# For AWS
+cloud_provider = "aws"
+region = "us-west-2"
+vpc_cidr = "10.0.0.0/16"
+availability_zones = ["us-west-2a", "us-west-2b"]
 ```
 
-**Option B: GCP**
-
-```bash
-# Requires GCP account
-# More realistic environment
-```
-
-### Step 2: Setup Cluster
+### Step 3: Setup Cluster
 
 **If Using Kind:**
 
@@ -47,7 +87,7 @@ This will create a Kind cluster automatically.
 ```bash
 cd labs/06-multi-tenant-deployment
 cp terraform.tfvars.example terraform.tfvars
-# Edit terraform.tfvars: set use_gcp = true and project_id
+# Edit terraform.tfvars: set cloud_provider = "gcp" and project_id
 
 terraform init
 terraform plan
@@ -55,22 +95,43 @@ terraform apply
 
 # Get credentials
 terraform output get_credentials_command
+eval $(terraform output -raw get_credentials_command)
 ```
 
-### Step 3: Verify Cluster
+**If Using AWS:**
+
+```bash
+cd labs/06-multi-tenant-deployment
+cp terraform.tfvars.example terraform.tfvars
+# Edit terraform.tfvars: set cloud_provider = "aws" and region
+
+terraform init
+terraform plan
+terraform apply
+
+# Get credentials
+terraform output get_credentials_command
+eval $(terraform output -raw get_credentials_command)
+```
+
+### Step 4: Verify Cluster
 
 ```bash
 # Verify cluster access
 kubectl cluster-info
 kubectl get nodes
 
-# Verify network policy support (if using GCP)
+# Verify network policy support (for GCP and AWS)
+# GCP
 kubectl get nodes -o jsonpath='{.items[0].metadata.labels}' | grep network-policy
+
+# AWS (network policies work with VPC CNI)
+kubectl get nodes
 ```
 
 ## Phase 2: Shared Services (5 minutes)
 
-### Step 4: Create Shared Services Namespace
+### Step 5: Create Shared Services Namespace
 
 ```bash
 # Create shared services namespace
@@ -80,7 +141,7 @@ kubectl apply -f manifests/shared-services/namespace.yaml
 kubectl get namespace shared-services
 ```
 
-### Step 5: Apply Shared Services Network Policy
+### Step 6: Apply Shared Services Network Policy
 
 ```bash
 # Apply network policy
@@ -92,7 +153,7 @@ kubectl get networkpolicy -n shared-services
 
 ## Phase 3: Create Tenants (15-20 minutes)
 
-### Step 6: Create First Tenant
+### Step 7: Create First Tenant
 
 ```bash
 # Create tenant with standard quota
@@ -105,7 +166,7 @@ kubectl get networkpolicy -n tenant-a
 kubectl get role -n tenant-a
 ```
 
-### Step 7: Create Second Tenant
+### Step 8: Create Second Tenant
 
 ```bash
 # Create tenant with limited quota
@@ -115,7 +176,7 @@ kubectl get role -n tenant-a
 kubectl get namespace tenant-b
 ```
 
-### Step 8: Create Third Tenant (Optional)
+### Step 9: Create Third Tenant (Optional)
 
 ```bash
 # Create another tenant
@@ -124,7 +185,7 @@ kubectl get namespace tenant-b
 
 ## Phase 4: Deploy Applications (10-15 minutes)
 
-### Step 9: Deploy to Tenant A
+### Step 10: Deploy to Tenant A
 
 ```bash
 # Deploy sample application
@@ -135,7 +196,7 @@ sed "s/{{TENANT_NAME}}/tenant-a/g" manifests/tenant-templates/argo-workflows.yam
   kubectl apply -f -
 ```
 
-### Step 10: Deploy to Tenant B
+### Step 11: Deploy to Tenant B
 
 ```bash
 # Deploy sample application
@@ -147,7 +208,7 @@ kubectl get pods -n tenant-b
 
 ## Phase 5: Validate Isolation (15-20 minutes)
 
-### Step 11: Test RBAC Isolation
+### Step 12: Test RBAC Isolation
 
 ```bash
 # As tenant-a admin, try to access tenant-b
@@ -159,7 +220,7 @@ kubectl get pods -n tenant-a
 # Should work
 ```
 
-### Step 12: Test Network Isolation
+### Step 13: Test Network Isolation
 
 ```bash
 # Get pod IPs
@@ -171,7 +232,7 @@ kubectl run test --image=busybox -n tenant-a --rm -it --restart=Never -- \
   wget -O- --timeout=5 http://$TENANT_B_POD || echo "✅ Network isolation working (connection failed as expected)"
 ```
 
-### Step 13: Test Resource Quota
+### Step 14: Test Resource Quota
 
 ```bash
 # Check current quota usage
@@ -184,7 +245,7 @@ kubectl run test-large --image=nginx -n tenant-a \
 # Should fail with quota exceeded error
 ```
 
-### Step 14: Test Shared Services Access
+### Step 15: Test Shared Services Access
 
 ```bash
 # Deploy a service in shared-services
@@ -199,7 +260,7 @@ kubectl run test --image=busybox -n tenant-a --rm -it --restart=Never -- \
 
 ## Phase 6: Validate Deployment (5 minutes)
 
-### Step 15: Run Validation Script
+### Step 16: Run Validation Script
 
 ```bash
 ./scripts/validate.sh
@@ -212,7 +273,7 @@ This will check:
 - Network policies
 - RBAC configurations
 
-### Step 16: Manual Verification
+### Step 17: Manual Verification
 
 ```bash
 # List all tenants
@@ -227,7 +288,7 @@ done
 
 ## Phase 7: Experiment (Optional, 20-30 minutes)
 
-### Step 17: Test Different Scenarios
+### Step 18: Test Different Scenarios
 
 **Test Quota Adjustment:**
 ```bash
@@ -262,15 +323,14 @@ kubectl edit networkpolicy tenant-isolation -n tenant-a
 
 ## Phase 8: Cleanup (5 minutes)
 
-### Step 18: Clean Up Resources
+### Step 19: Clean Up Resources
 
+**Kind:**
 ```bash
-# Delete all tenants and resources
-./scripts/cleanup.sh
+kind delete cluster --name multi-tenant-cluster
 ```
 
-Or manually:
-
+**GCP/AWS:**
 ```bash
 # Delete tenant namespaces
 kubectl delete namespace tenant-a tenant-b tenant-c
@@ -278,12 +338,32 @@ kubectl delete namespace tenant-a tenant-b tenant-c
 # Delete shared services
 kubectl delete namespace shared-services
 
-# Delete cluster (if using Kind)
-kind delete cluster --name multi-tenant-cluster
-
-# Or destroy GCP resources
+# Destroy infrastructure
 terraform destroy
 ```
+
+## Provider-Specific Notes
+
+### Kind (Local)
+
+- **Setup Time:** < 1 minute
+- **Cost:** Free
+- **Network Policies:** Fully supported
+- **Best For:** Learning, testing, development
+
+### GCP (GKE)
+
+- **Setup Time:** 5-10 minutes
+- **Cost:** Free control plane, ~$0.10/hour per node
+- **Network Policies:** Requires `network_policy_enabled = true`
+- **Best For:** Production GCP deployments
+
+### AWS (EKS)
+
+- **Setup Time:** 10-15 minutes
+- **Cost:** $0.10/hour control plane + ~$0.05/hour per node
+- **Network Policies:** Works with VPC CNI (automatic)
+- **Best For:** Production AWS deployments
 
 ## Tips for Success
 
@@ -305,43 +385,13 @@ terraform destroy
 
 ## Common Issues
 
-### Issue: Can't Create Pod (Quota Exceeded)
-
-**Solution:**
-```bash
-# Check quota usage
-kubectl describe resourcequota -n tenant-a
-
-# Either increase quota or reduce pod requests
-```
-
-### Issue: Pods Can't Communicate
-
-**Solution:**
-```bash
-# Check network policies
-kubectl get networkpolicy -n tenant-a
-
-# Verify policies allow required traffic
-kubectl describe networkpolicy -n tenant-a
-```
-
-### Issue: User Can't Access Namespace
-
-**Solution:**
-```bash
-# Check RBAC
-kubectl get rolebinding -n tenant-a
-kubectl describe rolebinding -n tenant-a
-
-# Verify user is in RoleBinding
-```
+See [Troubleshooting Guide](./troubleshooting.md) for detailed solutions to common issues.
 
 ## Next Steps
 
 After completing this lab:
 
-1. Review the Kubernetes modules
+1. Review the Kubernetes modules in `modules/kubernetes/`
 2. Understand different isolation strategies
 3. Practice tenant lifecycle management
 4. Experiment with different quota levels
@@ -353,4 +403,3 @@ After completing this lab:
 - [Tenant Lifecycle](./tenant-lifecycle.md)
 - [Resource Management](./resource-management.md)
 - [Troubleshooting](./troubleshooting.md)
-

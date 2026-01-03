@@ -2,9 +2,9 @@
 
 ## Common Issues and Solutions
 
-### Cluster Issues
+## Provider-Specific Cluster Issues
 
-#### Kind Cluster Not Starting
+### Kind Cluster Not Starting
 
 **Problem:** Kind cluster creation fails
 
@@ -25,7 +25,7 @@
    kind create cluster --name multi-tenant-cluster
    ```
 
-#### GKE Cluster Creation Fails
+### GKE Cluster Creation Fails
 
 **Problem:** Terraform fails to create GKE cluster
 
@@ -45,9 +45,60 @@
    gcloud projects get-iam-policy $PROJECT_ID
    ```
 
-### Tenant Creation Issues
+### EKS Cluster Creation Fails
 
-#### Tenant Script Fails
+**Problem:** Terraform fails to create EKS cluster
+
+**Solutions:**
+1. **Check service-linked role exists:**
+   ```bash
+   aws iam get-role --role-name AWSServiceRoleForAmazonEKS || \
+     aws iam create-service-linked-role --aws-service-name eks.amazonaws.com
+   ```
+
+2. **Check IAM permissions:**
+   ```bash
+   aws sts get-caller-identity
+   # Verify you have eks:CreateCluster, eks:DescribeCluster permissions
+   ```
+
+3. **Check service quotas:**
+   ```bash
+   aws service-quotas get-service-quota \
+     --service-code eks \
+     --quota-code L-1194A341
+   ```
+
+### Cannot Access Cluster (kubectl)
+
+**Problem:** `kubectl cluster-info` fails
+
+**GCP Solution:**
+```bash
+CLUSTER_NAME=$(terraform output -raw cluster_name)
+REGION=$(grep region terraform.tfvars | cut -d'"' -f2)
+PROJECT_ID=$(grep project_id terraform.tfvars | cut -d'"' -f2)
+
+gcloud container clusters get-credentials $CLUSTER_NAME \
+  --region $REGION \
+  --project $PROJECT_ID
+```
+
+**AWS Solution:**
+```bash
+CLUSTER_NAME=$(terraform output -raw cluster_name)
+REGION=$(grep -E '^region\s*=' terraform.tfvars | sed 's/.*=\s*"\(.*\)".*/\1/' | tr -d ' ')
+
+aws eks update-kubeconfig \
+  --region $REGION \
+  --name $CLUSTER_NAME
+```
+
+---
+
+## Tenant Creation Issues
+
+### Tenant Script Fails
 
 **Problem:** `create-tenant.sh` script fails
 
@@ -72,7 +123,7 @@
    # (replace {{TENANT_NAME}} first)
    ```
 
-#### Namespace Already Exists
+### Namespace Already Exists
 
 **Problem:** Namespace already exists error
 
@@ -88,9 +139,11 @@
    kubectl apply -f tenant-onboarding/tenant-quotas.yaml -n tenant-a
    ```
 
-### RBAC Issues
+---
 
-#### User Can't Access Namespace
+## RBAC Issues
+
+### User Can't Access Namespace
 
 **Problem:** User gets "forbidden" errors
 
@@ -115,7 +168,7 @@
      -n tenant-a
    ```
 
-#### Service Account Can't Create Resources
+### Service Account Can't Create Resources
 
 **Problem:** Service account gets permission denied
 
@@ -139,9 +192,11 @@
      -n tenant-a
    ```
 
-### Resource Quota Issues
+---
 
-#### Pod Creation Fails: Quota Exceeded
+## Resource Quota Issues
+
+### Pod Creation Fails: Quota Exceeded
 
 **Problem:** Can't create pod, quota exceeded
 
@@ -168,7 +223,7 @@
    kubectl delete pod <unused-pod> -n tenant-a
    ```
 
-#### Quota Not Enforced
+### Quota Not Enforced
 
 **Problem:** Pods created despite exceeding quota
 
@@ -190,9 +245,11 @@
    # Ensure namespace exists and quota is applied
    ```
 
-### Network Policy Issues
+---
 
-#### Pods Can't Communicate Within Namespace
+## Network Policy Issues
+
+### Pods Can't Communicate Within Namespace
 
 **Problem:** Pods in same namespace can't reach each other
 
@@ -220,7 +277,7 @@
    # Recreate policy with correct rules
    ```
 
-#### Can't Access Shared Services
+### Can't Access Shared Services
 
 **Problem:** Tenant pods can't reach shared services
 
@@ -248,7 +305,7 @@
              operator: Exists
    ```
 
-#### Cross-Tenant Communication Works (Shouldn't)
+### Cross-Tenant Communication Works (Shouldn't)
 
 **Problem:** Tenants can communicate (isolation not working)
 
@@ -265,16 +322,36 @@
    ```
 
 3. **Check CNI supports NetworkPolicy:**
+
+   **GCP:**
    ```bash
-   # For GKE, network policy must be enabled
    gcloud container clusters describe <cluster> --region <region> \
      --format="get(networkPolicy.enabled)"
    # Should be True
    ```
 
-### General Debugging
+   **AWS:**
+   ```bash
+   # EKS uses VPC CNI which supports NetworkPolicy by default
+   # Verify VPC CNI addon is installed
+   aws eks describe-addon \
+     --cluster-name <cluster-name> \
+     --addon-name vpc-cni \
+     --region <region>
+   ```
 
-#### Check Tenant Resources
+   **Kind:**
+   ```bash
+   # Kind supports NetworkPolicy by default (Calico or Cilium)
+   kubectl get nodes
+   # Network policies work out of the box
+   ```
+
+---
+
+## General Debugging
+
+### Check Tenant Resources
 
 ```bash
 # List all tenant namespaces
@@ -293,7 +370,7 @@ kubectl get networkpolicy -n tenant-a
 kubectl get role,rolebinding -n tenant-a
 ```
 
-#### Test Isolation
+### Test Isolation
 
 ```bash
 # Test RBAC
@@ -308,7 +385,7 @@ kubectl run test --image=nginx -n tenant-a \
   --requests=cpu=10,memory=20Gi
 ```
 
-#### View Logs
+### View Logs
 
 ```bash
 # Pod logs
@@ -320,6 +397,34 @@ kubectl get events -n tenant-a --sort-by='.lastTimestamp'
 # Describe resources
 kubectl describe pod <pod-name> -n tenant-a
 ```
+
+### Provider-Specific Debugging
+
+**GCP:**
+```bash
+# Check cluster status
+gcloud container clusters describe <cluster-name> --region <region> --project <project-id>
+
+# Check node pools
+gcloud container node-pools list --cluster <cluster-name> --region <region> --project <project-id>
+```
+
+**AWS:**
+```bash
+# Check cluster status
+aws eks describe-cluster --name <cluster-name> --region <region>
+
+# Check node groups
+aws eks list-nodegroups --cluster-name <cluster-name> --region <region>
+
+# Check node group details
+aws eks describe-nodegroup \
+  --cluster-name <cluster-name> \
+  --nodegroup-name <nodegroup-name> \
+  --region <region>
+```
+
+---
 
 ## Getting Help
 
@@ -340,6 +445,8 @@ If you're still experiencing issues:
    - `kubectl` command results
    - Network policy configurations
    - RBAC configurations
+   - Provider (Kind, GCP, or AWS)
+   - Cluster region/zone
 
 ## Prevention Tips
 
@@ -349,4 +456,4 @@ If you're still experiencing issues:
 4. **Review RBAC** - Audit permissions periodically
 5. **Test Network Policies** - Verify isolation works
 6. **Use Scripts** - Automated tenant creation reduces errors
-
+7. **Start with Kind** - Test locally before deploying to cloud

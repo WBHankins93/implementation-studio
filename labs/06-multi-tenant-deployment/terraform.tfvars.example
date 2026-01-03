@@ -1,17 +1,51 @@
 # Multi-Tenant Deployment Configuration
 # Copy this file to terraform.tfvars and configure
 
-# Choose deployment option
-use_gcp = false  # Set to true for GCP, false for Kind (local, free)
+# ============================================================================
+# Cloud Provider Selection
+# ============================================================================
+# Choose one: "kind" (local, free), "gcp" (GKE), or "aws" (EKS)
+cloud_provider = "kind"  # Change to "gcp" or "aws" for cloud deployment
 
-# If using GCP:
+# ============================================================================
+# Common Configuration (applies to all providers)
+# ============================================================================
+
+cluster_name = "multi-tenant-cluster"
+
+# ============================================================================
+# GCP-Specific Configuration (only used when cloud_provider = "gcp")
+# ============================================================================
+
 # project_id = "your-gcp-project-id"
 # region = "us-central1"
 # public_subnet_cidr = "10.0.1.0/24"
 # private_subnet_cidr = "10.0.2.0/24"
 # node_count = 2
 # machine_type = "e2-medium"
+# min_node_count = 1
+# max_node_count = 5
 
-# If using Kind:
-cluster_name = "multi-tenant-cluster"
+# ============================================================================
+# AWS-Specific Configuration (only used when cloud_provider = "aws")
+# ============================================================================
 
+# region = "us-west-2"
+# vpc_cidr = "10.0.0.0/16"
+# public_subnet_cidr = "10.0.1.0/24"
+# private_subnet_cidr = "10.0.2.0/24"
+# availability_zones = ["us-west-2a", "us-west-2b"]
+# node_count = 2
+# instance_type = "t3.medium"
+# min_node_count = 1
+# max_node_count = 5
+
+# ============================================================================
+# Resource Labels/Tags (GCP/AWS only)
+# ============================================================================
+
+# resource_labels = {
+#   environment = "learning"
+#   managed-by  = "terraform"
+#   lab         = "06-multi-tenant"
+# }
