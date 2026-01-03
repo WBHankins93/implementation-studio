@@ -369,9 +369,7 @@
 
 ## 🔗 Related Documentation
 
-- AWS Implementation Plan: `docs/aws-implementation-plan.md`
-- AWS Implementation Summary: `docs/aws-implementation-summary.md`
-- Multi-Cloud Considerations: `docs/multi-cloud-considerations.md`
+- Multi-Cloud Considerations: `docs/multi-cloud-considerations.md` - Strategic analysis of AWS implementation
 - Quality standards: `docs/quality-standards.md`
 - Contributing: `CONTRIBUTING.md`
 - Lab specifications: `docs/lab-specifications.md`
