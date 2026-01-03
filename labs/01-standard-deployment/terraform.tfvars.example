@@ -1,8 +1,13 @@
-# Copy this file to terraform.tfvars and fill in your values
+# Cloud Provider Selection
+# Choose "gcp" or "aws"
+cloud_provider = "gcp"  # Change to "aws" for AWS deployment
 
-project_id = "your-gcp-project-id"
+# ============================================================================
+# Common Configuration (applies to both GCP and AWS)
+# ============================================================================
+
 cluster_name = "implementation-studio"
-region = "us-central1"
+region       = "us-central1"  # For AWS, use AWS region like "us-west-2"
 
 # Network configuration
 public_subnet_cidr  = "10.0.1.0/24"
@@ -10,16 +15,36 @@ private_subnet_cidr = "10.0.2.0/24"
 
 # Cluster configuration
 node_count     = 2
-machine_type   = "e2-medium"
 min_node_count = 1
 max_node_count = 5
 
-# Optional: Enable VPA
-enable_vpa = false
-
-# Optional: Resource labels
+# Resource labels/tags
 resource_labels = {
   environment = "learning"
   managed-by  = "terraform"
+  lab         = "01-standard-deployment"
 }
 
+# ============================================================================
+# GCP-Specific Configuration (only used when cloud_provider = "gcp")
+# ============================================================================
+
+project_id   = "your-gcp-project-id"  # Required for GCP
+machine_type = "e2-medium"             # GCP machine type
+enable_vpa   = false                   # Enable Vertical Pod Autoscaling
+
+# ============================================================================
+# AWS-Specific Configuration (only used when cloud_provider = "aws")
+# ============================================================================
+
+# For AWS, update region to an AWS region:
+# region = "us-west-2"
+
+vpc_cidr = "10.0.0.0/16"  # VPC CIDR block
+availability_zones = ["us-west-2a", "us-west-2b"]  # AWS availability zones
+instance_type = "t3.medium"  # AWS EC2 instance type
+
+# Optional: Node labels for AWS
+node_labels = {
+  # Add any Kubernetes labels you want on nodes
+}
