@@ -33,6 +33,39 @@ Unlike tutorials that teach tools in isolation, this platform focuses on the **c
 
 ---
 
+## ⚠️ Important: Real-World Deployment Considerations
+
+> **The patterns are right, but production always has surprises.**
+
+This platform provides **validated, production-grade patterns** that teach real-world deployment scenarios. However, when using these labs or modules in actual customer engagements, be aware:
+
+**What's Validated:**
+- ✅ Terraform syntax and structure
+- ✅ Kubernetes manifest validation
+- ✅ Architecture patterns and design
+- ✅ Code quality and best practices
+
+**What Requires Real-World Testing:**
+- ⚠️ **IAM Permissions** - Customer environments have different permission models
+- ⚠️ **Quota Limits** - Regional quotas vary, may need increases
+- ⚠️ **API Differences** - Regional API variations (e.g., us-east-1 differences)
+- ⚠️ **Network Policies** - Customer-specific firewall and security rules
+- ⚠️ **Compliance Requirements** - Industry-specific constraints (HIPAA, FedRAMP, etc.)
+- ⚠️ **Resource Availability** - Instance types, regions, features vary by account
+
+**Best Practice:**
+> **Always test in a dev/staging environment first.** The patterns are correct, but production environments have unique constraints that can't be fully anticipated.
+
+Each lab includes a `VALIDATION-STATUS.md` file that transparently documents what has been tested versus what requires real deployment. This isn't a flaw - it's honest transparency about the difference between validated code and production reality.
+
+**For Real Customer Engagements:**
+1. Use these labs to learn the patterns
+2. Adapt the modules to your customer's environment
+3. Test thoroughly in a non-production environment first
+4. Account for customer-specific constraints (IAM, quotas, compliance)
+
+---
+
 ## 🚀 Quick Start
 
 1. **Clone and explore:**
