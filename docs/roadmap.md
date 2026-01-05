@@ -352,9 +352,10 @@
    - Updated database proxy patterns (Cloud SQL Proxy vs RDS Proxy)
    - Complete multi-cloud documentation
 
-7. **Phase 7: Optional Enhancements** (2-3 hours)
-   - Add cloud options to Labs 02 and 05
-   - Keep Kind as default for easiest path
+7. **Phase 7: Lab 05 AWS Support** (1-2 hours)
+   - Add AWS quick-deploy option to POC Sprint
+   - Lab 02 stays Kind-only (air-gap = no cloud connectivity)
+   - Keep Kind as default/recommended for fastest POC
 
 8. **Phase 8: Documentation** (2-3 hours)
    - Complete multi-cloud guides
