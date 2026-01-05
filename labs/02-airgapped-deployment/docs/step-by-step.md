@@ -116,7 +116,7 @@ This packages everything into a complete bundle.
     ✅ Copied 1 chart files
 ...
 ✅ Bundle created successfully!
-Bundle location: preparation/airgap-deployment-bundle-20251215-143022
+Bundle location: preparation/airgap-deployment-bundle-20260115-143022
 Total size: 2.5G
 ```
 

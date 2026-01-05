@@ -151,7 +151,7 @@ Daily standups keep the POC on track and stakeholders informed. Use this format 
 
 ## Example Standup
 
-### Date: 2025-12-20
+### Date: 2026-01-15
 ### Attendees: John (Lead), Sarah (SE), Mike (Customer)
 
 ---
