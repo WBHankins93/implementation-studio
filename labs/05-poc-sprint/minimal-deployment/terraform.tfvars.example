@@ -1,18 +1,42 @@
 # Minimal POC Configuration
 # Copy this file to terraform.tfvars and fill in your values
 
-project_id = "your-gcp-project-id"
+# ============================================================================
+# Cloud Provider Selection
+# ============================================================================
+# Choose one: "gcp" or "aws"
+# Note: For local deployment (zero cost), use Kind directly - no Terraform needed
+cloud_provider = "gcp"  # Change to "aws" for AWS deployment
+
+# ============================================================================
+# Common Configuration (applies to all providers)
+# ============================================================================
+
 cluster_name = "poc-cluster"
-region = "us-central1"
+region = "us-central1"  # Change to AWS region (e.g., "us-west-2") if using AWS
 
 # Minimal network configuration
 public_subnet_cidr  = "10.0.1.0/24"
 private_subnet_cidr = "10.0.2.0/24"
 
 # Minimal cluster (1 node, small instance)
-node_count     = 1
-machine_type   = "e2-small"
+node_count = 1
 
 # Optional: Create registry (set to false to use public images)
 create_registry = false
 
+# ============================================================================
+# GCP-Specific Configuration (only used when cloud_provider = "gcp")
+# ============================================================================
+
+# project_id = "your-gcp-project-id"
+# machine_type = "e2-small"  # Smaller than standard for cost
+
+# ============================================================================
+# AWS-Specific Configuration (only used when cloud_provider = "aws")
+# ============================================================================
+
+# region = "us-west-2"  # AWS region
+# vpc_cidr = "10.0.0.0/16"
+# availability_zones = ["us-west-2a", "us-west-2b"]
+# instance_type = "t3.small"  # Small for POC cost
