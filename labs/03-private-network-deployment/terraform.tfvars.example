@@ -1,33 +1,59 @@
-# Copy this file to terraform.tfvars and fill in your values
+# Private Network Deployment Configuration
+# Copy this file to terraform.tfvars and configure
 
-project_id = "your-gcp-project-id"
+# ============================================================================
+# Cloud Provider Selection
+# ============================================================================
+# Choose one: "gcp" or "aws"
+cloud_provider = "gcp"  # Change to "aws" for AWS deployment
+
+# ============================================================================
+# Common Configuration (applies to all providers)
+# ============================================================================
+
 cluster_name = "implementation-studio-private"
-region = "us-central1"
+region = "us-central1"  # Change to AWS region (e.g., "us-west-2") if using AWS
 
 # Network configuration
 private_subnet_cidr   = "10.0.1.0/24"
 management_subnet_cidr = "10.0.2.0/24"
-master_ipv4_cidr_block = "172.16.0.0/28"  # Must not overlap with subnets
 
 # Cluster configuration
 node_count     = 2
-machine_type   = "e2-medium"
 min_node_count = 1
 max_node_count = 5
 
 # Bastion configuration
-bastion_machine_type = "e2-micro"
-# Restrict this to your IP in production!
+# IMPORTANT: Restrict this to your IP in production!
 bastion_authorized_networks = ["0.0.0.0/0"]
-enable_bastion_nat = false  # Set to true if bastion needs internet access
 
-# Optional: Enable VPA
-enable_vpa = false
+# ============================================================================
+# GCP-Specific Configuration (only used when cloud_provider = "gcp")
+# ============================================================================
 
-# Optional: Resource labels
-resource_labels = {
-  environment = "learning"
-  managed-by  = "terraform"
-  lab         = "03-private-network"
-}
+# project_id = "your-gcp-project-id"
+# machine_type = "e2-medium"
+# bastion_machine_type = "e2-micro"
+# master_ipv4_cidr_block = "172.16.0.0/28"  # Must not overlap with subnets
+# enable_bastion_nat = false  # Set to true if bastion needs internet access
+# enable_vpa = false  # Enable Vertical Pod Autoscaling
 
+# ============================================================================
+# AWS-Specific Configuration (only used when cloud_provider = "aws")
+# ============================================================================
+
+# region = "us-west-2"  # AWS region
+# vpc_cidr = "10.0.0.0/16"
+# availability_zones = ["us-west-2a", "us-west-2b"]
+# instance_type = "t3.medium"
+# bastion_instance_type = "t3.micro"
+
+# ============================================================================
+# Resource Labels/Tags (applies to all providers)
+# ============================================================================
+
+# resource_labels = {
+#   environment = "learning"
+#   managed-by  = "terraform"
+#   lab         = "03-private-network"
+# }

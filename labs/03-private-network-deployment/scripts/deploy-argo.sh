@@ -1,6 +1,6 @@
 #!/bin/bash
 # Deploy Argo Workflows and Internal Ingress NGINX to the private cluster
-# This script should be run from the bastion host
+# This script should be run from the bastion host (works for both GCP and AWS)
 
 set -euo pipefail
 
@@ -13,9 +13,29 @@ echo ""
 # Check if kubectl is configured
 if ! kubectl cluster-info &>/dev/null; then
   echo "❌ kubectl is not configured or cluster is not accessible"
-  echo "   Run: gcloud container clusters get-credentials <cluster-name> --region <region> --project <project-id> --internal-ip"
+  echo ""
+  echo "For GCP:"
+  echo "   gcloud container clusters get-credentials <cluster-name> --region <region> --project <project-id> --internal-ip"
+  echo ""
+  echo "For AWS:"
+  echo "   aws eks update-kubeconfig --region <region> --name <cluster-name>"
   exit 1
 fi
+
+# Detect cloud provider (try to infer from cluster endpoint or config)
+CLUSTER_ENDPOINT=$(kubectl config view --minify -o jsonpath='{.clusters[0].cluster.server}' 2>/dev/null || echo "")
+if [[ "$CLUSTER_ENDPOINT" == *"gke"* ]] || [[ "$CLUSTER_ENDPOINT" == *"googleapis"* ]]; then
+  CLOUD_PROVIDER="gcp"
+elif [[ "$CLUSTER_ENDPOINT" == *"eks"* ]] || [[ "$CLUSTER_ENDPOINT" == *"amazonaws"* ]]; then
+  CLOUD_PROVIDER="aws"
+else
+  # Default to GCP if can't determine
+  CLOUD_PROVIDER="gcp"
+  echo "⚠️  Could not determine cloud provider, defaulting to GCP"
+fi
+
+echo "☁️  Cloud Provider: $CLOUD_PROVIDER"
+echo ""
 
 # Get cluster info
 CLUSTER_NAME=$(kubectl config view --minify -o jsonpath='{.clusters[0].name}' 2>/dev/null || echo "unknown")
@@ -35,12 +55,29 @@ kubectl create namespace ingress-nginx --dry-run=client -o yaml | kubectl apply 
 
 # Install Internal Ingress NGINX (internal-only load balancer)
 echo "🌐 Installing Internal Ingress NGINX..."
-helm upgrade --install ingress-nginx ingress-nginx/ingress-nginx \
-  --namespace ingress-nginx \
-  --set controller.service.type=LoadBalancer \
-  --set controller.service.annotations."cloud\.google\.com/load-balancer-type"="Internal" \
-  --set controller.admissionWebhooks.enabled=false \
-  --wait
+
+if [ "$CLOUD_PROVIDER" = "gcp" ]; then
+  # GCP: Use annotation for internal load balancer
+  helm upgrade --install ingress-nginx ingress-nginx/ingress-nginx \
+    --namespace ingress-nginx \
+    --set controller.service.type=LoadBalancer \
+    --set controller.service.annotations."cloud\.google\.com/load-balancer-type"="Internal" \
+    --set controller.admissionWebhooks.enabled=false \
+    --wait
+elif [ "$CLOUD_PROVIDER" = "aws" ]; then
+  # AWS: Internal load balancer is created automatically when using private subnets
+  # Add annotation to ensure it's internal
+  helm upgrade --install ingress-nginx ingress-nginx/ingress-nginx \
+    --namespace ingress-nginx \
+    --set controller.service.type=LoadBalancer \
+    --set controller.service.annotations."service\.beta\.kubernetes\.io/aws-load-balancer-scheme"="internal" \
+    --set controller.service.annotations."service\.beta\.kubernetes\.io/aws-load-balancer-type"="nlb" \
+    --set controller.admissionWebhooks.enabled=false \
+    --wait
+else
+  echo "❌ Unknown cloud provider: $CLOUD_PROVIDER"
+  exit 1
+fi
 
 # Install Argo Workflows
 echo "⚙️  Installing Argo Workflows..."
@@ -57,10 +94,10 @@ kubectl wait --for=condition=available --timeout=300s deployment/ingress-nginx-c
 # Get internal ingress IP
 echo ""
 echo "🔍 Getting Internal Ingress IP..."
-INGRESS_IP=$(kubectl get service ingress-nginx-controller -n ingress-nginx -o jsonpath='{.status.loadBalancer.ingress[0].ip}' 2>/dev/null || echo "pending")
+INGRESS_IP=$(kubectl get service ingress-nginx-controller -n ingress-nginx -o jsonpath='{.status.loadBalancer.ingress[0].ip}' 2>/dev/null || kubectl get service ingress-nginx-controller -n ingress-nginx -o jsonpath='{.status.loadBalancer.ingress[0].hostname}' 2>/dev/null || echo "pending")
 if [ "$INGRESS_IP" != "pending" ] && [ -n "$INGRESS_IP" ]; then
-  echo "✅ Internal Ingress IP: $INGRESS_IP"
-  echo "   Note: This IP is only accessible from within the VPC"
+  echo "✅ Internal Ingress IP/Hostname: $INGRESS_IP"
+  echo "   Note: This is only accessible from within the VPC"
 else
   echo "⏳ Ingress IP is still being assigned. Check with:"
   echo "   kubectl get service ingress-nginx-controller -n ingress-nginx"
@@ -73,4 +110,3 @@ echo "Next steps:"
 echo "1. Create an Ingress resource to expose Argo Workflows UI (internal only)"
 echo "2. Submit a sample workflow: kubectl apply -f manifests/sample-workflow.yaml"
 echo "3. Access the UI from within the VPC or via bastion port forwarding"
-
