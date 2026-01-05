@@ -1,0 +1,86 @@
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: database
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: rds-proxy-config
+  namespace: database
+data:
+  # RDS Proxy endpoint - update with your RDS Proxy endpoint from Terraform output
+  RDS_PROXY_ENDPOINT: "RDS_PROXY_ENDPOINT_PLACEHOLDER"
+  DATABASE_PORT: "5432"
+  DATABASE_NAME: "appdb"
+---
+apiVersion: v1
+kind: Secret
+metadata:
+  name: app-db-credentials
+  namespace: database
+type: Opaque
+stringData:
+  # Update with your database credentials
+  username: "appuser"
+  password: "CHANGE_ME"  # Use actual password from RDS
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: app-with-rds
+  namespace: database
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: app-with-rds
+  template:
+    metadata:
+      labels:
+        app: app-with-rds
+    spec:
+      containers:
+      - name: app
+        image: postgres:14-alpine
+        env:
+        - name: DB_HOST
+          valueFrom:
+            configMapKeyRef:
+              name: rds-proxy-config
+              key: RDS_PROXY_ENDPOINT
+        - name: DB_PORT
+          valueFrom:
+            configMapKeyRef:
+              name: rds-proxy-config
+              key: DATABASE_PORT
+        - name: DB_NAME
+          valueFrom:
+            configMapKeyRef:
+              name: rds-proxy-config
+              key: DATABASE_NAME
+        - name: DB_USER
+          valueFrom:
+            secretKeyRef:
+              name: app-db-credentials
+              key: username
+        - name: DB_PASSWORD
+          valueFrom:
+            secretKeyRef:
+              name: app-db-credentials
+              key: password
+        command:
+        - sh
+        - -c
+        - |
+          echo "Connecting to RDS via proxy at $DB_HOST:$DB_PORT"
+          psql -h $DB_HOST -p $DB_PORT -U $DB_USER -d $DB_NAME -c "SELECT version();" || echo "Connection test"
+          sleep 3600
+        resources:
+          requests:
+            cpu: "100m"
+            memory: "128Mi"
+          limits:
+            cpu: "200m"
+            memory: "256Mi"
+

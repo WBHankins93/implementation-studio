@@ -1,9 +1,18 @@
 # Integration Patterns Lab Configuration
 # Copy this file to terraform.tfvars and fill in your values
 
-project_id = "your-gcp-project-id"
+# ============================================================================
+# Cloud Provider Selection
+# ============================================================================
+# Choose one: "gcp" or "aws"
+cloud_provider = "gcp"  # Change to "aws" for AWS deployment
+
+# ============================================================================
+# Common Configuration (applies to all providers)
+# ============================================================================
+
 cluster_name = "integration-patterns"
-region = "us-central1"
+region = "us-central1"  # Change to AWS region (e.g., "us-west-2") if using AWS
 
 # Network configuration
 public_subnet_cidr  = "10.0.1.0/24"
@@ -11,22 +20,41 @@ private_subnet_cidr = "10.0.2.0/24"
 
 # Cluster configuration
 node_count     = 2
-machine_type   = "e2-medium"
 min_node_count = 1
 max_node_count = 5
 
-# Cloud SQL (optional - set to true to create database for examples)
-create_cloud_sql = false
+# Database (optional - set to true to create database for examples)
+# GCP: Creates Cloud SQL instance
+# AWS: Creates RDS instance
+create_database = false
+# db_name = "appdb"
 # db_username = "appuser"
 # db_password = "your-secure-password"  # Generate a strong password
 
-# Optional: Enable VPA
-enable_vpa = false
+# ============================================================================
+# GCP-Specific Configuration (only used when cloud_provider = "gcp")
+# ============================================================================
 
-# Optional: Resource labels
-resource_labels = {
-  environment = "learning"
-  managed-by  = "terraform"
-  lab         = "07-integration-patterns"
-}
+# project_id = "your-gcp-project-id"
+# machine_type = "e2-medium"
+# enable_vpa = false  # Enable Vertical Pod Autoscaling
 
+# ============================================================================
+# AWS-Specific Configuration (only used when cloud_provider = "aws")
+# ============================================================================
+
+# region = "us-west-2"  # AWS region
+# vpc_cidr = "10.0.0.0/16"
+# availability_zones = ["us-west-2a", "us-west-2b"]
+# instance_type = "t3.medium"
+# create_rds_proxy = false  # Create RDS Proxy for connection pooling (requires create_database = true)
+
+# ============================================================================
+# Resource Labels/Tags (applies to all providers)
+# ============================================================================
+
+# resource_labels = {
+#   environment = "learning"
+#   managed-by  = "terraform"
+#   lab         = "07-integration-patterns"
+# }

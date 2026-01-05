@@ -1,5 +1,5 @@
 #!/bin/bash
-# Setup script for Lab 07: Integration Patterns
+# Setup script for Lab 07: Integration Patterns (GCP or AWS)
 
 set -euo pipefail
 
@@ -13,9 +13,29 @@ echo ""
 echo "📋 Checking prerequisites..."
 
 command -v terraform >/dev/null 2>&1 || { echo "❌ terraform is required but not installed." >&2; exit 1; }
-command -v gcloud >/dev/null 2>&1 || { echo "❌ gcloud CLI is required but not installed." >&2; exit 1; }
 command -v kubectl >/dev/null 2>&1 || { echo "❌ kubectl is required but not installed." >&2; exit 1; }
 command -v helm >/dev/null 2>&1 || { echo "❌ helm is required but not installed." >&2; exit 1; }
+
+# Detect cloud provider from terraform.tfvars or use default
+CLOUD_PROVIDER="gcp"
+if [ -f "$LAB_DIR/terraform.tfvars" ]; then
+  CLOUD_PROVIDER=$(grep -E '^cloud_provider\s*=' "$LAB_DIR/terraform.tfvars" | sed 's/.*=\s*"\(.*\)".*/\1/' | tr -d ' ' || echo "gcp")
+fi
+
+echo "☁️  Cloud Provider: $CLOUD_PROVIDER"
+echo ""
+
+# Provider-specific prerequisites
+if [ "$CLOUD_PROVIDER" = "gcp" ]; then
+  command -v gcloud >/dev/null 2>&1 || { echo "❌ gcloud CLI is required for GCP deployment" >&2; exit 1; }
+  echo "✅ GCP prerequisites met"
+elif [ "$CLOUD_PROVIDER" = "aws" ]; then
+  command -v aws >/dev/null 2>&1 || { echo "❌ aws CLI is required for AWS deployment" >&2; exit 1; }
+  echo "✅ AWS prerequisites met"
+else
+  echo "⚠️  Unknown cloud provider: $CLOUD_PROVIDER (assuming GCP)"
+  command -v gcloud >/dev/null 2>&1 || { echo "❌ gcloud CLI is required for GCP deployment" >&2; exit 1; }
+fi
 
 echo "✅ All prerequisites met"
 echo ""
@@ -46,4 +66,3 @@ echo "2. Run: terraform plan"
 echo "3. Run: terraform apply"
 echo "4. After apply, get credentials: terraform output get_credentials_command"
 echo "5. Deploy integration patterns from auth-integration/, database-connectivity/, api-gateway/"
-

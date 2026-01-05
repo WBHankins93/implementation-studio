@@ -1,5 +1,5 @@
 #!/bin/bash
-# Validate Lab 07: Integration Patterns
+# Validate Lab 07: Integration Patterns (works for both GCP and AWS)
 
 set -euo pipefail
 
@@ -7,6 +7,13 @@ SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 LAB_DIR="$(cd "$SCRIPT_DIR/.." && pwd)"
 
 echo "🔍 Validating Lab 07: Integration Patterns"
+echo ""
+
+# Detect cloud provider
+cd "$LAB_DIR"
+CLOUD_PROVIDER=$(grep -E '^cloud_provider\s*=' terraform.tfvars 2>/dev/null | sed 's/.*=\s*"\(.*\)".*/\1/' | tr -d ' ' || echo "gcp")
+
+echo "☁️  Cloud Provider: $CLOUD_PROVIDER"
 echo ""
 
 # Check if kubectl is configured
@@ -35,15 +42,26 @@ else
   echo "   Deploy with: kubectl apply -f auth-integration/oauth-proxy/"
 fi
 
-# Check Cloud SQL Proxy (if deployed)
+# Check Database Proxy (if deployed)
 echo ""
-echo "🗄️  Checking Cloud SQL Proxy..."
-if kubectl get deployment cloud-sql-proxy -n database &>/dev/null; then
-  echo "✅ Cloud SQL Proxy deployed"
-  kubectl get pods -n database
-else
-  echo "⚠️  Cloud SQL Proxy not deployed"
-  echo "   Deploy with: kubectl apply -f database-connectivity/cloud-sql-proxy/"
+if [ "$CLOUD_PROVIDER" = "gcp" ]; then
+  echo "🗄️  Checking Cloud SQL Proxy..."
+  if kubectl get deployment cloud-sql-proxy -n database &>/dev/null; then
+    echo "✅ Cloud SQL Proxy deployed"
+    kubectl get pods -n database
+  else
+    echo "⚠️  Cloud SQL Proxy not deployed"
+    echo "   Deploy with: kubectl apply -f database-connectivity/cloud-sql-proxy/"
+  fi
+elif [ "$CLOUD_PROVIDER" = "aws" ]; then
+  echo "🗄️  Checking RDS Proxy..."
+  if kubectl get deployment rds-proxy -n database &>/dev/null; then
+    echo "✅ RDS Proxy deployed"
+    kubectl get pods -n database
+  else
+    echo "⚠️  RDS Proxy not deployed"
+    echo "   Deploy with: kubectl apply -f database-connectivity/rds-proxy/"
+  fi
 fi
 
 # Check Kong (if deployed)
@@ -62,4 +80,3 @@ echo ""
 echo "✅ Validation complete!"
 echo ""
 echo "Integration patterns are optional - deploy the ones you want to learn about."
-
