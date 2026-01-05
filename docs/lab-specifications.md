@@ -2,41 +2,53 @@
 
 Detailed specifications for all 9 labs in Implementation Studio.
 
-## Lab 01: Standard GKE Deployment ✅
+## Multi-Cloud Support
 
-**Status:** Complete  
-**Time:** 1-2 hours | **Cost:** $5-10
+Implementation Studio supports **multi-cloud deployments** for most labs:
+
+- **GCP (GKE)** - Google Kubernetes Engine
+- **AWS (EKS)** - Amazon Elastic Kubernetes Service
+- **Kind** - Local Kubernetes (for labs that support it)
+
+See [Provider Comparison Guide](./provider-comparison.md) for detailed technical comparisons.
+
+---
+
+## Lab 01: Standard Deployment ✅
+
+**Status:** Complete (Multi-Cloud: GCP ✅ | AWS ✅)  
+**Time:** 1-2 hours | **Cost:** GCP $5-10 | AWS $8-15
 
 **Learning Objectives:**
-- Deploy a production-ready GKE cluster with proper networking
+- Deploy a production-ready Kubernetes cluster with proper networking
 - Install and configure Argo Workflows
 - Set up ingress with TLS termination
 - Implement basic monitoring and logging
 - Understand the baseline that all other labs modify
 
 **What Gets Deployed:**
-- GCP VPC with public and private subnets
-- GKE cluster (private nodes, public endpoint)
+- **GCP:** VPC with public and private subnets, GKE cluster, Artifact Registry
+- **AWS:** VPC with public and private subnets, EKS cluster, ECR
 - Argo Workflows with UI exposed via ingress
 - Ingress-nginx controller
 - Sample workflows demonstrating the reference application
 
 **Prerequisites:**
-- GCP project with billing enabled
-- gcloud CLI configured
+- **GCP:** GCP project with billing enabled, `gcloud` CLI configured
+- **AWS:** AWS account with appropriate permissions, `aws` CLI configured
 - Terraform >= 1.5
 - kubectl
 - Helm 3
 
-**Validation Status:** Kubernetes manifests testable locally; GCP infrastructure requires cloud deployment
+**Validation Status:** Kubernetes manifests testable locally; cloud infrastructure requires deployment
 
 [View Lab 01 →](../labs/01-standard-deployment/README.md)
 
 ---
 
-## Lab 02: Air-Gapped Deployment
+## Lab 02: Air-Gapped Deployment ✅
 
-**Status:** In Progress  
+**Status:** Complete (Kind-only, no cloud options)  
 **Time:** 2-3 hours | **Cost:** $0 (fully local)
 
 **Learning Objectives:**
@@ -65,6 +77,8 @@ Detailed specifications for all 9 labs in Implementation Studio.
 - kubectl
 - ~10GB disk space for images
 
+**Why Kind-Only:** True air-gapped environments have no internet AND no cloud connectivity. While you could technically simulate air-gap with private clusters + network policies, it would be confusing and not representative of real air-gapped scenarios. Kind provides perfect simulation without cloud costs.
+
 **Validation Status:** Fully testable locally - this IS the target environment
 
 [View Lab 02 →](../labs/02-airgapped-deployment/README.md)
@@ -73,63 +87,70 @@ Detailed specifications for all 9 labs in Implementation Studio.
 
 ## Lab 03: Private Network Deployment ✅
 
-**Status:** Complete  
-**Time:** 2-3 hours | **Cost:** $8-15
+**Status:** Complete (Multi-Cloud: GCP ✅ | AWS ✅)  
+**Time:** 2-3 hours | **Cost:** GCP $8-15 | AWS $10-18
 
 **Learning Objectives:**
-- Deploy GKE with private cluster configuration
-- Configure private Google Access for GCP services
+- Deploy Kubernetes with private cluster configuration
+- Configure private service access (Private Google Access / VPC Endpoints)
 - Set up bastion host for cluster access
 - Implement internal-only load balancers
 - Understand VPN/Interconnect patterns (conceptual)
 
 **What Gets Deployed:**
-- GCP VPC with private-only subnets
-- Private GKE cluster (private nodes, private endpoint)
-- Bastion host for access
+- **GCP:** Private VPC, Private GKE cluster, Bastion host (gcloud SSH)
+- **AWS:** Private VPC, Private EKS cluster, Bastion host (SSH/SSM)
 - Internal ingress controller
 - Argo Workflows accessible only from within VPC
 
 **Prerequisites:**
-- Same as Lab 01
+- Same as Lab 01 (provider-specific)
 - Understanding of Lab 01 baseline
 
-**Validation Status:** Kubernetes manifests testable locally; GCP infrastructure requires cloud deployment
+**Validation Status:** Kubernetes manifests testable locally; cloud infrastructure requires deployment
+
+[View Lab 03 →](../labs/03-private-network-deployment/README.md)
 
 ---
 
 ## Lab 04: Firewall-Restricted Deployment ✅
 
-**Status:** Complete  
-**Time:** 2-3 hours | **Cost:** $5-10
+**Status:** Complete (Multi-Cloud: GCP ✅ | AWS ✅)  
+**Time:** 2-3 hours | **Cost:** GCP $5-10 | AWS $8-15
 
 **Learning Objectives:**
-- Work within strict egress firewall rules
+- Work within strict egress firewall rules / security groups
 - Identify and document required external endpoints
 - Configure applications to work through proxies
 - Communicate requirements to customer security teams
 - Implement allowlist-based network policies
 
 **What Gets Deployed:**
-- GKE cluster with strict egress firewall rules
-- Squid proxy for controlled external access
+- **GCP:** GKE cluster with strict egress firewall rules, Squid proxy VM
+- **AWS:** EKS cluster with strict egress security groups, Squid proxy EC2
 - Network policies enforcing egress restrictions
 - Argo Workflows configured for proxy usage
 
 **Key Techniques:**
 - HTTP_PROXY / HTTPS_PROXY configuration
 - Network policy egress rules
-- Firewall rule documentation
+- Firewall rule / security group documentation
 - Working with customer security teams (process documentation)
 
-**Validation Status:** Partial - network policies testable locally, GCP firewall rules require cloud
+**Key Differences:**
+- **GCP:** Firewall rules (network-level, can deny)
+- **AWS:** Security groups (instance-level, allow-only)
+
+**Validation Status:** Network policies testable locally; cloud firewall/security groups require deployment
+
+[View Lab 04 →](../labs/04-firewall-restricted-deployment/README.md)
 
 ---
 
 ## Lab 05: The POC Sprint ✅
 
-**Status:** Complete  
-**Time:** 1-2 hours (deployment) + templates | **Cost:** $0-5
+**Status:** Complete (Multi-Cloud: GCP ✅ | AWS ✅ | Kind ✅)  
+**Time:** 1-2 hours (deployment) + templates | **Cost:** Kind $0 | GCP $0-5 | AWS $0-5
 
 **Learning Objectives:**
 - Scope a time-boxed proof of concept
@@ -139,7 +160,9 @@ Detailed specifications for all 9 labs in Implementation Studio.
 - Document outcomes for stakeholders
 
 **What Gets Deployed:**
-- Minimal GKE cluster (or Kind for zero-cost option)
+- **Kind:** Local cluster (fastest, zero cost) - Recommended
+- **GCP:** Minimal GKE cluster
+- **AWS:** Minimal EKS cluster
 - Argo Workflows with pre-configured demo workflows
 - Demo script and presentation materials
 
@@ -149,14 +172,16 @@ Detailed specifications for all 9 labs in Implementation Studio.
 - Demo script and backup plan
 - Final report template
 
-**Validation Status:** Fully testable - templates and local deployment
+**Validation Status:** Fully testable - templates and all deployment options
+
+[View Lab 05 →](../labs/05-poc-sprint/README.md)
 
 ---
 
 ## Lab 06: Multi-Tenant Deployment ✅
 
-**Status:** Complete  
-**Time:** 2-3 hours | **Cost:** $0-10
+**Status:** Complete (Multi-Cloud: GCP ✅ | AWS ✅ | Kind ✅)  
+**Time:** 2-3 hours | **Cost:** Kind $0 | GCP $0-10 | AWS $0-10
 
 **Learning Objectives:**
 - Implement namespace-based tenant isolation
@@ -166,7 +191,7 @@ Detailed specifications for all 9 labs in Implementation Studio.
 - Manage tenant lifecycle (onboarding, offboarding)
 
 **What Gets Deployed:**
-- GKE cluster (or Kind)
+- **Kind/GCP/AWS:** Kubernetes cluster (choose based on preference)
 - Multiple tenant namespaces
 - Tenant-specific RBAC, quotas, network policies
 - Shared services namespace
@@ -178,14 +203,16 @@ Detailed specifications for all 9 labs in Implementation Studio.
 - ResourceQuota and LimitRange
 - RBAC scoping
 
-**Validation Status:** Fully testable locally with Kind
+**Validation Status:** Fully testable locally with Kind; cloud options available
+
+[View Lab 06 →](../labs/06-multi-tenant-deployment/README.md)
 
 ---
 
-## Lab 07: Integration Patterns
+## Lab 07: Integration Patterns ✅
 
-**Status:** ✅ Complete  
-**Time:** 3-4 hours | **Cost:** $10-20
+**Status:** Complete (Multi-Cloud: GCP ✅ | AWS ✅)  
+**Time:** 3-4 hours | **Cost:** GCP $10-20 | AWS $12-25
 
 **Learning Objectives:**
 - Integrate with external authentication (OAuth, SAML)
@@ -194,10 +221,11 @@ Detailed specifications for all 9 labs in Implementation Studio.
 - Understand service mesh basics for external traffic
 
 **What Gets Deployed:**
-- GKE cluster with Argo Workflows
-- OAuth2-proxy for authentication
-- Cloud SQL proxy for database connectivity
-- Example API gateway configuration
+- **GCP:** GKE cluster, Cloud SQL (optional), Cloud SQL Proxy
+- **AWS:** EKS cluster, RDS (optional), RDS Proxy (optional)
+- OAuth2-proxy for authentication (cloud-agnostic)
+- Database proxy for secure connectivity
+- Example API gateway configuration (Kong - cloud-agnostic)
 
 **Key Techniques:**
 - OAuth2/OIDC integration
@@ -205,13 +233,19 @@ Detailed specifications for all 9 labs in Implementation Studio.
 - API gateway patterns
 - Service mesh traffic management (Istio basics)
 
-**Validation Status:** Partial - some patterns testable locally, cloud services require deployment
+**Key Differences:**
+- **GCP:** Cloud SQL Proxy (Kubernetes pod)
+- **AWS:** RDS Proxy (managed service with connection pooling)
+
+**Validation Status:** Some patterns testable locally; cloud services require deployment
+
+[View Lab 07 →](../labs/07-integration-patterns/README.md)
 
 ---
 
-## Lab 08: Handoff and Runbooks
+## Lab 08: Handoff and Runbooks ✅
 
-**Status:** ✅ Complete  
+**Status:** Complete (Cloud-Agnostic)  
 **Time:** 2-3 hours | **Cost:** $0-5
 
 **Learning Objectives:**
@@ -222,7 +256,7 @@ Detailed specifications for all 9 labs in Implementation Studio.
 - Execute knowledge transfer
 
 **What Gets Deployed:**
-- Prometheus + Grafana stack
+- Prometheus + Grafana stack (cloud-agnostic)
 - Pre-built dashboards for Argo Workflows
 - Alerting rules for common issues
 - Documentation templates
@@ -234,13 +268,15 @@ Detailed specifications for all 9 labs in Implementation Studio.
 - Training agenda and exercises
 - Handoff checklist
 
-**Validation Status:** Dashboards and rules testable locally; full stack testable in Kind
+**Validation Status:** Dashboards and rules testable locally; full stack testable in Kind or cloud
+
+[View Lab 08 →](../labs/08-handoff-runbooks/README.md)
 
 ---
 
-## Lab 09: Troubleshooting Scenarios
+## Lab 09: Troubleshooting Scenarios ✅
 
-**Status:** ✅ Complete  
+**Status:** Complete (Cloud-Agnostic)  
 **Time:** 2-4 hours (all scenarios) | **Cost:** $0 (fully local)
 
 **Learning Objectives:**
@@ -270,3 +306,49 @@ Detailed specifications for all 9 labs in Implementation Studio.
 
 **Validation Status:** Fully testable locally
 
+[View Lab 09 →](../labs/09-troubleshooting-scenarios/README.md)
+
+---
+
+## Lab Support Matrix
+
+| Lab | GCP | AWS | Kind | Notes |
+|-----|-----|-----|------|-------|
+| **Lab 01** | ✅ | ✅ | ❌ | Standard deployment |
+| **Lab 02** | ❌ | ❌ | ✅ | Air-gapped (Kind-only) |
+| **Lab 03** | ✅ | ✅ | ❌ | Private network |
+| **Lab 04** | ✅ | ✅ | ❌ | Firewall-restricted |
+| **Lab 05** | ✅ | ✅ | ✅ | POC Sprint (Kind recommended) |
+| **Lab 06** | ✅ | ✅ | ✅ | Multi-tenant |
+| **Lab 07** | ✅ | ✅ | ❌ | Integration patterns |
+| **Lab 08** | ✅ | ✅ | ✅ | Handoff (cloud-agnostic) |
+| **Lab 09** | ✅ | ✅ | ✅ | Troubleshooting (cloud-agnostic) |
+
+## Provider Selection Guide
+
+**Choose GCP if:**
+- Cost-conscious (free control plane)
+- Prefer simpler networking (VPC-native)
+- Need faster setup
+- Use Google Workspace
+
+**Choose AWS if:**
+- Need larger ecosystem
+- Require connection pooling (RDS Proxy)
+- Have existing AWS infrastructure
+- Need enterprise-scale features
+
+**Choose Kind if:**
+- Learning/testing
+- Zero cost requirement
+- Fast iteration needed
+- No cloud account available
+
+See [Provider Comparison Guide](./provider-comparison.md) for detailed technical comparisons.
+
+## Additional Resources
+
+- [Provider Comparison Guide](./provider-comparison.md) - Technical GCP vs AWS comparison
+- [Migration Guide](./migration-guide.md) - How to migrate between providers
+- [Feature Parity Matrix](./feature-parity-matrix.md) - Detailed feature comparison
+- [Multi-Cloud Considerations](./multi-cloud-considerations.md) - Strategic analysis

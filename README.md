@@ -46,8 +46,9 @@ Unlike tutorials that teach tools in isolation, this platform focuses on the **c
    - [Learning Paths](./docs/learning-paths.md) - Recommended progression
 
 3. **Choose your first lab:**
-   - **Lab 01** (Standard GKE) - If you have GCP access → [View Lab 01](./labs/01-standard-deployment/README.md)
+   - **Lab 01** (Standard Deployment) - GCP or AWS → [View Lab 01](./labs/01-standard-deployment/README.md)
    - **Lab 02** (Air-Gapped) - Fully local, no cloud costs → [View Lab 02](./labs/02-airgapped-deployment/README.md)
+   - **Lab 05** (POC Sprint) - Kind, GCP, or AWS → [View Lab 05](./labs/05-poc-sprint/README.md)
 
 4. **Follow the lab README** - Each lab has comprehensive documentation
 
@@ -55,17 +56,17 @@ Unlike tutorials that teach tools in isolation, this platform focuses on the **c
 
 ## 🧪 Labs Overview
 
-| Lab | Name | Status | Time | Cost | Description | Link |
-|-----|------|--------|------|------|-------------|------|
-| 01 | Standard GKE Deployment | ✅ Complete | 1-2h | $5-10 | Production-ready GKE cluster baseline | [View Lab →](./labs/01-standard-deployment/README.md) |
-| 02 | Air-Gapped Deployment | ✅ Complete | 2-3h | $0 | Deploy without internet access | [View Lab →](./labs/02-airgapped-deployment/README.md) |
-| 03 | Private Network Deployment | ✅ Complete | 2-3h | $8-15 | Private clusters and bastion hosts | [View Lab →](./labs/03-private-network-deployment/README.md) |
-| 04 | Firewall-Restricted Deployment | ✅ Complete | 2-3h | $5-10 | Work within strict egress rules | [View Lab →](./labs/04-firewall-restricted-deployment/README.md) |
-| 05 | The POC Sprint | ✅ Complete | 1-2h | $0-5 | Scope and deliver proof of concepts | [View Lab →](./labs/05-poc-sprint/README.md) |
-| 06 | Multi-Tenant Deployment | ✅ Complete | 2-3h | $0-10 | Namespace isolation and RBAC | [View Lab →](./labs/06-multi-tenant-deployment/README.md) |
-| 07 | Integration Patterns | ✅ Complete | 3-4h | $10-20 | Auth, databases, API gateways | [View Lab →](./labs/07-integration-patterns/README.md) |
-| 08 | Handoff and Runbooks | ✅ Complete | 2-3h | $0-5 | Production documentation and monitoring | [View Lab →](./labs/08-handoff-runbooks/README.md) |
-| 09 | Troubleshooting Scenarios | ✅ Complete | 2-4h | $0 | Systematic debugging methodology | [View Lab →](./labs/09-troubleshooting-scenarios/README.md) |
+| Lab | Name | Status | Providers | Time | Cost | Description | Link |
+|-----|------|--------|-----------|------|------|-------------|------|
+| 01 | Standard Deployment | ✅ Complete | GCP, AWS | 1-2h | $5-15 | Production-ready Kubernetes cluster baseline | [View Lab →](./labs/01-standard-deployment/README.md) |
+| 02 | Air-Gapped Deployment | ✅ Complete | Kind | 2-3h | $0 | Deploy without internet access | [View Lab →](./labs/02-airgapped-deployment/README.md) |
+| 03 | Private Network Deployment | ✅ Complete | GCP, AWS | 2-3h | $8-18 | Private clusters and bastion hosts | [View Lab →](./labs/03-private-network-deployment/README.md) |
+| 04 | Firewall-Restricted Deployment | ✅ Complete | GCP, AWS | 2-3h | $5-15 | Work within strict egress rules | [View Lab →](./labs/04-firewall-restricted-deployment/README.md) |
+| 05 | The POC Sprint | ✅ Complete | Kind, GCP, AWS | 1-2h | $0-5 | Scope and deliver proof of concepts | [View Lab →](./labs/05-poc-sprint/README.md) |
+| 06 | Multi-Tenant Deployment | ✅ Complete | Kind, GCP, AWS | 2-3h | $0-10 | Namespace isolation and RBAC | [View Lab →](./labs/06-multi-tenant-deployment/README.md) |
+| 07 | Integration Patterns | ✅ Complete | GCP, AWS | 3-4h | $10-25 | Auth, databases, API gateways | [View Lab →](./labs/07-integration-patterns/README.md) |
+| 08 | Handoff and Runbooks | ✅ Complete | Cloud-Agnostic | 2-3h | $0-5 | Production documentation and monitoring | [View Lab →](./labs/08-handoff-runbooks/README.md) |
+| 09 | Troubleshooting Scenarios | ✅ Complete | Cloud-Agnostic | 2-4h | $0 | Systematic debugging methodology | [View Lab →](./labs/09-troubleshooting-scenarios/README.md) |
 
 **Each lab includes:**
 - Comprehensive README with learning objectives
@@ -87,7 +88,8 @@ implementation-studio/
 ├── docs/                    # Platform documentation + SE guides
 ├── modules/                 # Reusable Terraform & Kubernetes modules
 │   ├── gcp/                 # GCP infrastructure modules
-│   └── kubernetes/          # Kubernetes deployment modules
+│   ├── aws/                 # AWS infrastructure modules
+│   └── kubernetes/          # Kubernetes deployment modules (cloud-agnostic)
 ├── labs/                    # 9 hands-on learning labs
 ├── reference-app/           # Argo Workflows sample workloads
 └── tools/                   # Validation, setup, cleanup scripts
@@ -104,7 +106,15 @@ implementation-studio/
 - `firewall-rules` - Common firewall configurations
 - `private-service-connect` - Private GCP service access
 
-**Kubernetes Modules** (`modules/kubernetes/`):
+**AWS Modules** (`modules/aws/`):
+- `eks-cluster` - Standard EKS with configurable options
+- `vpc` - Public + private subnets, NAT gateway
+- `vpc-private` - Fully private, VPC endpoints
+- `ecr` - Elastic Container Registry
+- `rds` - Relational Database Service
+- `security-groups` - Security groups for strict egress control
+
+**Kubernetes Modules** (`modules/kubernetes/`) - Cloud-agnostic:
 - `argo-workflows` - Standard Argo deployment
 - `argo-workflows-airgap` - Offline-ready Argo
 - `ingress-nginx` - Public ingress controller
@@ -114,6 +124,21 @@ implementation-studio/
 - `resource-quotas` - Multi-tenant resource limits
 
 Each module includes comprehensive documentation. [View module documentation →](./modules/README.md)
+
+### Multi-Cloud Support
+
+Implementation Studio supports **both GCP and AWS** for cloud deployments:
+
+- **GCP (GKE)** - Google Kubernetes Engine
+- **AWS (EKS)** - Amazon Elastic Kubernetes Service
+- **Kind** - Local Kubernetes (for labs that support it)
+
+Most labs support multiple providers. Choose based on your needs:
+- **GCP:** Lower costs, simpler networking, faster setup
+- **AWS:** Larger ecosystem, connection pooling, enterprise features
+- **Kind:** Zero cost, fastest iteration, perfect for learning
+
+See [Provider Comparison Guide](./docs/provider-comparison.md) for detailed technical comparisons.
 
 ### Reference Application
 
@@ -136,8 +161,11 @@ Argo Workflows serves as the reference application. [Learn more →](./docs/refe
 
 ### Technical Documentation
 - [Testing Strategy](./docs/testing-strategy.md) - What's validated locally vs cloud
-- [Cost Management](./docs/cost-management.md) - GCP cost estimates, optimization
+- [Cost Management](./docs/cost-management.md) - Cost estimates and optimization
 - [Lab Specifications](./docs/lab-specifications.md) - Detailed lab requirements
+- [Provider Comparison](./docs/provider-comparison.md) - GCP vs AWS technical comparison
+- [Migration Guide](./docs/migration-guide.md) - How to migrate between providers
+- [Feature Parity Matrix](./docs/feature-parity-matrix.md) - Detailed feature comparison
 
 ### Project Management
 - [Roadmap](./docs/roadmap.md) - Improvement roadmap, lab priorities, and ADR planning
