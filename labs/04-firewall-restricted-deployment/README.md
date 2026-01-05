@@ -4,33 +4,52 @@
 
 By completing this lab, you will:
 
-- Work within strict egress firewall rules
+- Work within strict egress firewall rules/security groups
 - Identify and document required external endpoints
 - Configure applications to work through HTTP/HTTPS proxies
 - Communicate requirements to customer security teams
 - Implement allowlist-based network policies
 - Understand the proxy pattern for controlled external access
+- Experience multi-cloud firewall/security group patterns (GCP and AWS)
+
+## Cloud Provider Selection
+
+This lab supports **two deployment options**:
+
+1. **GCP (GKE)** - Google Kubernetes Engine with firewall rules
+2. **AWS (EKS)** - Amazon Elastic Kubernetes Service with security groups
+
+Choose your provider by setting `cloud_provider` in `terraform.tfvars`:
+- `cloud_provider = "gcp"` - GKE cluster with GCP firewall rules
+- `cloud_provider = "aws"` - EKS cluster with AWS security groups
 
 ## Prerequisites
 
-- GCP project with billing enabled
-- `gcloud` CLI configured with appropriate permissions
+### Common Prerequisites
 - Terraform >= 1.5
 - `kubectl` installed
 - Helm 3.x installed
 - Basic understanding of Kubernetes concepts
 - Completion of Lab 01 recommended (to understand baseline)
 
+### GCP Prerequisites
+- GCP project with billing enabled
+- `gcloud` CLI configured with appropriate permissions
+
+### AWS Prerequisites
+- AWS account with appropriate permissions
+- `aws` CLI configured (`aws configure`)
+
 ## Architecture
 
 This lab deploys:
 
-- **GKE Cluster** with standard networking
-- **Strict Egress Firewall Rules** (deny-all by default)
+- **Kubernetes Cluster** with standard networking (GKE or EKS)
+- **Strict Egress Rules** (firewall rules for GCP, security groups for AWS)
 - **Squid Proxy Server** for controlled external access
 - **Network Policies** enforcing egress restrictions
 - **Argo Workflows** configured to use proxy
-- **Artifact Registry** for container images
+- **Container Registry** (Artifact Registry for GCP, ECR for AWS)
 
 See [Architecture Documentation](./docs/architecture.md) for detailed diagrams.
 
@@ -41,7 +60,9 @@ See [Architecture Documentation](./docs/architecture.md) for detailed diagrams.
 ```bash
 cd labs/04-firewall-restricted-deployment
 cp terraform.tfvars.example terraform.tfvars
-# Edit terraform.tfvars with your GCP project ID
+# Edit terraform.tfvars:
+#   - Set cloud_provider = "gcp" or "aws"
+#   - Set project_id (GCP) or region (AWS)
 ```
 
 ### 2. Run Setup
@@ -63,7 +84,7 @@ terraform apply
 # Get proxy internal IP
 terraform output proxy_internal_ip
 
-# Update the proxy ConfigMap (or it will be done automatically by deploy script)
+# The deploy script will automatically update the ConfigMap, or you can do it manually
 # Edit manifests/proxy-configmap.yaml and replace PROXY_INTERNAL_IP
 ```
 
@@ -93,16 +114,31 @@ See [Step-by-Step Documentation](./docs/step-by-step.md) for detailed instructio
 
 ### Infrastructure (Terraform)
 
+**GCP:**
 - **VPC Network** with public, private, and proxy subnets
 - **GKE Cluster** with standard configuration
-- **Squid Proxy Server** on dedicated VM
+- **Squid Proxy Server** on dedicated VM (Debian)
 - **Strict Egress Firewall Rules**:
   - Deny all egress by default
   - Allow DNS (Google DNS)
   - Allow egress to proxy
   - Allow internal VPC traffic
   - Optional: Allow specific external endpoints
+  - Optional: Allow GCP services (Private Google Access)
 - **Artifact Registry** repository
+
+**AWS:**
+- **VPC Network** with public, private, and proxy subnets
+- **EKS Cluster** with standard configuration
+- **Squid Proxy Server** on dedicated EC2 instance (Amazon Linux)
+- **Strict Egress Security Groups**:
+  - Allow-only rules (AWS security groups are allow-only by default)
+  - Allow DNS queries
+  - Allow egress to proxy
+  - Allow internal VPC traffic
+  - Optional: Allow specific external endpoints
+  - Optional: Allow AWS services (via prefix lists)
+- **ECR Repository** for container images
 
 ### Kubernetes Resources
 
@@ -120,12 +156,12 @@ This lab uses **Squid**, an open-source HTTP/HTTPS proxy server, to provide cont
 
 ### What is Squid?
 
-Squid is a caching proxy server that acts as an intermediary between clients (your GKE pods) and the internet. In this lab, we use it primarily as a **forwarding proxy** to enable applications to access external services despite strict firewall rules.
+Squid is a caching proxy server that acts as an intermediary between clients (your Kubernetes pods) and the internet. In this lab, we use it primarily as a **forwarding proxy** to enable applications to access external services despite strict firewall rules/security groups.
 
 ### How It Works
 
 ```
-GKE Pod (no external IP)
+Kubernetes Pod (no external IP)
    │
    │ HTTP_PROXY=http://proxy:3128
    ▼
@@ -144,10 +180,11 @@ Internet
 
 ### In This Lab
 
-- **Location**: Dedicated VM in proxy subnet (10.0.3.0/24)
+- **Location**: Dedicated VM/instance in proxy subnet (10.0.3.0/24)
 - **Port**: 3128 (standard Squid port)
 - **Configuration**: Minimal setup focused on forwarding (not caching)
-- **Access**: Only from VPC internal network (GKE nodes)
+- **Access**: Only from VPC internal network (cluster nodes)
+- **Works on**: Both GCP (Debian VM) and AWS (Amazon Linux EC2)
 
 ### Learn More
 
@@ -159,10 +196,19 @@ Internet
 
 ### Strict Egress Control
 
-- **Deny-All Default**: All egress traffic is blocked by default
+**GCP (Firewall Rules):**
+- **Deny-All Default**: Explicit deny-all egress rule blocks all traffic
 - **Allowlist Approach**: Only explicitly allowed endpoints are accessible
+- **Network-Level**: Rules apply at the VPC network level
+
+**AWS (Security Groups):**
+- **Implicit Deny**: Security groups are allow-only; traffic not explicitly allowed is denied
+- **Allowlist Approach**: Only explicitly allowed endpoints are accessible
+- **Instance-Level**: Rules apply to instances/ENIs
+
+**Both:**
 - **Proxy Pattern**: All external traffic goes through a controlled proxy
-- **Network Policies**: Kubernetes-level enforcement complements firewall rules
+- **Network Policies**: Kubernetes-level enforcement complements firewall/security group rules
 
 ### Proxy Configuration
 
@@ -181,30 +227,59 @@ This lab includes documentation on:
 
 See [Security Team Guide](./docs/security-team-guide.md) for details.
 
+## Provider Comparison
+
+| Feature | GCP Firewall Rules | AWS Security Groups |
+|---------|-------------------|---------------------|
+| **Rule Type** | Explicit deny-all + allow rules | Allow-only (implicit deny) |
+| **Scope** | Network-level (VPC) | Instance/ENI-level |
+| **Proxy Support** | ✅ Supported | ✅ Supported |
+| **DNS Control** | ✅ Explicit allow rules | ✅ Explicit allow rules |
+| **Internal Traffic** | ✅ Explicit allow rules | ✅ Explicit allow rules |
+| **Setup Time** | 5-10 minutes | 10-15 minutes |
+| **Cost** | ~$0.10/hour per node | $0.10/hour control plane + nodes |
+
+### Key Differences
+
+**GCP Firewall Rules:**
+- Can explicitly deny traffic (deny-all rule)
+- Network-level enforcement
+- Rules apply to all instances with matching tags
+- Can use Private Google Access for GCP services
+
+**AWS Security Groups:**
+- Allow-only (implicit deny for unmatched traffic)
+- Instance/ENI-level enforcement
+- Each instance can have multiple security groups
+- Can use VPC prefix lists for AWS services
+
 ## Estimated Time
 
-2-3 hours (depending on GCP resource provisioning time)
+2-3 hours (depending on cloud provider and resource provisioning time)
 
 ## Estimated Cost
 
-$5-10 if resources are destroyed within a few hours
-
-**Cost breakdown:**
+**GCP:** $5-10 if resources are destroyed within a few hours
 - GKE cluster: ~$0.10/hour per node
 - Proxy server: ~$0.01/hour (e2-micro)
 - Load balancer: ~$0.025/hour
-- Storage: minimal
+
+**AWS:** $8-15 if resources are destroyed within a few hours
+- EKS control plane: $0.10/hour
+- Node instances: ~$0.05-0.10/hour per node
+- Proxy server: ~$0.01/hour (t3.micro)
+- Load balancer: ~$0.025/hour
 
 ## Testing Egress Restrictions
 
-The lab includes a test script to verify firewall restrictions:
+The lab includes a test script to verify firewall/security group restrictions:
 
 ```bash
 ./scripts/test-egress.sh
 ```
 
 This will test:
-1. Direct egress (should fail with strict firewall)
+1. Direct egress (should fail with strict rules)
 2. Egress through proxy (should succeed)
 3. Internal connectivity (should work without proxy)
 4. DNS resolution (should work)
@@ -243,7 +318,9 @@ terraform destroy
 
 After completing this lab:
 
-1. Review the firewall-rules module in `modules/gcp/firewall-rules/`
+1. Review the firewall/security group modules:
+   - `modules/gcp/firewall-rules/` (GCP)
+   - `modules/aws/security-groups/` (AWS)
 2. Understand proxy patterns and when to use them
 3. Practice documenting egress requirements
 4. Learn about working with customer security teams
@@ -251,8 +328,17 @@ After completing this lab:
 
 ## Additional Resources
 
+**GCP:**
 - [GCP Firewall Rules](https://cloud.google.com/vpc/docs/firewalls)
+- [Private Google Access](https://cloud.google.com/vpc/docs/private-google-access)
+
+**AWS:**
+- [AWS Security Groups](https://docs.aws.amazon.com/vpc/latest/userguide/VPC_SecurityGroups.html)
+- [VPC Prefix Lists](https://docs.aws.amazon.com/vpc/latest/userguide/managed-prefix-lists.html)
+
+**Kubernetes:**
 - [Kubernetes Network Policies](https://kubernetes.io/docs/concepts/services-networking/network-policies/)
-- [Squid Proxy Documentation](http://www.squid-cache.org/)
 - [Working with Proxies in Kubernetes](https://kubernetes.io/docs/tasks/access-application-cluster/configure-access-multiple-clusters/)
 
+**Squid:**
+- [Squid Proxy Documentation](http://www.squid-cache.org/)

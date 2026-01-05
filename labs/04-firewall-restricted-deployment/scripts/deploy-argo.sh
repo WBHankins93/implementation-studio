@@ -1,5 +1,5 @@
 #!/bin/bash
-# Deploy Argo Workflows with proxy configuration
+# Deploy Argo Workflows with proxy configuration (works for both GCP and AWS)
 
 set -euo pipefail
 
@@ -12,7 +12,12 @@ echo ""
 # Check if kubectl is configured
 if ! kubectl cluster-info &>/dev/null; then
   echo "❌ kubectl is not configured or cluster is not accessible"
-  echo "   Run: gcloud container clusters get-credentials <cluster-name> --region <region> --project <project-id>"
+  echo ""
+  echo "For GCP:"
+  echo "   gcloud container clusters get-credentials <cluster-name> --region <region> --project <project-id>"
+  echo ""
+  echo "For AWS:"
+  echo "   aws eks update-kubeconfig --region <region> --name <cluster-name>"
   exit 1
 fi
 
@@ -164,7 +169,7 @@ kubectl wait --for=condition=available --timeout=300s deployment/ingress-nginx-c
 # Get ingress IP
 echo ""
 echo "🔍 Getting Ingress IP..."
-INGRESS_IP=$(kubectl get service ingress-nginx-controller -n ingress-nginx -o jsonpath='{.status.loadBalancer.ingress[0].ip}' 2>/dev/null || echo "pending")
+INGRESS_IP=$(kubectl get service ingress-nginx-controller -n ingress-nginx -o jsonpath='{.status.loadBalancer.ingress[0].ip}' 2>/dev/null || kubectl get service ingress-nginx-controller -n ingress-nginx -o jsonpath='{.status.loadBalancer.ingress[0].hostname}' 2>/dev/null || echo "pending")
 if [ "$INGRESS_IP" != "pending" ] && [ -n "$INGRESS_IP" ]; then
   echo "✅ Ingress IP: $INGRESS_IP"
 else
@@ -183,4 +188,3 @@ echo "Next steps:"
 echo "1. Verify proxy is accessible: ./scripts/test-egress.sh"
 echo "2. Submit a sample workflow: kubectl apply -f manifests/sample-workflow.yaml"
 echo "3. Check workflow logs to verify proxy usage"
-
