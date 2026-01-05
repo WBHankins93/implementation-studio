@@ -268,14 +268,17 @@
   - Read Replica patterns for read-heavy workloads
   - Cost analysis for each pattern (GCP and AWS)
   - Pattern comparison and selection guide
+  - Implementation considerations and best practices
 
 - ✅ **Disaster Recovery Strategies** - `docs/05-operations/disaster-recovery.md`
   - Backup/Restore strategy (low cost, hours RTO)
   - Pilot Light strategy (low-medium cost, minutes RTO)
   - Warm Standby strategy (medium-high cost, minutes RTO)
   - Hot Standby strategy (high cost, seconds RTO)
-  - Cost analysis and selection guide
+  - Cost analysis for each strategy (GCP and AWS)
+  - Strategy selection guide with use cases
   - Implementation examples with Terraform
+  - Best practices and references
 
 **Status:** ✅ **COMPLETE**  
 **Interview Impact: LOW-MEDIUM** - Mainly needed for Staff+ platform engineering roles  
