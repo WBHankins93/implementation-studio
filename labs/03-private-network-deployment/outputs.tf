@@ -70,23 +70,23 @@ output "aws_ecr_repository_url" {
 # Common outputs (provider-agnostic)
 output "cluster_name" {
   description = "Name of the Kubernetes cluster"
-  value       = var.cloud_provider == "gcp" ? module.gke_cluster[0].cluster_name : module.eks_cluster[0].cluster_name
+  value = var.cloud_provider == "gcp" ? module.gke_cluster[0].cluster_name : module.eks_cluster[0].cluster_name
 }
 
 output "cluster_endpoint" {
   description = "Kubernetes API endpoint (private)"
-  value       = var.cloud_provider == "gcp" ? module.gke_cluster[0].cluster_endpoint : module.eks_cluster[0].cluster_endpoint
-  sensitive   = true
+  value = var.cloud_provider == "gcp" ? module.gke_cluster[0].cluster_endpoint : module.eks_cluster[0].cluster_endpoint
+  sensitive = true
 }
 
 output "bastion_ssh_command" {
   description = "Command to SSH to bastion host"
-  value       = var.cloud_provider == "gcp" ? "gcloud compute ssh ${google_compute_instance.bastion[0].name} --zone ${google_compute_instance.bastion[0].zone} --project ${var.project_id}" : "ssh -i ~/.ssh/id_rsa ec2-user@${aws_instance.bastion[0].public_ip}"
+  value = var.cloud_provider == "gcp" ? "gcloud compute ssh ${google_compute_instance.bastion[0].name} --zone ${google_compute_instance.bastion[0].zone} --project ${var.project_id}" : "ssh -i ~/.ssh/id_rsa ec2-user@${aws_instance.bastion[0].public_ip}"
 }
 
 output "get_credentials_command" {
   description = "Command to get cluster credentials (run from bastion)"
-  value       = var.cloud_provider == "gcp" ? "gcloud container clusters get-credentials ${module.gke_cluster[0].cluster_name} --region ${var.region} --project ${var.project_id} --internal-ip" : "aws eks update-kubeconfig --region ${var.region} --name ${module.eks_cluster[0].cluster_name}"
+  value = var.cloud_provider == "gcp" ? "gcloud container clusters get-credentials ${module.gke_cluster[0].cluster_name} --region ${var.region} --project ${var.project_id} --internal-ip" : "aws eks update-kubeconfig --region ${var.region} --name ${module.eks_cluster[0].cluster_name}"
 }
 
 output "vpc_network_name" {
