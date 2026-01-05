@@ -10,7 +10,7 @@ Implementation Studio supports **multi-cloud deployments** for most labs:
 - **AWS (EKS)** - Amazon Elastic Kubernetes Service
 - **Kind** - Local Kubernetes (for labs that support it)
 
-See [Provider Comparison Guide](./provider-comparison.md) for detailed technical comparisons.
+See [Provider Comparison Guide](../02-multi-cloud/provider-comparison.md) for detailed technical comparisons.
 
 ---
 
@@ -344,11 +344,11 @@ See [Provider Comparison Guide](./provider-comparison.md) for detailed technical
 - Fast iteration needed
 - No cloud account available
 
-See [Provider Comparison Guide](./provider-comparison.md) for detailed technical comparisons.
+See [Provider Comparison Guide](../02-multi-cloud/provider-comparison.md) for detailed technical comparisons.
 
 ## Additional Resources
 
-- [Provider Comparison Guide](./provider-comparison.md) - Technical GCP vs AWS comparison
-- [Migration Guide](./migration-guide.md) - How to migrate between providers
-- [Feature Parity Matrix](./feature-parity-matrix.md) - Detailed feature comparison
+- [Provider Comparison Guide](../02-multi-cloud/provider-comparison.md) - Technical GCP vs AWS comparison
+- [Migration Guide](../02-multi-cloud/migration-guide.md) - How to migrate between providers
+- [Feature Parity Matrix](../02-multi-cloud/feature-parity-matrix.md) - Detailed feature comparison
 - [Multi-Cloud Considerations](./multi-cloud-considerations.md) - Strategic analysis

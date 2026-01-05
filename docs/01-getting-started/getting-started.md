@@ -15,8 +15,11 @@ Welcome to Implementation Studio! This guide will help you get started with the 
 
 ### Cloud Accounts
 
-- **GCP Account** with billing enabled (for cloud-based labs)
+- **GCP Account** with billing enabled (for GCP labs)
+- **AWS Account** with appropriate permissions (for AWS labs)
 - **GitHub Account** (for cloning and contributing)
+
+**Note:** Many labs support **Kind** (local Kubernetes) for zero-cost learning. Cloud accounts are optional.
 
 ## Installation
 
@@ -60,7 +63,7 @@ brew install kind
 # Follow: https://kind.sigs.k8s.io/docs/user/quick-start/#installation
 ```
 
-### Install gcloud CLI
+### Install gcloud CLI (for GCP labs)
 
 ```bash
 # macOS
@@ -68,6 +71,16 @@ brew install google-cloud-sdk
 
 # Linux
 # Follow: https://cloud.google.com/sdk/docs/install
+```
+
+### Install aws CLI (for AWS labs)
+
+```bash
+# macOS
+brew install awscli
+
+# Linux
+# Follow: https://docs.aws.amazon.com/cli/latest/userguide/getting-started-install.html
 ```
 
 ## Quick Start
@@ -84,9 +97,11 @@ cd implementation-studio
 We recommend starting with **Lab 02: Air-Gapped Deployment** because:
 - Fully testable locally (no cloud costs)
 - Teaches critical skills for enterprise deployments
-- No GCP account required
+- No cloud account required
 
-Alternatively, start with **Lab 01: Standard GKE Deployment** if you want to work with GCP immediately.
+Alternatively:
+- **Lab 01: Standard Deployment** - Supports GCP or AWS
+- **Lab 05: POC Sprint** - Supports Kind (local), GCP, or AWS
 
 ### 3. Follow the Lab Instructions
 
@@ -106,6 +121,13 @@ cat README.md
 ## Learning Paths
 
 See [Learning Paths](./learning-paths.md) for recommended progression through the labs.
+
+## Next Steps
+
+1. Read [Learning Paths](./learning-paths.md) to choose your path
+2. Read [Reference Application](./reference-application.md) to understand Argo Workflows
+3. Review [Lab Specifications](../04-labs/lab-specifications.md) to see all available labs
+4. Choose your first lab and get started!
 
 ## Getting Help
 

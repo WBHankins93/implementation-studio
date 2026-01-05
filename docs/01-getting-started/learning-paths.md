@@ -6,7 +6,7 @@ Implementation Studio offers multiple learning paths depending on your goals and
 
 For a comprehensive understanding of deployment patterns:
 
-1. **Lab 01: Standard GKE Deployment** - Establish baseline
+1. **Lab 01: Standard Deployment** - Establish baseline (GCP or AWS)
 2. **Lab 02: Air-Gapped Deployment** - Learn offline deployment
 3. **Lab 03: Private Network Deployment** - Private cluster patterns
 4. **Lab 04: Firewall-Restricted Deployment** - Working with security constraints
@@ -33,7 +33,7 @@ If you need to understand constraints quickly:
 
 Focused on customer engagement skills:
 
-1. **Lab 01: Standard GKE Deployment** - Baseline understanding
+1. **Lab 01: Standard Deployment** - Baseline understanding (GCP or AWS)
 2. **Lab 05: The POC Sprint** - POC frameworks and templates
 3. **Lab 06: Multi-Tenant Deployment** - Customer isolation patterns
 4. **Lab 08: Handoff and Runbooks** - Customer handoff process
@@ -51,7 +51,7 @@ Plus documentation in `docs/for-ses/`:
 
 Focused on infrastructure and operations:
 
-1. **Lab 01: Standard GKE Deployment** - Foundation
+1. **Lab 01: Standard Deployment** - Foundation (GCP or AWS)
 2. **Lab 03: Private Network Deployment** - Network architecture
 3. **Lab 04: Firewall-Restricted Deployment** - Security architecture
 4. **Lab 06: Multi-Tenant Deployment** - Resource management
@@ -75,10 +75,10 @@ All local, no cloud costs:
 
 ## Prerequisites by Lab
 
-### Lab 01: Standard GKE Deployment
-- GCP account with billing
-- gcloud CLI configured
-- Terraform, kubectl, Helm
+### Lab 01: Standard Deployment
+- **GCP:** GCP account with billing, gcloud CLI configured
+- **AWS:** AWS account with permissions, aws CLI configured
+- **Both:** Terraform, kubectl, Helm
 
 ### Lab 02: Air-Gapped Deployment
 - Docker, Kind
@@ -87,27 +87,31 @@ All local, no cloud costs:
 - **No cloud account needed**
 
 ### Lab 03: Private Network Deployment
-- Same as Lab 01
+- Same as Lab 01 (GCP or AWS)
 - Understanding of Lab 01 baseline
 
 ### Lab 04: Firewall-Restricted Deployment
-- Same as Lab 01
+- Same as Lab 01 (GCP or AWS)
 - Understanding of network policies
 
 ### Lab 05: The POC Sprint
-- Can use Kind (no cloud needed)
-- Or minimal GCP setup
+- **Kind** (recommended, no cloud needed)
+- **GCP:** Minimal GCP setup
+- **AWS:** Minimal AWS setup
 
 ### Lab 06: Multi-Tenant Deployment
-- Kind or GKE
+- **Kind** (recommended, no cloud needed)
+- **GCP:** GCP account
+- **AWS:** AWS account
 - Understanding of namespaces and RBAC
 
 ### Lab 07: Integration Patterns
-- GCP account (for Cloud SQL)
+- **GCP:** GCP account (for Cloud SQL)
+- **AWS:** AWS account (for RDS)
 - Understanding of OAuth/OIDC basics
 
 ### Lab 08: Handoff and Runbooks
-- Kind or GKE
+- **Kind, GCP, or AWS** (cloud-agnostic)
 - Understanding of monitoring basics
 
 ### Lab 09: Troubleshooting Scenarios

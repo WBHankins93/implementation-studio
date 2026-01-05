@@ -172,9 +172,9 @@
 - ✅ Updated lab specifications with AWS support status
 
 **New Documentation Files:**
-- `docs/provider-comparison.md` - Comprehensive GCP vs AWS comparison
-- `docs/migration-guide.md` - Migration instructions and patterns
-- `docs/feature-parity-matrix.md` - Feature parity analysis
+- `docs/02-multi-cloud/provider-comparison.md` - Comprehensive GCP vs AWS comparison
+- `docs/02-multi-cloud/migration-guide.md` - Migration instructions and patterns
+- `docs/02-multi-cloud/feature-parity-matrix.md` - Feature parity analysis
 
 **Status:** ✅ **COMPLETE**  
 **Commit:** "Complete multi-cloud documentation and guides"
@@ -414,9 +414,9 @@
 ## 🔗 Related Documentation
 
 - Multi-Cloud Considerations: `docs/multi-cloud-considerations.md` - Strategic analysis of AWS implementation
-- Quality standards: `docs/quality-standards.md`
+- Quality standards: `docs/03-project-management/quality-standards.md`
 - Contributing: `CONTRIBUTING.md`
-- Lab specifications: `docs/lab-specifications.md`
+- Lab specifications: `docs/04-labs/lab-specifications.md`
 
 ---
 

@@ -42,8 +42,9 @@ Unlike tutorials that teach tools in isolation, this platform focuses on the **c
    ```
 
 2. **Read the getting started guide:**
-   - [Getting Started Guide](./docs/getting-started.md) - Prerequisites, installation, first steps
-   - [Learning Paths](./docs/learning-paths.md) - Recommended progression
+   - [📖 Documentation Guide](./docs/README.md) - **Start here!** Organized docs with reading order
+   - [Getting Started Guide](./docs/01-getting-started/getting-started.md) - Prerequisites, installation, first steps
+   - [Learning Paths](./docs/01-getting-started/learning-paths.md) - Recommended progression
 
 3. **Choose your first lab:**
    - **Lab 01** (Standard Deployment) - GCP or AWS → [View Lab 01](./labs/01-standard-deployment/README.md)
@@ -75,7 +76,7 @@ Unlike tutorials that teach tools in isolation, this platform focuses on the **c
 - Troubleshooting guides
 - Validation status transparency
 
-[View detailed lab specifications →](./docs/lab-specifications.md)
+[View detailed lab specifications →](./docs/04-labs/lab-specifications.md)
 
 ---
 
@@ -138,39 +139,47 @@ Most labs support multiple providers. Choose based on your needs:
 - **AWS:** Larger ecosystem, connection pooling, enterprise features
 - **Kind:** Zero cost, fastest iteration, perfect for learning
 
-See [Provider Comparison Guide](./docs/provider-comparison.md) for detailed technical comparisons.
+See [Provider Comparison Guide](./docs/02-multi-cloud/provider-comparison.md) for detailed technical comparisons.
 
 ### Reference Application
 
-Argo Workflows serves as the reference application. [Learn more →](./docs/reference-application.md)
+Argo Workflows serves as the reference application. [Learn more →](./docs/01-getting-started/reference-application.md)
 
 ---
 
 ## 📚 Documentation
 
-### Getting Started
-- [Getting Started Guide](./docs/getting-started.md) - Prerequisites, installation, first steps
-- [Learning Paths](./docs/learning-paths.md) - Recommended progression through labs
-- [Reference Application](./docs/reference-application.md) - Why Argo Workflows, what it represents
+> **📖 Start Here:** See the [Documentation Guide](./docs/README.md) for organized documentation and essential reading order.
 
-### For Solutions Engineers
+### Quick Links
+
+**Essential Reading (Start Here):**
+- [📖 Documentation Guide](./docs/README.md) - **Read this first!** Organized docs with reading order
+- [Getting Started](./docs/01-getting-started/getting-started.md) - Prerequisites, installation, first steps
+- [Learning Paths](./docs/01-getting-started/learning-paths.md) - Recommended progression through labs
+- [Reference Application](./docs/01-getting-started/reference-application.md) - Why Argo Workflows
+
+**Multi-Cloud Documentation:**
+- [Provider Comparison](./docs/02-multi-cloud/provider-comparison.md) - GCP vs AWS technical comparison
+- [Migration Guide](./docs/02-multi-cloud/migration-guide.md) - How to migrate between providers
+- [Feature Parity Matrix](./docs/02-multi-cloud/feature-parity-matrix.md) - Detailed feature comparison
+
+**Project Information:**
+- [Roadmap](./docs/03-project-management/roadmap.md) - Improvement roadmap and ADR planning
+- [Quality Standards](./docs/03-project-management/quality-standards.md) - Code and documentation standards
+- [Testing Strategy](./docs/03-project-management/testing-strategy.md) - What's validated locally vs cloud
+
+**Lab Information:**
+- [Lab Specifications](./docs/04-labs/lab-specifications.md) - Detailed specifications for all 9 labs
+
+**For Solutions Engineers:**
 - [Using Labs in Engagements](./docs/for-ses/using-in-engagements.md) - Adapt labs for real customers
 - [Discovery Frameworks](./docs/for-ses/discovery-frameworks.md) - Technical discovery questions
 - [Scoping POCs](./docs/for-ses/scoping-pocs.md) - How to scope and deliver POCs
 - [Customer Handoff](./docs/for-ses/customer-handoff.md) - Transitioning to operations
 
-### Technical Documentation
-- [Testing Strategy](./docs/testing-strategy.md) - What's validated locally vs cloud
-- [Cost Management](./docs/cost-management.md) - Cost estimates and optimization
-- [Lab Specifications](./docs/lab-specifications.md) - Detailed lab requirements
-- [Provider Comparison](./docs/provider-comparison.md) - GCP vs AWS technical comparison
-- [Migration Guide](./docs/migration-guide.md) - How to migrate between providers
-- [Feature Parity Matrix](./docs/feature-parity-matrix.md) - Detailed feature comparison
-
-### Project Management
-- [Roadmap](./docs/roadmap.md) - Improvement roadmap, lab priorities, and ADR planning
-- [Quality Standards](./docs/quality-standards.md) - Code and documentation standards
-- [Success Criteria](./docs/success-criteria.md) - Project and lab completion criteria
+**Operations:**
+- [Cost Management](./docs/05-operations/cost-management.md) - Cost estimates and optimization
 
 ---
 

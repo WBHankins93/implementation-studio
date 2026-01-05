@@ -46,9 +46,9 @@ Implementation Studio supports both **GCP** and **AWS** for cloud deployments. A
 ### Provider Comparison
 
 For detailed comparisons between GCP and AWS modules, see:
-- [Provider Comparison Guide](../docs/provider-comparison.md) - Technical comparison of GCP vs AWS
-- [Feature Parity Matrix](../docs/feature-parity-matrix.md) - Detailed feature comparison
-- [Migration Guide](../docs/migration-guide.md) - How to migrate between providers
+- [Provider Comparison Guide](../docs/02-multi-cloud/provider-comparison.md) - Technical comparison of GCP vs AWS
+- [Feature Parity Matrix](../docs/02-multi-cloud/feature-parity-matrix.md) - Detailed feature comparison
+- [Migration Guide](../docs/02-multi-cloud/migration-guide.md) - How to migrate between providers
 
 ### Module Equivalents
 
@@ -196,7 +196,7 @@ When adding new modules:
 
 ## Additional Resources
 
-- [Provider Comparison Guide](../docs/provider-comparison.md)
-- [Migration Guide](../docs/migration-guide.md)
-- [Feature Parity Matrix](../docs/feature-parity-matrix.md)
-- [Multi-Cloud Considerations](../docs/multi-cloud-considerations.md)
+- [Provider Comparison Guide](../docs/02-multi-cloud/provider-comparison.md)
+- [Migration Guide](../docs/02-multi-cloud/migration-guide.md)
+- [Feature Parity Matrix](../docs/02-multi-cloud/feature-parity-matrix.md)
+- [Multi-Cloud Considerations](../docs/02-multi-cloud/multi-cloud-considerations.md)
