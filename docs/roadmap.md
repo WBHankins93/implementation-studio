@@ -133,23 +133,28 @@
 
 ---
 
-## 🔄 Phase 7: Optional Cloud Options for Labs 02 & 05 (Optional)
+## 🔄 Phase 7: Add AWS Support to Lab 05 - POC Sprint
 
-**Goal:** Add cloud options to labs that currently only use Kind
+**Goal:** Add AWS/EKS quick-deploy option to Lab 05 for multi-cloud POC deployments
 
-**Lab 02: Air-Gapped Deployment**
-- Add option for private GKE/EKS clusters
-- Use network policies to simulate air-gap
-- Keep Kind as default (easiest path)
-- Time: ~1-2 hours
+**Lab 02: Air-Gapped Deployment - Decision**
+- **Keep Kind-only (no cloud options)**
+- **Rationale:** True air-gapped environments have no internet AND no cloud connectivity. While you *could* technically simulate air-gap with private GKE/EKS clusters + network policies, this would be:
+  - Confusing (air-gap means no cloud connectivity)
+  - Not representative of real air-gapped scenarios (which are physically isolated)
+  - Unnecessary (Kind provides perfect simulation without cloud costs)
+- **Note:** Real air-gapped deployments use private clusters, but those are physically isolated on-premises, not cloud-based. The Kind simulation accurately teaches the air-gap deployment patterns.
 
-**Lab 05: POC Sprint**
-- Add AWS quick-deploy option
-- Update minimal deployment scripts
-- Time: ~1 hour
+**Lab 05: POC Sprint - Changes**
+- ✅ Currently has GCP quick-deploy option
+- Add AWS quick-deploy option (EKS minimal cluster)
+- Add `cloud_provider` variable (kind/gcp/aws)
+- Update minimal deployment scripts to support all three options
+- Keep Kind as default/recommended (fastest, zero cost)
+- Update documentation with provider selection guide
 
-**Time Estimate: ~2-3 hours (optional)**  
-**Commit Checkpoint:** "Add optional cloud options to Labs 02 and 05"
+**Time Estimate: ~1-2 hours**  
+**Commit Checkpoint:** "Add AWS quick-deploy option to Lab 05: POC Sprint"
 
 ---
 
@@ -298,7 +303,7 @@
 | Phase 4 | Lab 03 AWS | 1 lab | 2-3 hours | ✅ Complete |
 | Phase 5 | Lab 04 AWS | 1 lab | 2 hours | ✅ Complete |
 | Phase 6 | Lab 07 AWS | 1 lab | 2-3 hours | ✅ Complete |
-| Phase 7 | Labs 02/05 | 2 labs (optional) | 2-3 hours | ⏳ Not Started |
+| Phase 7 | Lab 05 AWS | 1 lab | 1-2 hours | ⏳ Not Started |
 | Phase 8 | Documentation | Multi-cloud docs | 2-3 hours | ⏳ Not Started |
 | Phase 9 | ADRs | 4 ADRs | 105 min | ⏳ Not Started |
 | Phase 10 | Production Readiness | 2 docs | 90 min | ⏳ Not Started |
