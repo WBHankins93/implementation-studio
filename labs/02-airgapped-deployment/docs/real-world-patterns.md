@@ -377,9 +377,9 @@ harbor.example.com/
 
 ```yaml
 # image-manifest.yaml
-bundle-version: "2026-01-15"
+bundle-version: "2026-01-05"
 prepared-by: "Your Name"
-prepared-date: "2026-01-15"
+prepared-date: "2026-01-05"
 
 images:
   - name: quay.io/argoproj/workflow-controller
