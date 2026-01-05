@@ -55,58 +55,28 @@ Create an ADR when making decisions that:
 
 ## ADR Template
 
-Use this template for new ADRs:
+Use the [ADR Template](./TEMPLATE.md) file for creating new ADRs. It includes:
 
-```markdown
-# ADR-XXX: [Title]
+- Complete structure with all sections
+- Detailed guidance and examples
+- Placeholders for all required information
+- Formatting examples
 
-## Status
-[Proposed | Accepted | Deprecated | Superseded]
+**Quick Start:**
+1. Copy `TEMPLATE.md` to `XXX-[title].md` (where XXX is the next ADR number)
+2. Fill in all sections following the guidance
+3. Update the ADR index in this README
+4. Commit with a descriptive message
 
-## Context
-
-[Describe the issue motivating this decision or change. What is the architectural challenge?]
-
-## Decision
-
-[State the architectural decision that is being made.]
-
-## Consequences
-
-### Positive
-- [Positive consequence 1]
-- [Positive consequence 2]
-
-### Negative
-- [Negative consequence 1]
-- [Negative consequence 2]
-
-### Neutral
-- [Neutral consequence 1]
-
-## Alternatives Considered
-
-### Option 1: [Name]
-- **Pros:** [Advantages]
-- **Cons:** [Disadvantages]
-- **Why not chosen:** [Reason]
-
-### Option 2: [Name]
-- **Pros:** [Advantages]
-- **Cons:** [Disadvantages]
-- **Why not chosen:** [Reason]
-
-## References
-
-- [Link to related documentation]
-- [Link to external resources]
-
----
-
-**Date:** [Date]  
-**Author:** [Name]  
-**Reviewers:** [Names]
-```
+**Template Sections:**
+- Status (Proposed/Accepted/Deprecated/Superseded)
+- Context (background, requirements, constraints)
+- Decision (clear statement of the decision)
+- Consequences (Positive/Negative/Neutral)
+- Alternatives Considered (detailed analysis of options)
+- Decision Rationale (why this option was chosen)
+- Implementation (how it will be implemented)
+- References (related docs and resources)
 
 ## ADR Lifecycle
 
@@ -115,8 +85,34 @@ Use this template for new ADRs:
 3. **Deprecated** - Decision is no longer recommended
 4. **Superseded** - Decision has been replaced by a new ADR
 
+## Creating a New ADR
+
+1. **Copy the template:**
+   ```bash
+   cp docs/adr/TEMPLATE.md docs/adr/XXX-[title].md
+   ```
+
+2. **Number the ADR:**
+   - Use the next sequential number (e.g., 004, 005)
+   - Update the filename: `004-[descriptive-title].md`
+
+3. **Fill in all sections:**
+   - Follow the guidance in the template
+   - Be thorough in alternatives analysis
+   - Document consequences clearly
+
+4. **Update the index:**
+   - Add the new ADR to the table in this README
+   - Set status to "Proposed" initially
+
+5. **Review and accept:**
+   - Get feedback from reviewers
+   - Update status to "Accepted" when decision is final
+   - Commit with descriptive message
+
 ## Additional Resources
 
+- [ADR Template](./TEMPLATE.md) - Reusable template for new ADRs
 - [ADR GitHub](https://github.com/joelparkerhenderson/architecture-decision-record) - ADR format and examples
 - [Documenting Architecture Decisions](https://cognitect.com/blog/2011/11/15/documenting-architecture-decisions) - Original ADR concept
 
