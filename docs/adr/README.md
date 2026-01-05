@@ -41,7 +41,7 @@ Each ADR follows this structure:
 | [001](./001-reference-application.md) | Reference Application Selection | ✅ Accepted | January 2026 |
 | [002](./002-terraform-selection.md) | Terraform Selection | ✅ Accepted | January 2026 |
 | [003](./003-multi-cloud-strategy.md) | Multi-Cloud Strategy | ✅ Accepted | January 2026 |
-| [004](./004-lab-environment-choices.md) | Lab Environment Choices | ⏳ Not Started | - |
+| [004](./004-lab-environment-choices.md) | Lab Environment Choices | ✅ Accepted | January 2026 |
 
 ## When to Create an ADR
 
