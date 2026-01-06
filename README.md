@@ -18,6 +18,14 @@
 
 ---
 
+## 🧠 How to Use This Repo
+
+- Need to **learn by doing**? Start with the labs.
+- Need to **solve a real customer problem**? Steal a module.
+- Need to **run a POC or handoff**? Use the templates.
+
+---
+
 ## ⚡ Immediate Payoff: What You Can Steal Today
 
 ### 🎨 Templates & Frameworks
