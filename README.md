@@ -79,9 +79,9 @@
 
 ---
 
-## 🏆 Social Proof
+## 🏆 Built From Real Engagements
 
-**Built from Real Customer Engagements**
+**Real Customer Implementation Work**
 
 These patterns come from actual implementation work in enterprise and defense environments. The constraints you'll learn (air-gapped networks, private clusters, strict firewall rules) are the same ones you'll face in real customer deployments.
 
