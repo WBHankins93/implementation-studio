@@ -6,40 +6,30 @@ Lab 06 demonstrates multi-tenant Kubernetes deployment patterns using namespace-
 
 ## Multi-Tenant Architecture
 
-```
-┌─────────────────────────────────────────────────────────┐
-│              Kubernetes Cluster                          │
-│                                                          │
-│  ┌──────────────────────────────────────────────────┐  │
-│  │     Shared Services Namespace                      │  │
-│  │     - Common services for all tenants              │  │
-│  │     - Accessible from all tenant namespaces        │  │
-│  └──────────────────────────────────────────────────┘  │
-│                                                          │
-│  ┌──────────────────────────────────────────────────┐  │
-│  │     Tenant A Namespace                            │  │
-│  │     - Isolated from other tenants                  │  │
-│  │     - Resource quota: 4 CPU, 8Gi memory           │  │
-│  │     - Network policy: namespace isolation          │  │
-│  │     - RBAC: tenant-a-admin role                    │  │
-│  └──────────────────────────────────────────────────┘  │
-│                                                          │
-│  ┌──────────────────────────────────────────────────┐  │
-│  │     Tenant B Namespace                            │  │
-│  │     - Isolated from other tenants                  │  │
-│  │     - Resource quota: 1 CPU, 2Gi memory           │  │
-│  │     - Network policy: namespace isolation          │  │
-│  │     - RBAC: tenant-b-admin role                    │  │
-│  └──────────────────────────────────────────────────┘  │
-│                                                          │
-│  ┌──────────────────────────────────────────────────┐  │
-│  │     Tenant C Namespace                            │  │
-│  │     - Isolated from other tenants                  │  │
-│  │     - Resource quota: 4 CPU, 8Gi memory           │  │
-│  │     - Network policy: namespace isolation          │  │
-│  │     - RBAC: tenant-c-admin role                    │  │
-│  └──────────────────────────────────────────────────┘  │
-└─────────────────────────────────────────────────────────┘
+```mermaid
+graph TB
+    subgraph "Kubernetes Cluster"
+        SharedNS[Shared Services Namespace<br/>Common Services<br/>Accessible from All Tenants]
+        
+        TenantA[Tenant A Namespace<br/>Resource Quota: 4 CPU, 8Gi<br/>Network Policy: Isolation<br/>RBAC: tenant-a-admin]
+        
+        TenantB[Tenant B Namespace<br/>Resource Quota: 1 CPU, 2Gi<br/>Network Policy: Isolation<br/>RBAC: tenant-b-admin]
+        
+        TenantC[Tenant C Namespace<br/>Resource Quota: 4 CPU, 8Gi<br/>Network Policy: Isolation<br/>RBAC: tenant-c-admin]
+    end
+    
+    TenantA -.->|Allowed| SharedNS
+    TenantB -.->|Allowed| SharedNS
+    TenantC -.->|Allowed| SharedNS
+    
+    TenantA -.->|Blocked| TenantB
+    TenantA -.->|Blocked| TenantC
+    TenantB -.->|Blocked| TenantC
+    
+    style SharedNS fill:#e1f5ff
+    style TenantA fill:#c8e6c9
+    style TenantB fill:#fff9c4
+    style TenantC fill:#f3e5f5
 ```
 
 ## Isolation Layers
@@ -135,61 +125,64 @@ Lab 06 demonstrates multi-tenant Kubernetes deployment patterns using namespace-
 
 ### Allowed Traffic
 
-```
-Tenant A Pod
-   │
-   │ (allowed)
-   ▼
-Shared Services
-   │
-   │ (allowed)
-   ▼
-Tenant A Pod (same namespace)
+```mermaid
+graph LR
+    TenantAPod1[Tenant A Pod 1]
+    SharedServices[Shared Services]
+    TenantAPod2[Tenant A Pod 2]
+    
+    TenantAPod1 -->|Allowed| SharedServices
+    SharedServices -->|Allowed| TenantAPod2
+    TenantAPod1 -->|Allowed<br/>Same Namespace| TenantAPod2
+    
+    style TenantAPod1 fill:#c8e6c9
+    style TenantAPod2 fill:#c8e6c9
+    style SharedServices fill:#e1f5ff
 ```
 
 ### Blocked Traffic
 
-```
-Tenant A Pod
-   │
-   │ (blocked by network policy)
-   ▼
-Tenant B Pod ❌
+```mermaid
+graph LR
+    TenantAPod[Tenant A Pod]
+    TenantBPod[Tenant B Pod]
+    
+    TenantAPod -.->|Blocked by<br/>Network Policy| TenantBPod
+    
+    style TenantAPod fill:#c8e6c9
+    style TenantBPod fill:#fff9c4
 ```
 
 ## RBAC Flow
 
 ### Tenant Admin Access
 
-```
-Tenant Admin User
-   │
-   │ (authenticated)
-   ▼
-Kubernetes API
-   │
-   │ (authorized via RoleBinding)
-   ▼
-Tenant A Namespace ✅
-   │
-   │ (denied - different namespace)
-   ▼
-Tenant B Namespace ❌
+```mermaid
+sequenceDiagram
+    participant Admin as Tenant Admin User
+    participant API as Kubernetes API
+    participant TenantA as Tenant A Namespace
+    participant TenantB as Tenant B Namespace
+    
+    Admin->>API: Authenticated Request
+    API->>TenantA: Authorized via RoleBinding<br/>✅ Allowed
+    Admin->>API: Request Tenant B
+    API->>TenantB: Denied - Different Namespace<br/>❌ Blocked
 ```
 
 ## Resource Quota Flow
 
 ### Resource Request
 
-```
-Pod Creation Request
-   │
-   ▼
-Check ResourceQuota
-   │
-   ├─ Within quota? → ✅ Allow
-   │
-   └─ Exceeds quota? → ❌ Deny
+```mermaid
+flowchart TD
+    Request[Pod Creation Request] --> Check{Check ResourceQuota}
+    Check -->|Within Quota| Allow[✅ Allow Pod Creation]
+    Check -->|Exceeds Quota| Deny[❌ Deny Pod Creation]
+    
+    style Allow fill:#c8e6c9
+    style Deny fill:#ffcdd2
+    style Check fill:#fff9c4
 ```
 
 ## Multi-Tenant Patterns

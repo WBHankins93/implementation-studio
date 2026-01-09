@@ -14,28 +14,22 @@ Customer deployments often require integration with:
 
 ### OAuth2 Proxy Pattern
 
-```
-┌─────────────┐
-│   User      │
-└──────┬──────┘
-       │ HTTPS
-       ▼
-┌─────────────────────┐
-│  Ingress Controller │
-└──────┬──────────────┘
-       │
-       ▼
-┌─────────────────────┐
-│   OAuth2 Proxy      │
-│   (Authentication)  │
-└──────┬──────────────┘
-       │
-       │ Authenticated Request
-       ▼
-┌─────────────────────┐
-│  Application        │
-│  (Argo Workflows)   │
-└─────────────────────┘
+```mermaid
+sequenceDiagram
+    participant User
+    participant Ingress as Ingress Controller
+    participant OAuth as OAuth2 Proxy<br/>(Authentication)
+    participant App as Application<br/>(Argo Workflows)
+    participant Provider as OAuth Provider<br/>(Google, GitHub)
+    
+    User->>Ingress: HTTPS Request
+    Ingress->>OAuth: Forward Request
+    OAuth->>Provider: Authenticate User
+    Provider-->>OAuth: Authentication Token
+    OAuth->>App: Authenticated Request
+    App-->>OAuth: Response
+    OAuth-->>Ingress: Response
+    Ingress-->>User: Response
 ```
 
 **Components:**
@@ -46,30 +40,17 @@ Customer deployments often require integration with:
 
 ### SAML Pattern
 
-```
-┌─────────────┐
-│   User      │
-└──────┬──────┘
-       │
-       │ Access Application
-       ▼
-┌─────────────────────┐
-│  Application (SP)   │
-└──────┬──────────────┘
-       │
-       │ Redirect to IdP
-       ▼
-┌─────────────────────┐
-│  Identity Provider  │
-│  (Okta, Azure AD)   │
-└──────┬──────────────┘
-       │
-       │ SAML Assertion
-       ▼
-┌─────────────────────┐
-│  Application (SP)   │
-│  (Authenticated)     │
-└─────────────────────┘
+```mermaid
+sequenceDiagram
+    participant User
+    participant App as Application (SP)
+    participant IdP as Identity Provider<br/>(Okta, Azure AD)
+    
+    User->>App: Access Application
+    App->>IdP: Redirect to IdP
+    User->>IdP: Authenticate
+    IdP->>App: SAML Assertion
+    App->>User: Authenticated Access
 ```
 
 **Components:**
@@ -79,30 +60,16 @@ Customer deployments often require integration with:
 
 ### LDAP/AD Pattern
 
-```
-┌─────────────┐
-│   User      │
-└──────┬──────┘
-       │
-       │ Login Request
-       ▼
-┌─────────────────────┐
-│  Application        │
-└──────┬──────────────┘
-       │
-       │ LDAP Bind
-       ▼
-┌─────────────────────┐
-│  LDAP/AD Server     │
-│  (Active Directory) │
-└──────┬──────────────┘
-       │
-       │ Authentication Result
-       ▼
-┌─────────────────────┐
-│  Application        │
-│  (Authenticated)    │
-└─────────────────────┘
+```mermaid
+sequenceDiagram
+    participant User
+    participant App as Application
+    participant LDAP as LDAP/AD Server<br/>(Active Directory)
+    
+    User->>App: Login Request
+    App->>LDAP: LDAP Bind
+    LDAP-->>App: Authentication Result
+    App->>User: Authenticated Access
 ```
 
 **Components:**
@@ -114,24 +81,18 @@ Customer deployments often require integration with:
 
 ### Cloud SQL Proxy Pattern
 
-```
-┌─────────────────────┐
-│  Application Pod    │
-└──────┬──────────────┘
-       │
-       │ (via service)
-       ▼
-┌─────────────────────┐
-│  Cloud SQL Proxy    │
-│  (Sidecar/Service)  │
-└──────┬──────────────┘
-       │
-       │ (IAM-authenticated)
-       ▼
-┌─────────────────────┐
-│  Cloud SQL Instance │
-│  (Private IP)       │
-└─────────────────────┘
+```mermaid
+graph LR
+    App[Application Pod]
+    Proxy[Cloud SQL Proxy<br/>Sidecar/Service]
+    SQL[Cloud SQL Instance<br/>Private IP]
+    
+    App -->|via Service| Proxy
+    Proxy -->|IAM-Authenticated| SQL
+    
+    style App fill:#e0f2f1
+    style Proxy fill:#fff4e1
+    style SQL fill:#e1f5ff
 ```
 
 **Components:**
@@ -198,24 +159,19 @@ Customer deployments often require integration with:
 
 ### Kong Pattern
 
-```
-┌─────────────┐
-│   Client    │
-└──────┬──────┘
-       │ HTTP/HTTPS
-       ▼
-┌─────────────────────┐
-│  Kong API Gateway   │
-│  (Routing, Auth,    │
-│   Rate Limiting)    │
-└──────┬──────────────┘
-       │
-       │ (routed)
-       ▼
-┌─────────────────────┐
-│  Backend Services   │
-│  (Argo, etc.)       │
-└─────────────────────┘
+```mermaid
+graph TB
+    Client[Client]
+    Kong[Kong API Gateway<br/>Routing, Auth<br/>Rate Limiting]
+    Backend[Backend Services<br/>Argo, etc.]
+    
+    Client -->|HTTP/HTTPS| Kong
+    Kong -->|Routed| Backend
+    Backend -->|Response| Kong
+    Kong -->|Response| Client
+    
+    style Kong fill:#fff4e1
+    style Backend fill:#e0f2f1
 ```
 
 **Components:**
@@ -253,30 +209,26 @@ Customer deployments often require integration with:
 
 ### Istio Pattern
 
-```
-┌─────────────────────┐
-│  Application Pod    │
-│  ┌───────────────┐  │
-│  │   App         │  │
-│  └──────┬────────┘  │
-│         │            │
-│  ┌──────▼────────┐  │
-│  │ Envoy Sidecar │  │
-│  └──────┬────────┘  │
-└─────────┼────────────┘
-          │
-          │ (mTLS, routing)
-          ▼
-┌─────────────────────┐
-│  Destination Pod    │
-│  ┌───────────────┐  │
-│  │ Envoy Sidecar │  │
-│  └──────┬────────┘  │
-│         │            │
-│  ┌──────▼────────┐  │
-│  │   App         │  │
-│  └───────────────┘  │
-└─────────────────────┘
+```mermaid
+graph TB
+    subgraph "Source Pod"
+        App1[Application]
+        Envoy1[Envoy Sidecar]
+    end
+    
+    subgraph "Destination Pod"
+        Envoy2[Envoy Sidecar]
+        App2[Application]
+    end
+    
+    App1 --> Envoy1
+    Envoy1 -->|mTLS, Routing| Envoy2
+    Envoy2 --> App2
+    
+    style App1 fill:#e0f2f1
+    style Envoy1 fill:#fff4e1
+    style Envoy2 fill:#fff4e1
+    style App2 fill:#e0f2f1
 ```
 
 **Components:**
