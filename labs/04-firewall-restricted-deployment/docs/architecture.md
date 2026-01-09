@@ -6,50 +6,44 @@ Lab 04 deploys a GKE cluster with strict egress firewall rules, using a proxy se
 
 ## Network Architecture
 
-```
-Internet
-   │
-   ▼
-┌─────────────────────────────────────────┐
-│         GCP VPC Network                   │
-│                                         │
-│  ┌──────────────────────────────────┐  │
-│  │   Public Subnet (10.0.1.0/24) │  │
-│  │   - Load Balancers             │  │
-│  └──────────────────────────────────┘  │
-│                                         │
-│  ┌──────────────────────────────────┐  │
-│  │  Private Subnet (10.0.2.0/24)     │  │
-│  │  - GKE Nodes (no external IPs)   │  │
-│  │  - Strict egress firewall rules   │  │
-│  └──────────────────────────────────┘  │
-│              │                          │
-│              │ (proxy traffic)         │
-│              ▼                          │
-│  ┌──────────────────────────────────┐  │
-│  │  Proxy Subnet (10.0.3.0/24)       │  │
-│  │  - Squid Proxy Server              │  │
-│  │  - External IP for outbound        │  │
-│  └──────────────────────────────────┘  │
-└─────────────────────────────────────────┘
+```mermaid
+graph TB
+    Internet[Internet]
+    VPC[GCP VPC Network]
+    PublicSubnet[Public Subnet<br/>10.0.1.0/24<br/>Load Balancers]
+    PrivateSubnet[Private Subnet<br/>10.0.2.0/24<br/>GKE Nodes<br/>No External IPs<br/>Strict Egress Rules]
+    ProxySubnet[Proxy Subnet<br/>10.0.3.0/24<br/>Squid Proxy Server<br/>External IP]
+    
+    Internet -->|Ingress| PublicSubnet
+    VPC --> PublicSubnet
+    VPC --> PrivateSubnet
+    VPC --> ProxySubnet
+    PrivateSubnet -->|Proxy Traffic<br/>HTTP/HTTPS| ProxySubnet
+    ProxySubnet -->|Outbound<br/>External IP| Internet
+    
+    style VPC fill:#e1f5ff
+    style PublicSubnet fill:#fff4e1
+    style PrivateSubnet fill:#e8f5e9
+    style ProxySubnet fill:#ffebee
 ```
 
 ## Egress Flow
 
-```
-GKE Node (no external IP)
-   │
-   │ HTTP/HTTPS request
-   │ (blocked by firewall)
-   ▼
-┌─────────────────┐
-│  Squid Proxy     │
-│  (10.0.3.x)      │
-└─────────────────┘
-   │
-   │ (external IP)
-   ▼
-Internet
+```mermaid
+sequenceDiagram
+    participant Node as GKE Node<br/>(No External IP)
+    participant Firewall as Firewall Rules<br/>(Strict Egress)
+    participant Proxy as Squid Proxy<br/>10.0.3.x
+    participant Internet as Internet
+    
+    Node->>Firewall: HTTP/HTTPS Request
+    Note over Node,Firewall: Direct egress blocked
+    Firewall-->>Node: Blocked
+    Node->>Proxy: HTTP/HTTPS via Proxy<br/>(10.0.3.x:3128)
+    Note over Node,Proxy: Allowed by firewall
+    Proxy->>Internet: Request (External IP)
+    Internet-->>Proxy: Response
+    Proxy-->>Node: Response
 ```
 
 ## Firewall Rules Architecture
@@ -64,30 +58,53 @@ Internet
 
 ### Firewall Rule Flow
 
-```
-Egress Request
-   │
-   ▼
-┌─────────────────┐
-│  Priority 100    │
-│  Internal?       │──Yes──► Allow
-└─────────────────┘
-   │ No
-   ▼
-┌─────────────────┐
-│  Priority 1000  │
-│  DNS/Proxy/      │──Match──► Allow
-│  Allowlist?     │
-└─────────────────┘
-   │ No Match
-   ▼
-┌─────────────────┐
-│  Priority 65534 │
-│  Deny All       │──► Block
-└─────────────────┘
+```mermaid
+flowchart TD
+    Start[Egress Request] --> Check1{Priority 100<br/>Internal Traffic?}
+    Check1 -->|Yes| Allow1[✅ Allow]
+    Check1 -->|No| Check2{Priority 1000<br/>DNS/Proxy/<br/>Allowlist?}
+    Check2 -->|Match| Allow2[✅ Allow]
+    Check2 -->|No Match| Deny[Priority 65534<br/>❌ Deny All]
+    
+    style Allow1 fill:#c8e6c9
+    style Allow2 fill:#c8e6c9
+    style Deny fill:#ffcdd2
+    style Check1 fill:#fff9c4
+    style Check2 fill:#fff9c4
 ```
 
 ## Component Architecture
+
+```mermaid
+graph TB
+    subgraph "GKE Cluster"
+        Nodes[GKE Nodes<br/>Private IPs Only<br/>No External IPs]
+        NetworkPolicy[Network Policies<br/>Kubernetes-Level Enforcement]
+    end
+    
+    subgraph "Proxy Subnet"
+        Proxy[Squid Proxy Server<br/>HTTP/HTTPS Proxy<br/>External IP]
+    end
+    
+    subgraph "Firewall Rules"
+        InternalRule[Priority 100<br/>Internal Traffic]
+        AllowlistRule[Priority 1000<br/>DNS/Proxy/Allowlist]
+        DenyRule[Priority 65534<br/>Deny All Egress]
+    end
+    
+    Nodes --> NetworkPolicy
+    NetworkPolicy -->|Egress Blocked| DenyRule
+    Nodes -->|Proxy Traffic| Proxy
+    Proxy -->|Allowed| AllowlistRule
+    Nodes -->|Internal| InternalRule
+    
+    style Nodes fill:#e0f2f1
+    style NetworkPolicy fill:#f3e5f5
+    style Proxy fill:#ffebee
+    style DenyRule fill:#ffcdd2
+    style AllowlistRule fill:#c8e6c9
+    style InternalRule fill:#c8e6c9
+```
 
 ### GKE Cluster
 

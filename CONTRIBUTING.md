@@ -13,7 +13,10 @@
 
 - Describe what you're changing and why
 - Reference any related issues
-- Ensure all validation scripts pass
+- Ensure all validation scripts pass:
+  - `tools/validate-terraform.sh` - Validates Terraform syntax
+  - `tools/validate-local.sh` - Validates Kubernetes manifests
+  - `tools/validate-modules.sh` - Comprehensive module validation (battle-tested checks)
 - Update documentation if needed
 
 ## Code of Conduct
