@@ -54,6 +54,9 @@ After 8+ enterprise implementations in healthcare and energy, I was repeating th
 - [Provider Selection Guide](./docs/02-multi-cloud/provider-comparison.md) - GCP vs AWS technical comparison
 - [Migration Decision Tree](./docs/02-multi-cloud/migration-guide.md) - When and how to migrate between clouds
 - [Lab Selection Guide](./docs/01-getting-started/learning-paths.md) - Choose your learning path
+- **[Multi-Workstream Coordination](engagements/multi-workstream.md)** - Managing multiple SEs in one enterprise account
+- **[Account Strategy Framework](pre-sales/account-strategy.md)** - Expansion, competitive displacement, executive relationships
+- **[Product Feedback Process](internal/product-feedback.md)** - Capturing gaps, influencing roadmap, managing "we can't do that"
 
 **Architectural Decision Records**:
 - [ADR Template](./docs/adr/TEMPLATE.md) - Document architectural decisions
@@ -190,8 +193,16 @@ implementation-studio/
 │   ├── 02-multi-cloud/      # GCP vs AWS guides
 │   ├── 03-project-management/ # Roadmap, ADRs, quality standards
 │   ├── 04-labs/             # Lab specifications
-│   ├── 05-operations/       # Cost management, DR patterns
+│   ├── 05-operations/      # Cost management, DR patterns
 │   └── adr/                 # Architectural Decision Records
+├── engagements/             # New customer, joining existing, inherited handoffs, multi-workstream
+├── pre-sales/               # Discovery, demos, POCs, technical deep-dives, account strategy
+├── implementation/          # Kickoff, mid-point checkpoints, troubleshooting, handoff
+├── environments/            # Air-gapped, private, restricted, multi-tenant, hybrid
+├── recovery/                 # Demo failures, POC recovery, escalation, scope creep
+├── internal/                # Team coordination, status updates, requesting help, product feedback
+├── templates/               # Customer emails, technical checklists, handoff docs
+├── lessons/                 # Retrospective templates for continuous improvement
 ├── modules/                 # Reusable Terraform & K8s modules
 │   ├── gcp/                 # GCP infrastructure modules
 │   ├── aws/                 # AWS infrastructure modules
@@ -200,6 +211,8 @@ implementation-studio/
 ├── reference-app/           # Argo Workflows sample workloads
 └── tools/                   # Validation, setup, cleanup scripts
 ```
+
+**45 complete guides and templates** covering the full SE lifecycle from first discovery call to strategic account management.
 
 ### Multi-Cloud Support
 
@@ -226,10 +239,9 @@ Most labs support multiple providers. [Compare providers →](./docs/02-multi-cl
 - [Feature Parity Matrix](./docs/02-multi-cloud/feature-parity-matrix.md) - Detailed feature comparison
 
 **For Solutions Engineers:**
-- [Using Labs in Engagements](./docs/for-ses/using-in-engagements.md) - Adapt labs for real customers
-- [Discovery Frameworks](./docs/for-ses/discovery-frameworks.md) - Technical discovery questions
-- [Scoping POCs](./docs/for-ses/scoping-pocs.md) - How to scope and deliver POCs
-- [Customer Handoff](./docs/for-ses/customer-handoff.md) - Transitioning to operations
+- [SE Integration Guide](./docs/se-integration.md) - How implementation-studio connects to SE playbook
+- [SE Playbook](https://github.com/WBHankins93/se-playbook) - For discovery, scoping, handoff, account strategy
+- [Learning Paths](LEARNING-PATHS.md) - Skill development and self-assessment (SE playbook)
 
 **Operations:**
 - [Cost Management](./docs/05-operations/cost-management.md) - Cost estimates and optimization
@@ -266,8 +278,46 @@ Most labs support multiple providers. [Compare providers →](./docs/02-multi-cl
 
 ## 📄 License
 
-This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
+MIT License - see [LICENSE](LICENSE) file for full text.
+
+### What This Means
+
+**You can:**
+- ✅ Use in commercial projects and customer engagements
+- ✅ Modify for your specific needs
+- ✅ Use in SaaS products or internal tools
+- ✅ Fork and create derivative works
+- ✅ Include in training materials
+- ✅ Use for consulting/implementation work
+
+**You must:**
+- Include the LICENSE file in substantial portions
+- Respect the MIT License terms (it's very permissive)
+
+**You should (but don't have to):**
+- Give credit if sharing publicly (blog, talks, courses)
+- Star the repo if it helped you
+- Consider sponsoring if your company benefited
+
+### Attribution Appreciated
+
+While MIT doesn't require attribution, if you:
+- Write a blog post using these patterns → Link back
+- Give a talk mentioning these deployments → Credit the repo
+- Build training materials → Acknowledge the source
+- Get promoted partly due to these skills → Star and sponsor 😊
+
+**Why?** It helps other SEs discover these patterns and motivates me to create more.
+
+### Commercial Use
+
+The MIT license explicitly allows commercial use. If your company:
+- Uses these patterns for customer deployments - Great!
+- Includes in internal training - Awesome!
+- Builds products using these patterns - Perfect!
+
+**Consider** GitHub Sponsors or hiring me for consulting - it helps maintain this project and supports the SE community.
 
 ---
 
-*Last Updated: January 2026*
+*Last Updated: February 2026*
