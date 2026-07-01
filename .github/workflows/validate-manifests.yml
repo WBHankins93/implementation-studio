@@ -41,7 +41,8 @@ jobs:
             \( -name "*.yaml" -o -name "*.yml" \) -print0 |
           while IFS= read -r -d '' file; do
             # Skip non-Kubernetes YAML files
-            if grep -Eq "^[[:space:]]*(apiVersion|kind):" "$file" 2>/dev/null; then
+            if grep -Eq "^[[:space:]]*apiVersion:" "$file" 2>/dev/null &&
+              grep -Eq "^[[:space:]]*kind:" "$file" 2>/dev/null; then
               echo "Validating $file"
               kubeconform \
                 -strict \
