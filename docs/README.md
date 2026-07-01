@@ -16,12 +16,12 @@ The documentation folder is the technical index for Implementation Studio. Use i
 
 | Section | Contents | Use it when |
 | --- | --- | --- |
-| [01-getting-started](01-getting-started/) | Setup, learning paths, reference app | You are new to the repo |
-| [02-multi-cloud](02-multi-cloud/) | Provider comparison, migration, parity matrix | You are choosing or moving between GCP and AWS |
-| [03-project-management](03-project-management/) | Roadmap, standards, testing, success criteria, module maintenance | You are contributing or assessing quality |
-| [04-labs](04-labs/) | Lab specifications | You are comparing labs |
-| [05-operations](05-operations/) | Cost, disaster recovery, multi-region patterns | You are planning production operations |
-| [adr](adr/) | Architecture decision records | You want design rationale |
+| [01-getting-started](01-getting-started/getting-started.md) | Setup, learning paths, reference app | You are new to the repo |
+| [02-multi-cloud](02-multi-cloud/provider-comparison.md) | Provider comparison, migration, parity matrix | You are choosing or moving between GCP and AWS |
+| [03-project-management](03-project-management/quality-standards.md) | Roadmap, standards, testing, success criteria, module maintenance | You are contributing or assessing quality |
+| [04-labs](04-labs/lab-specifications.md) | Lab specifications | You are comparing labs |
+| [05-operations](05-operations/cost-management.md) | Cost, disaster recovery, multi-region patterns | You are planning production operations |
+| [adr](adr/README.md) | Architecture decision records | You want design rationale |
 | [se-integration.md](se-integration.md) | Mapping between labs and customer scenarios | You are using the repo in SE work |
 
 ## Navigation By Role

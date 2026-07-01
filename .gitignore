@@ -36,6 +36,10 @@ Thumbs.db
 # Logs
 *.log
 
+# Node / docs site
+node_modules/
+.vitepress/dist/
+
 # Temporary files
 tmp/
 temp/
@@ -43,4 +47,3 @@ temp/
 
 # Local testing
 kind-config.yaml.local
-
