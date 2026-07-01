@@ -1,13 +1,3 @@
-terraform {
-  required_version = ">= 1.5"
-  required_providers {
-    aws = {
-      source  = "hashicorp/aws"
-      version = "~> 5.0"
-    }
-  }
-}
-
 # DB Subnet Group
 resource "aws_db_subnet_group" "main" {
   name       = "${var.db_instance_identifier}-subnet-group"
@@ -113,12 +103,67 @@ resource "aws_db_instance" "main" {
   )
 }
 
+# IAM Role for RDS Proxy to read database credentials
+resource "aws_iam_role" "rds_proxy" {
+  count = var.create_rds_proxy ? 1 : 0
+
+  name = "${var.db_instance_identifier}-proxy-role"
+
+  assume_role_policy = jsonencode({
+    Version = "2012-10-17"
+    Statement = [
+      {
+        Action = "sts:AssumeRole"
+        Effect = "Allow"
+        Principal = {
+          Service = "rds.amazonaws.com"
+        }
+      }
+    ]
+  })
+
+  tags = merge(
+    var.resource_tags,
+    {
+      Name = "${var.db_instance_identifier}-proxy-role"
+    }
+  )
+}
+
+resource "aws_iam_role_policy" "rds_proxy_secrets" {
+  count = var.create_rds_proxy ? 1 : 0
+
+  name = "${var.db_instance_identifier}-proxy-secrets"
+  role = aws_iam_role.rds_proxy[0].id
+
+  policy = jsonencode({
+    Version = "2012-10-17"
+    Statement = [
+      {
+        Effect = "Allow"
+        Action = [
+          "secretsmanager:GetSecretValue"
+        ]
+        Resource = aws_secretsmanager_secret.db_credentials[0].arn
+      },
+      {
+        Effect = "Allow"
+        Action = [
+          "kms:Decrypt"
+        ]
+        Resource = "*"
+      }
+    ]
+  })
+}
+
 # RDS Proxy (optional, for connection pooling)
 resource "aws_db_proxy" "main" {
   count = var.create_rds_proxy ? 1 : 0
 
   name                   = "${var.db_instance_identifier}-proxy"
   engine_family          = var.engine_family
+  role_arn               = aws_iam_role.rds_proxy[0].arn
   vpc_subnet_ids         = var.subnet_ids
   vpc_security_group_ids = [aws_security_group.rds_proxy[0].id]
 
@@ -214,4 +259,3 @@ resource "aws_db_proxy_target" "main" {
   db_proxy_name          = aws_db_proxy.main[0].name
   target_group_name      = "default"
 }
-

@@ -132,17 +132,16 @@ See [Learning Paths](./learning-paths.md) for recommended progression through th
 ## Getting Help
 
 - Check the lab's troubleshooting section
-- Review [Testing Strategy](./testing-strategy.md)
+- Review [Testing Strategy](../03-project-management/testing-strategy.md)
 - Open an issue on GitHub
 - Check existing issues for solutions
 
 ## Next Steps
 
 1. Read [Reference Application](./reference-application.md) to understand what we're deploying
-2. Review [Testing Strategy](./testing-strategy.md) to understand validation
+2. Review [Testing Strategy](../03-project-management/testing-strategy.md) to understand validation
 3. Choose your first lab and begin!
 
 ---
 
 Happy learning!
-

@@ -1,13 +1,3 @@
-terraform {
-  required_version = ">= 1.5"
-  required_providers {
-    google = {
-      source  = "hashicorp/google"
-      version = "~> 5.0"
-    }
-  }
-}
-
 # Service Account for GKE nodes
 resource "google_service_account" "gke_node" {
   account_id   = "${var.cluster_name}-node-sa"
@@ -93,7 +83,7 @@ resource "google_container_cluster" "primary" {
     content {
       cidr_blocks {
         cidr_block   = "0.0.0.0/0"
-        display_name  = "All"
+        display_name = "All"
       }
     }
   }
@@ -159,4 +149,3 @@ resource "google_container_node_pool" "primary" {
     max_node_count = var.max_node_count
   }
 }
-

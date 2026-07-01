@@ -14,13 +14,11 @@ terraform {
 
 # Configure providers conditionally
 provider "google" {
-  count   = var.cloud_provider == "gcp" ? 1 : 0
   project = var.project_id
   region  = var.region
 }
 
 provider "aws" {
-  count  = var.cloud_provider == "aws" ? 1 : 0
   region = var.region
 }
 
@@ -187,7 +185,6 @@ module "ecr" {
   source = "../../modules/aws/ecr"
 
   repository_name = "${var.cluster_name}-repo"
-  description     = "Container registry for ${var.cluster_name}"
 
   resource_tags = merge(var.resource_labels, {
     purpose = "integration-patterns"

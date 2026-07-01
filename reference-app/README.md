@@ -1,110 +1,71 @@
 # Reference Application: Argo Workflows
 
-## Overview
+Argo Workflows is the reference workload for Implementation Studio. It is Kubernetes-native, lightweight enough for labs, and realistic enough to expose the deployment issues this repo teaches: networking, image access, RBAC, ingress, resource limits, failures, and handoff.
 
-Argo Workflows serves as the reference application for Implementation Studio. It's a Kubernetes-native workflow engine that demonstrates deployment patterns in various constrained environments.
+## Why Argo Workflows
 
-## Why Argo Workflows?
+| Quality | Why it matters here |
+| --- | --- |
+| Kubernetes-native | The deployment platform is part of the lesson. |
+| Operationally realistic | Workflows model compute, data, ML, and batch-processing workloads. |
+| Portable | The same workload can run across Kind, GKE, and EKS. |
+| Constraint-sensitive | It makes air-gap, proxy, registry, RBAC, and resource issues visible. |
+| Useful | Learners leave with a real tool, not only a toy app. |
 
-- **Kubernetes-native**: Deployment IS the lesson
-- **Relevant**: Common in ML/data engineering contexts
-- **Lightweight**: Minimal deployment footprint
-- **Useful**: Teaches a genuinely useful tool
-- **Real-world**: Represents simulation/compute workloads (job submission, execution, results)
+## Workflow Catalog
 
-## Sample Workflows
+| Workflow | Pattern | Run |
+| --- | --- | --- |
+| [hello-world.yaml](workflows/hello-world.yaml) | Minimal single-step workflow | `kubectl apply -f workflows/hello-world.yaml` |
+| [multi-step.yaml](workflows/multi-step.yaml) | Sequential task execution | `kubectl apply -f workflows/multi-step.yaml` |
+| [parallel-jobs.yaml](workflows/parallel-jobs.yaml) | Parallel fan-out | `kubectl apply -f workflows/parallel-jobs.yaml` |
+| [compute-intensive.yaml](workflows/compute-intensive.yaml) | Resource requests and limits | `kubectl apply -f workflows/compute-intensive.yaml` |
+| [data-pipeline.yaml](workflows/data-pipeline.yaml) | Input, process, output flow | `kubectl apply -f workflows/data-pipeline.yaml` |
+| [failure-handling.yaml](workflows/failure-handling.yaml) | Retries and failure behavior | `kubectl apply -f workflows/failure-handling.yaml` |
 
-The `workflows/` directory contains example workflows demonstrating different patterns:
+## Basic Commands
 
-### hello-world.yaml
-Simplest possible workflow - a single container task.
-
-```bash
-kubectl apply -f workflows/hello-world.yaml
-```
-
-### multi-step.yaml
-Sequential execution - tasks run one after another.
-
-```bash
-kubectl apply -f workflows/multi-step.yaml
-```
-
-### parallel-jobs.yaml
-Parallel execution - multiple tasks run simultaneously.
+Submit a workflow:
 
 ```bash
-kubectl apply -f workflows/parallel-jobs.yaml
+kubectl apply -f reference-app/workflows/hello-world.yaml
 ```
 
-### compute-intensive.yaml
-CPU-heavy workload - demonstrates resource requests and limits.
-
-```bash
-kubectl apply -f workflows/compute-intensive.yaml
-```
-
-### data-pipeline.yaml
-Input → process → output - demonstrates artifact passing.
-
-```bash
-kubectl apply -f workflows/data-pipeline.yaml
-```
-
-### failure-handling.yaml
-Retries and error handling - demonstrates resilience patterns.
-
-```bash
-kubectl apply -f workflows/failure-handling.yaml
-```
-
-## Using Workflows
-
-### Submit a Workflow
-
-```bash
-kubectl apply -f workflows/hello-world.yaml
-```
-
-### List Workflows
+List workflows:
 
 ```bash
 kubectl get workflows -n argo
 ```
 
-### View Workflow Details
+Inspect a workflow:
 
 ```bash
 kubectl describe workflow <workflow-name> -n argo
 ```
 
-### View Workflow Logs
+View pod logs:
 
 ```bash
-kubectl logs -n argo <workflow-name>
+kubectl logs -n argo <pod-name>
 ```
 
-### Delete a Workflow
+Delete a workflow:
 
 ```bash
 kubectl delete workflow <workflow-name> -n argo
 ```
 
-## Workflow Templates
+## Used By
 
-The `workflow-templates/` directory contains reusable workflow templates for common patterns.
+The workflows are used across the labs as a stable target application:
 
-## Scripts
-
-The `scripts/` directory contains helper scripts for workflow management:
-
-- `submit-workflow.sh` - Submit a workflow
-- `watch-workflow.sh` - Watch workflow status
-- `get-results.sh` - Get workflow results
-- `cleanup-completed.sh` - Clean up completed workflows
+- [Lab 01: Standard Deployment](../labs/01-standard-deployment/README.md)
+- [Lab 02: Air-Gapped Deployment](../labs/02-airgapped-deployment/README.md)
+- [Lab 03: Private Network Deployment](../labs/03-private-network-deployment/README.md)
+- [Lab 04: Firewall-Restricted Deployment](../labs/04-firewall-restricted-deployment/README.md)
+- [Lab 05: POC Sprint](../labs/05-poc-sprint/README.md)
 
 ## Learn More
 
-- [Argo Workflows Documentation](https://argoproj.github.io/workflows/)
-- [Workflow Examples](https://github.com/argoproj/argo-workflows/tree/master/examples)
-
+- [Argo Workflows documentation](https://argoproj.github.io/workflows/)
+- [Argo Workflows examples](https://github.com/argoproj/argo-workflows/tree/master/examples)

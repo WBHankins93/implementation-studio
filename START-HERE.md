@@ -1,85 +1,62 @@
-# SE Playbook - Start Here
+# Implementation Studio - Start Here
 
-## 📝 Context
+Implementation Studio is organized for just-in-time use. Start from the situation you are in, then follow the nearest lab, module, or field guide.
 
-This playbook contains battle-tested frameworks, templates, and guides for Solutions Engineers. Everything here comes from real customer engagements. Use it to navigate your day-to-day work, from first discovery call to strategic account management.
+## I Need To Learn The System
 
-## 🎯 Quick Navigation
+| Goal | Start with |
+| --- | --- |
+| Understand the repo | [README.md](README.md) |
+| Pick a sequence | [LEARNING-PATHS.md](LEARNING-PATHS.md) |
+| Compare every lab | [labs/README.md](labs/README.md) |
+| Learn the reference workload | [reference-app/README.md](reference-app/README.md) |
+| Understand validation boundaries | [testing strategy](docs/03-project-management/testing-strategy.md) |
 
-### I just got assigned something new
+## I Need A Deployment Pattern
 
-- New customer engagement → [engagements/new-customer.md](engagements/new-customer.md)
-- Joining an existing engagement → [engagements/joining-existing.md](engagements/joining-existing.md)
-- Inherited a customer from another SE → [engagements/inherited-customer.md](engagements/inherited-customer.md)
-- Multiple SEs working in one account → [engagements/multi-workstream.md](engagements/multi-workstream.md)
+| Scenario | Use |
+| --- | --- |
+| Standard cloud deployment | [Lab 01: Standard Deployment](labs/01-standard-deployment/README.md) |
+| No internet or disconnected install | [Lab 02: Air-Gapped Deployment](labs/02-airgapped-deployment/README.md) |
+| Private cluster or bastion access | [Lab 03: Private Network Deployment](labs/03-private-network-deployment/README.md) |
+| Strict egress or firewall allowlists | [Lab 04: Firewall-Restricted Deployment](labs/04-firewall-restricted-deployment/README.md) |
+| Tenant isolation | [Lab 06: Multi-Tenant Deployment](labs/06-multi-tenant-deployment/README.md) |
+| Auth, database, API gateway, or mesh integration | [Lab 07: Integration Patterns](labs/07-integration-patterns/README.md) |
 
-### I need to prepare for a customer interaction
+## I Need Customer-Facing Material
 
-- Discovery call → [pre-sales/discovery.md](pre-sales/discovery.md)
-- Technical deep-dive → [pre-sales/technical-deep-dive.md](pre-sales/technical-deep-dive.md)
-- Demo → [pre-sales/demo.md](pre-sales/demo.md)
-- POC scoping → [pre-sales/poc-scoping.md](pre-sales/poc-scoping.md)
-- POC execution → [pre-sales/poc-execution.md](pre-sales/poc-execution.md)
-- Strategic account planning → [pre-sales/account-strategy.md](pre-sales/account-strategy.md)
+| Situation | Use |
+| --- | --- |
+| Scope or run a POC | [Lab 05: POC Sprint](labs/05-poc-sprint/README.md) |
+| Coordinate several workstreams | [Multi-workstream engagement guide](engagements/multi-workstream.md) |
+| Build account strategy | [Account strategy framework](pre-sales/account-strategy.md) |
+| Prepare handoff/runbooks | [Lab 08: Handoff and Runbooks](labs/08-handoff-runbooks/README.md) |
+| Capture roadmap-impacting product gaps | [Product feedback process](internal/product-feedback.md) |
+| Show measurable SE/implementation impact | [Tracking impact](internal/tracking-impact.md) |
 
-### I'm in the middle of an engagement
+## I Need Reusable Building Blocks
 
-- Implementation kickoff → [implementation/kickoff.md](implementation/kickoff.md)
-- Mid-point checkpoint → [implementation/mid-point-checkpoint.md](implementation/mid-point-checkpoint.md)
-- Troubleshooting → [implementation/troubleshooting.md](implementation/troubleshooting.md)
-- Handoff to customer → [implementation/handoff.md](implementation/handoff.md)
+| Need | Start with |
+| --- | --- |
+| Terraform module catalog | [modules/README.md](modules/README.md) |
+| Provider comparison | [provider comparison](docs/02-multi-cloud/provider-comparison.md) |
+| Migration between GCP and AWS | [migration guide](docs/02-multi-cloud/migration-guide.md) |
+| Operational patterns | [operations docs](docs/05-operations/) |
+| Architecture decisions | [ADR index](docs/adr/README.md) |
 
-### Something went wrong
+## I Need To Debug Something
 
-- Demo failure → [recovery/demo-failure.md](recovery/demo-failure.md)
-- POC recovery → [recovery/poc-recovery.md](recovery/poc-recovery.md)
-- Escalation → [recovery/escalation.md](recovery/escalation.md)
-- Scope creep → [recovery/scope-creep.md](recovery/scope-creep.md)
+| Problem type | Use |
+| --- | --- |
+| Practice common failures | [Lab 09: Troubleshooting Scenarios](labs/09-troubleshooting-scenarios/README.md) |
+| Cluster health checks | [cluster health tool](labs/09-troubleshooting-scenarios/diagnostic-tools/cluster-health.sh) |
+| Connectivity checks | [connectivity tool](labs/09-troubleshooting-scenarios/diagnostic-tools/connectivity-check.sh) |
+| Log collection | [log collector](labs/09-troubleshooting-scenarios/diagnostic-tools/log-collector.sh) |
+| Resource inspection | [resource inspector](labs/09-troubleshooting-scenarios/diagnostic-tools/resource-inspector.sh) |
 
-### Internal team coordination
+## Common Paths
 
-- Pre-call prep → [internal/pre-call-prep.md](internal/pre-call-prep.md)
-- Post-call debrief → [internal/post-call-debrief.md](internal/post-call-debrief.md)
-- Status updates → [internal/status-updates.md](internal/status-updates.md)
-- Requesting help → [internal/requesting-help.md](internal/requesting-help.md)
-- Handoff to SE → [internal/handoff-to-se.md](internal/handoff-to-se.md)
-- Capturing product feedback → [internal/product-feedback.md](internal/product-feedback.md)
-
-### I want to level up
-
-- Learning paths → [LEARNING-PATHS.md](LEARNING-PATHS.md)
-- Tracking impact → [internal/tracking-impact.md](internal/tracking-impact.md)
-
-## 📋 How to Use This Playbook
-
-**Don't read everything at once.** This playbook is designed for "just-in-time" learning:
-
-1. **When you get a new task** → Go to the relevant section
-2. **Use the checklists** → They're designed to be actionable
-3. **Follow the frameworks** → They're battle-tested patterns
-4. **Learn from the gotchas** → They're real mistakes others have made
-5. **Contribute back** → Add your learnings to improve the playbook
-
-## 🎯 Common Scenarios
-
-**First week as SE:**
-1. Read [LEARNING-PATHS.md](LEARNING-PATHS.md) to understand skill levels
-2. Read [engagements/new-customer.md](engagements/new-customer.md) for your first assignment
-3. Use [pre-sales/discovery.md](pre-sales/discovery.md) for your first discovery call
-4. Review [internal/pre-call-prep.md](internal/pre-call-prep.md) before calls
-
-**Preparing for a POC:**
-1. [pre-sales/poc-scoping.md](pre-sales/poc-scoping.md) - Scope it right
-2. [pre-sales/poc-execution.md](pre-sales/poc-execution.md) - Execute it well
-3. [recovery/poc-recovery.md](recovery/poc-recovery.md) - Know how to recover if it goes wrong
-
-**Handling a complex account:**
-1. [pre-sales/account-strategy.md](pre-sales/account-strategy.md) - Think strategically
-2. [engagements/multi-workstream.md](engagements/multi-workstream.md) - Coordinate with other SEs
-3. [internal/product-feedback.md](internal/product-feedback.md) - Capture gaps and influence roadmap
-
-## 🔗 Links
-
-- [README.md](README.md) - Overview of the playbook
-- [PROJECT-STATUS.md](PROJECT-STATUS.md) - What's complete and what's in progress
-- [LEARNING-PATHS.md](LEARNING-PATHS.md) - Skill development paths
+1. First-time learner: [Learning Paths](LEARNING-PATHS.md) -> [Lab 01](labs/01-standard-deployment/README.md) -> [Lab 02](labs/02-airgapped-deployment/README.md).
+2. Customer POC: [Account Strategy](pre-sales/account-strategy.md) -> [Lab 05](labs/05-poc-sprint/README.md) -> [Handoff Runbooks](labs/08-handoff-runbooks/README.md).
+3. Locked-down enterprise install: [Provider Comparison](docs/02-multi-cloud/provider-comparison.md) -> [Lab 03](labs/03-private-network-deployment/README.md) -> [Lab 04](labs/04-firewall-restricted-deployment/README.md).
+4. Platform foundation: [Modules](modules/README.md) -> [Lab 06](labs/06-multi-tenant-deployment/README.md) -> [Lab 07](labs/07-integration-patterns/README.md).

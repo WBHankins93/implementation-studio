@@ -470,11 +470,10 @@ terraform plan
 
 - [Terraform Version Constraints](https://www.terraform.io/docs/language/expressions/version-constraints.html)
 - [Terraform Provider Versioning](https://www.terraform.io/docs/language/providers/requirements.html)
-- [Module Standards](../quality-standards.md)
+- [Module Standards](./quality-standards.md)
 - [Testing Strategy](./testing-strategy.md)
 
 ---
 
 **Last Updated:** January 2026  
 **Maintained By:** Implementation Studio Team
-

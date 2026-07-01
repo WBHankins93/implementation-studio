@@ -1,166 +1,77 @@
-# SE Learning Paths
+# Implementation Studio Learning Paths
 
-## 📝 Context
+Use these paths to move through the repo without reading everything at once. Each path links to labs and docs that are already present in this repository.
 
-This guide helps you understand your current skill level and plan your development as a Solutions Engineer. There are three main paths: Foundations, Practitioner, and Advanced. Each path builds on the previous one, and you should spend quality time at each level before advancing.
+## Complete Implementation Path
 
-## 🎯 Learning Paths Overview
+For a broad understanding of the deployment patterns:
 
-### Foundations Path
-**For:** New SEs, career switchers, or those new to customer-facing technical work
+1. [Lab 01: Standard Deployment](labs/01-standard-deployment/README.md)
+2. [Lab 02: Air-Gapped Deployment](labs/02-airgapped-deployment/README.md)
+3. [Lab 03: Private Network Deployment](labs/03-private-network-deployment/README.md)
+4. [Lab 04: Firewall-Restricted Deployment](labs/04-firewall-restricted-deployment/README.md)
+5. [Lab 05: POC Sprint](labs/05-poc-sprint/README.md)
+6. [Lab 06: Multi-Tenant Deployment](labs/06-multi-tenant-deployment/README.md)
+7. [Lab 07: Integration Patterns](labs/07-integration-patterns/README.md)
+8. [Lab 08: Handoff and Runbooks](labs/08-handoff-runbooks/README.md)
+9. [Lab 09: Troubleshooting Scenarios](labs/09-troubleshooting-scenarios/README.md)
 
-**Focus:** Core skills needed to be effective in customer engagements
-- Discovery and requirements gathering
-- Basic demos and technical communication
-- Following established processes
-- Basic troubleshooting
+## Fast Track: Customer Constraints
 
-**Time:** 3-6 months minimum
+For the patterns most likely to appear in locked-down enterprise implementations:
 
-### Practitioner Path
-**For:** SEs who can handle standard engagements independently
+1. [Lab 02: Air-Gapped Deployment](labs/02-airgapped-deployment/README.md)
+2. [Lab 03: Private Network Deployment](labs/03-private-network-deployment/README.md)
+3. [Lab 04: Firewall-Restricted Deployment](labs/04-firewall-restricted-deployment/README.md)
+4. [Lab 09: Troubleshooting Scenarios](labs/09-troubleshooting-scenarios/README.md)
 
-**Focus:** Advanced execution and handling complexity
-- Scoping and executing POCs independently
-- Managing implementations end-to-end
-- Handling complex environments (air-gapped, private clusters)
-- Recovering from failures
+## Solutions Engineer Path
 
-**Time:** 12-18 months minimum
+For POC, account, handoff, and customer-facing implementation work:
 
-### Advanced Path
-**For:** Senior SEs who influence strategy and mentor others
+1. [SE Integration Guide](docs/se-integration.md)
+2. [Lab 05: POC Sprint](labs/05-poc-sprint/README.md)
+3. [Account Strategy](pre-sales/account-strategy.md)
+4. [Multi-Workstream Engagements](engagements/multi-workstream.md)
+5. [Lab 08: Handoff and Runbooks](labs/08-handoff-runbooks/README.md)
+6. [Product Feedback](internal/product-feedback.md)
+7. [Tracking Impact](internal/tracking-impact.md)
 
-**Focus:** Strategic thinking, account management, and team leadership
-- Strategic account planning
-- Executive relationship building
-- Product roadmap influence
-- Mentoring and process improvement
+## Platform Engineer Path
 
-**Time:** Continuous journey
+For infrastructure, shared platforms, and operational patterns:
 
-## 📋 Self-Assessment
+1. [Provider Comparison](docs/02-multi-cloud/provider-comparison.md)
+2. [Modules Catalog](modules/README.md)
+3. [Lab 01: Standard Deployment](labs/01-standard-deployment/README.md)
+4. [Lab 03: Private Network Deployment](labs/03-private-network-deployment/README.md)
+5. [Lab 06: Multi-Tenant Deployment](labs/06-multi-tenant-deployment/README.md)
+6. [Lab 07: Integration Patterns](labs/07-integration-patterns/README.md)
+7. [Lab 08: Handoff and Runbooks](labs/08-handoff-runbooks/README.md)
 
-Before choosing your path, assess your current level across these core competencies:
+## Cost-Conscious Path
 
-- **Discovery & Requirements Gathering** - Can you uncover what customers really need?
-- **POC Scoping & Execution** - Can you scope realistic POCs and execute them successfully?
-- **Environment Expertise** - Do you understand different deployment environments?
-- **Customer Communication & Relationship** - Can you build trust and manage expectations?
-- **Recovery & Problem Solving** - Can you handle failures and escalations?
+For local practice with little or no cloud spend:
 
-Rate yourself (1-5) for each competency. See [Skill Level Quick Reference](#skill-level-quick-reference) below for calibration.
+1. [Lab 02: Air-Gapped Deployment](labs/02-airgapped-deployment/README.md)
+2. [Lab 05: POC Sprint](labs/05-poc-sprint/README.md)
+3. [Lab 06: Multi-Tenant Deployment](labs/06-multi-tenant-deployment/README.md)
+4. [Lab 09: Troubleshooting Scenarios](labs/09-troubleshooting-scenarios/README.md)
 
-## Skill Level Quick Reference
+## Prerequisites By Lab
 
-Use these condensed rubrics to calibrate your self-assessment (1-5 scale):
+| Lab | Primary prerequisites |
+| --- | --- |
+| Lab 01 | Terraform, kubectl, Helm, GCP or AWS account |
+| Lab 02 | Docker, Kind, Helm, kubectl, about 10GB disk space |
+| Lab 03 | Lab 01 baseline plus private networking concepts |
+| Lab 04 | Lab 01 baseline plus network policy and egress concepts |
+| Lab 05 | Kind for local mode, or minimal GCP/AWS setup |
+| Lab 06 | Kind, GCP, or AWS plus namespace/RBAC basics |
+| Lab 07 | GCP or AWS plus OAuth/OIDC and database concepts |
+| Lab 08 | Existing cluster or Kind plus monitoring basics |
+| Lab 09 | Kind and kubectl |
 
-### Discovery & Requirements (1-5)
+## Next Step
 
-**1-2 (Learning):** Following templates, capturing basics, identifying obvious constraints
-**3 (Competent):** Leading independently, adapting questions, recognizing environment types and red flags
-**4-5 (Advanced):** Complex multi-stakeholder discovery, uncovering unstated requirements, mentoring others
-
-### POC Execution (1-5)
-
-**1-2 (Learning):** Executing defined scope with support, identifying basic scope creep
-**3 (Competent):** Scoping and executing independently, managing scope proactively, recovering from minor issues
-**4-5 (Advanced):** Complex environments (air-gapped, multi-tenant), handling major failures, influencing POC methodology
-
-### Environment Expertise (1-5)
-
-**1-2 (Learning):** Deployed in 1 environment type with support, following checklists
-**3 (Competent):** 2-3 environment types independently, troubleshooting environment-specific issues
-**4-5 (Advanced):** Deep expertise across multiple types, creating patterns, handling edge cases
-
-### Communication & Relationships (1-5)
-
-**1-2 (Learning):** Clear technical communication, routine interactions, building rapport
-**3 (Competent):** Tailoring to audience, proactive updates, managing expectations, handling difficult conversations
-**4-5 (Advanced):** Navigating complex politics, executive relationships, strategic influence, recovering damaged relationships
-
-### Recovery & Problem Solving (1-5)
-
-**1-2 (Learning):** Systematic troubleshooting, escalating appropriately, following frameworks
-**3 (Competent):** Complex issues independently, demo/POC recovery, knowing when to escalate vs. resolve
-**4-5 (Advanced):** Executive escalations, turning failures into improvements, crisis management
-
----
-
-## Ready to Advance? (Milestone Checklist)
-
-### Foundations → Practitioner
-
-You're ready when you have:
-- ✅ Led 5+ discovery calls independently
-- ✅ Delivered 10+ successful demos
-- ✅ Identified environment types correctly in 5+ discoveries
-- ✅ Troubleshot 5+ technical issues using frameworks
-- ✅ Created handoff docs for 3+ engagements
-
-**Green light:** You can run discovery, demo, and troubleshoot without constant guidance.
-
-### Practitioner → Advanced
-
-You're ready when you have:
-- ✅ Led 5+ POCs with 80%+ win rate
-- ✅ Completed 3+ implementations (kickoff → handoff)
-- ✅ Deep expertise in 2-3 environments (5+ deployments each)
-- ✅ Recovered from 2+ major failures successfully
-- ✅ Managed scope creep in 5+ engagements
-- ✅ Mentored 2+ junior SEs
-- ✅ Contributed 2+ playbook improvements
-
-**Green light:** You handle complex enterprise work independently and help others level up.
-
-### Operating at Advanced Level
-
-You're at Advanced when you consistently:
-- ✅ Contribute to account strategy (not just execution)
-- ✅ Present to C-level stakeholders comfortably
-- ✅ Manage multi-workstream accounts
-- ✅ Handle executive escalations
-- ✅ Influence product roadmap
-- ✅ Lead process improvements
-- ✅ Have 3+ reference customers
-
-**Green light:** You're the go-to person for the hardest problems and you're shaping how the team operates.
-
----
-
-## Timing Guidance
-
-**Don't rush:**
-- Foundations: 3-6 months minimum
-- Practitioner: 12-18 months minimum  
-- Advanced: Continuous journey
-
-**Quality reps > speed.** Better to be deeply competent at one level than superficially exposed to the next.
-
-**Stuck without opportunities?**
-- Limited POCs? → Shadow, then take on pieces gradually
-- No implementations? → Document patterns you observe, build lab environments
-- No mentorship? → Create docs, answer team questions, run learning sessions
-
-Use the [Progress Tracking table](#progress-tracking) to monitor milestone completion.
-
-## Progress Tracking
-
-Track your milestone completion over time:
-
-| Milestone | Target | Current | Date Completed | Notes |
-|-----------|--------|---------|----------------|-------|
-| Discovery calls led | 5+ | | | |
-| Demos delivered | 10+ | | | |
-| POCs scoped & executed | 5+ | | | |
-| Implementations led | 3+ | | | |
-| Major recoveries | 2+ | | | |
-| SEs mentored | 2+ | | | |
-| Playbook contributions | 2+ | | | |
-
-## 🔗 Links
-
-- [START-HERE.md](START-HERE.md) - Navigation guide
-- [Account Strategy](pre-sales/account-strategy.md) - Strategic account planning
-- [Product Feedback](internal/product-feedback.md) - Influencing roadmap
-- [Tracking Impact](internal/tracking-impact.md) - Measuring your effectiveness
+After choosing a path, open [labs/README.md](labs/README.md) for a side-by-side lab comparison and then follow the README inside the first lab.

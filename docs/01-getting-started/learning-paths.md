@@ -39,11 +39,12 @@ Focused on customer engagement skills:
 4. **Lab 08: Handoff and Runbooks** - Customer handoff process
 5. **Lab 09: Troubleshooting Scenarios** - Customer support skills
 
-Plus documentation in `docs/for-ses/`:
-- Using labs in engagements
-- Discovery frameworks
-- Scoping POCs
-- Customer handoff
+Plus field guidance:
+- [SE Integration Guide](../se-integration.md)
+- [POC Sprint templates](../../labs/05-poc-sprint/templates/)
+- [Account Strategy](../../pre-sales/account-strategy.md)
+- [Multi-Workstream Engagements](../../engagements/multi-workstream.md)
+- [Handoff and Runbooks](../../labs/08-handoff-runbooks/README.md)
 
 **Time Estimate:** 50-60 hours (~1.5 weeks)
 
@@ -131,4 +132,3 @@ The labs are designed to be modular - use what's relevant to you.
 ---
 
 Choose the path that matches your goals and constraints!
-

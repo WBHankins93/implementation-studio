@@ -304,11 +304,10 @@ module "cluster" {
 - [Lab Specifications](../04-labs/lab-specifications.md) - Detailed lab requirements
 - [Learning Paths](../01-getting-started/learning-paths.md) - Recommended progression
 - [Cost Management](../05-operations/cost-management.md) - Cost estimates and optimization
-- [Testing Strategy](./testing-strategy.md) - What can be tested locally vs cloud
+- [Testing Strategy](../03-project-management/testing-strategy.md) - What can be tested locally vs cloud
 
 ---
 
 **Date:** January 5, 2026  
 **Author:** Ben Hankins  
 **Status:** Accepted
-

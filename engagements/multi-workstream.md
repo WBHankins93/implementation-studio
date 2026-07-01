@@ -137,7 +137,6 @@ knowledge sharing become critical to avoid stepping on each other and maximize w
 
 ## 🔗 Links
 
-- [New customer engagement](new-customer.md)
-- [Status updates](../internal/status-updates.md)
-- [Handoff to SE](../internal/handoff-to-se.md)
+- [Engagement guides](README.md)
+- [Tracking impact](../internal/tracking-impact.md)
 - [Account strategy](../pre-sales/account-strategy.md)

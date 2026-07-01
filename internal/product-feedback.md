@@ -221,7 +221,7 @@ Good: "We've lost 3 deals worth $1.2M this quarter because we don't support GCP 
 
 ## 🔗 Links
 
-- [Discovery call](../pre-sales/discovery.md)
-- [POC recovery](../recovery/poc-recovery.md)
-- [Escalation](../recovery/escalation.md)
-- [Requesting help](requesting-help.md)
+- [Account strategy](../pre-sales/account-strategy.md)
+- [POC Sprint](../labs/05-poc-sprint/README.md)
+- [Multi-workstream engagement](../engagements/multi-workstream.md)
+- [Tracking impact](tracking-impact.md)

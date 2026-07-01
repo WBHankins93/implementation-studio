@@ -222,6 +222,5 @@ Example:
 ## 🔗 Links
 
 - [Product feedback](product-feedback.md)
-- [Status updates](status-updates.md)
-- [Requesting help](requesting-help.md)
 - [Learning paths](../LEARNING-PATHS.md)
+- [Project status](../PROJECT-STATUS.md)

@@ -1,323 +1,121 @@
 # Implementation Studio
 
-> **Battle-tested implementation patterns for cloud, infrastructure, and customer-facing engineering teams.**
-
+[![Validate Terraform](https://github.com/WBHankins93/implementation-studio/actions/workflows/validate-terraform.yml/badge.svg)](https://github.com/WBHankins93/implementation-studio/actions/workflows/validate-terraform.yml)
+[![Validate Kubernetes Manifests](https://github.com/WBHankins93/implementation-studio/actions/workflows/validate-manifests.yml/badge.svg)](https://github.com/WBHankins93/implementation-studio/actions/workflows/validate-manifests.yml)
+[![Markdown Lint](https://github.com/WBHankins93/implementation-studio/actions/workflows/markdown-lint.yml/badge.svg)](https://github.com/WBHankins93/implementation-studio/actions/workflows/markdown-lint.yml)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
 
----
+A practical implementation library for deploying software in real customer environments: private clusters, air-gapped networks, firewall restrictions, multi-tenant platforms, integrations, POCs, handoffs, and troubleshooting.
 
-## 🔨 Why I Built This
+The repo combines reusable Terraform modules, Kubernetes manifests, Argo Workflows examples, field templates, and hands-on labs. It is meant to be useful in two modes: learn the patterns end to end, or copy the specific module, lab, checklist, or template you need for an implementation.
 
-After 8+ enterprise implementations in healthcare and energy, I was repeating the same patterns but documenting them differently each time.
+## Quick Start
 
-**The problem:** Terraform modules scattered across projects. Kubernetes knowledge fragmented in notes. Re-learning GCP quirks and AWS differences between clients.
-
-**Without this repo:** Searching old repos for "how did I handle bastion access?" Re-validating modules that should have been production-grade. Forgetting critical patterns between engagements.
-
-**With this repo:** Deploy faster with battle-tested patterns. Scale consistently across GCP and AWS. Map client constraints to proven labs in minutes.
-
-**What you get:** Production-grade Terraform modules, 9 hands-on labs (air-gapped, private clusters, RBAC isolation), and frameworks tested in healthcare and energy implementations where mistakes are expensive.
-
----
-
-## 🎯 Who This Is For
-
-**If you are a Solutions Engineer**, this repo helps you **deploy software in real customer environments** with air-gapped networks, private clusters, and strict security constraints.
-
-**If you are a Platform Engineer**, this repo helps you **build reusable infrastructure patterns** that work across GCP and AWS, with production-grade Terraform modules you can steal.
-
-**If you are a DevOps Engineer**, this repo helps you **master the "last mile" of deployment** - the part where tutorials end but real customer work begins.
-
-**If you are preparing for an SE role**, this repo helps you **understand customer implementation lifecycles** - from POC scoping to production handoff.
-
----
-
-## 🧠 How to Use This Repo
-
-- Need to **learn by doing**? Start with the labs.
-- Need to **solve a real customer problem**? Steal a module.
-- Need to **run a POC or handoff**? Use the templates.
-
----
-
-## ⚡ Immediate Payoff: What You Can Steal Today
-
-### 🎨 Templates & Frameworks
-
-**POC Templates** (ready to use in customer engagements):
-- [POC Scope Document](./labs/05-poc-sprint/templates/poc-scope-document.md) - Structure customer POCs
-- [Daily Standup Format](./labs/05-poc-sprint/templates/daily-standup-format.md) - Keep stakeholders aligned
-- [Final Report Template](./labs/05-poc-sprint/templates/final-report-template.md) - Professional POC deliverables
-- [Success Criteria Template](./labs/05-poc-sprint/templates/success-criteria.md) - Define measurable outcomes
-
-**Decision Frameworks**:
-- [Provider Selection Guide](./docs/02-multi-cloud/provider-comparison.md) - GCP vs AWS technical comparison
-- [Migration Decision Tree](./docs/02-multi-cloud/migration-guide.md) - When and how to migrate between clouds
-- [Lab Selection Guide](./docs/01-getting-started/learning-paths.md) - Choose your learning path
-- **[Multi-Workstream Coordination](engagements/multi-workstream.md)** - Managing multiple SEs in one enterprise account
-- **[Account Strategy Framework](pre-sales/account-strategy.md)** - Expansion, competitive displacement, executive relationships
-- **[Product Feedback Process](internal/product-feedback.md)** - Capturing gaps, influencing roadmap, managing "we can't do that"
-
-**Architectural Decision Records**:
-- [ADR Template](./docs/adr/TEMPLATE.md) - Document architectural decisions
-- [ADR-001: Reference Application](./docs/adr/001-reference-application.md) - Why Argo Workflows
-- [ADR-003: Multi-Cloud Strategy](./docs/adr/003-multi-cloud-strategy.md) - GCP + AWS approach
-
-### 🏗️ Production-Grade Terraform Modules
-
-**GCP Modules** (battle-tested):
-- `modules/gcp/gke-cluster` - Production-ready GKE with private endpoints
-- `modules/gcp/vpc-private` - Fully private VPC, no external IPs
-- `modules/gcp/airgap-registry` - Offline container registry
-
-**AWS Modules** (production-ready):
-- `modules/aws/eks-cluster` - EKS with IRSA and private endpoints
-- `modules/aws/vpc-private` - Private VPC with VPC endpoints
-- `modules/aws/rds` - RDS with proxy and connection pooling
-
-**Kubernetes Modules** (cloud-agnostic):
-- `modules/kubernetes/argo-workflows-airgap` - Offline deployment patterns
-- `modules/kubernetes/network-policies` - Multi-tenant isolation
-- `modules/kubernetes/rbac-patterns` - Permission templates
-
-[View all modules →](./modules/README.md)
-
-### 📋 Real-World Patterns
-
-**9 Hands-On Labs** covering actual customer scenarios:
-- Air-gapped deployments (no internet)
-- Private cluster patterns (bastion access)
-- Firewall-restricted environments (egress control)
-- Multi-tenant isolation (RBAC, quotas, network policies)
-- Integration patterns (databases, auth, API gateways)
-- POC sprint frameworks (scoping, delivery, handoff)
-
-[View all labs →](#-labs-overview)
-
----
-
-## 🏆 Built From Real Engagements
-
-**Real Customer Implementation Work**
-
-These patterns come from actual implementation work in enterprise and defense environments. The constraints you'll learn (air-gapped networks, private clusters, strict firewall rules) are the same ones you'll face in real customer deployments.
-
-**Production-Grade Quality**
-
-- ✅ Terraform validated and tested
-- ✅ Kubernetes manifests verified
-- ✅ Architecture patterns documented with ADRs
-- ✅ Multi-cloud support (GCP + AWS)
-- ✅ Transparent validation status (we document what's tested vs. what needs real deployment)
-
-**Used in Real Implementations**
-
-The modules and patterns in this repo are designed to be adapted for actual customer engagements. Each lab includes:
-- Step-by-step deployment guides
-- Troubleshooting documentation
-- Validation status transparency
-- Real-world constraint scenarios
-
----
-
-## 🚀 Quick Start (30 Seconds)
-
-**Option 1: Start with a Lab** (recommended)
 ```bash
 git clone https://github.com/WBHankins93/implementation-studio.git
 cd implementation-studio
-# Choose your first lab:
-# - Lab 01 (Standard Deployment) - GCP or AWS
-# - Lab 02 (Air-Gapped) - Fully local, $0 cost
-# - Lab 05 (POC Sprint) - Templates and frameworks
+
+# Pick a path, then open the matching lab README.
+open START-HERE.md
+open labs/README.md
 ```
 
-**Option 2: Steal a Module**
+Run the local checks that match the files you changed:
+
 ```bash
-# Copy a Terraform module directly into your project
-cp -r modules/gcp/gke-cluster /path/to/your/project
-# Or browse: modules/gcp/ | modules/aws/ | modules/kubernetes/
+tools/validate-terraform.sh
+tools/validate-local.sh
+tools/validate-modules.sh
 ```
 
-**Option 3: Use a Template**
-```bash
-# Copy POC templates for customer engagements
-cp labs/05-poc-sprint/templates/*.md /path/to/your/poc/
+## How To Navigate
+
+| Entry point | Use it when |
+| --- | --- |
+| [Start Here](START-HERE.md) | You want the fastest route into the repo by scenario. |
+| [Labs](labs/README.md) | You want hands-on deployment paths and lab comparisons. |
+| [Documentation](docs/README.md) | You want the organized technical docs and reading order. |
+| [Modules](modules/README.md) | You want reusable Terraform modules or Kubernetes patterns. |
+| [Reference App](reference-app/README.md) | You want the Argo Workflows workloads used across labs. |
+| [Learning Paths](LEARNING-PATHS.md) | You want a sequenced path by role, cost, or time available. |
+| [Project Status](PROJECT-STATUS.md) | You want to know what exists, what is validated, and what is next. |
+
+## Repository Structure
+
+```text
+docs/             Getting started, multi-cloud, quality, operations, ADRs
+labs/             Nine implementation labs with scripts, Terraform, manifests, and guides
+modules/          Reusable AWS, GCP, and Kubernetes building blocks
+reference-app/    Argo Workflows examples used as the deployment target
+engagements/      Customer/account coordination guides
+pre-sales/        Account strategy and POC-facing field guidance
+internal/         Product feedback and impact-tracking guidance
+tools/            Local validation, setup, and cleanup scripts
+.github/          CI checks for Markdown, Terraform, and Kubernetes manifests
 ```
 
-[📖 Full Getting Started Guide →](./docs/01-getting-started/getting-started.md)
+## Labs
 
----
+| Lab | Scenario | Providers | Best for |
+| --- | --- | --- | --- |
+| [01 Standard Deployment](labs/01-standard-deployment/README.md) | Baseline Kubernetes deployment | GCP, AWS | First production-style cluster |
+| [02 Air-Gapped Deployment](labs/02-airgapped-deployment/README.md) | Offline deployment workflow | Kind | Disconnected environments |
+| [03 Private Network Deployment](labs/03-private-network-deployment/README.md) | Private clusters and bastion access | GCP, AWS | Locked-down networks |
+| [04 Firewall-Restricted Deployment](labs/04-firewall-restricted-deployment/README.md) | Egress allowlists and proxy patterns | GCP, AWS | Security-team constrained installs |
+| [05 POC Sprint](labs/05-poc-sprint/README.md) | POC scoping, demo prep, and reports | Kind, GCP, AWS | Fast customer validation |
+| [06 Multi-Tenant Deployment](labs/06-multi-tenant-deployment/README.md) | Namespace isolation, RBAC, quotas | Kind, GCP, AWS | Shared platform foundations |
+| [07 Integration Patterns](labs/07-integration-patterns/README.md) | Auth, databases, gateways, service mesh | GCP, AWS | Enterprise integration planning |
+| [08 Handoff and Runbooks](labs/08-handoff-runbooks/README.md) | Monitoring, runbooks, knowledge transfer | Cloud-agnostic | Production readiness |
+| [09 Troubleshooting Scenarios](labs/09-troubleshooting-scenarios/README.md) | Common failure modes and diagnostics | Kind | Debugging practice |
 
-## ⚠️ Real-World Deployment Note
+See [lab specifications](docs/04-labs/lab-specifications.md) for the detailed comparison.
 
-> **The patterns are right, but production always has surprises.**
+## Modules
 
-This repo provides **validated, production-grade patterns**. However, when using in actual customer engagements:
+Implementation Studio includes 11 tracked Terraform modules and 6 Kubernetes pattern bundles.
 
-- ✅ **Validated:** Terraform syntax, Kubernetes manifests, architecture patterns
-- ⚠️ **Requires testing:** IAM permissions, quota limits, regional API differences, customer-specific constraints
+| Area | Available modules |
+| --- | --- |
+| GCP | `artifact-registry`, `firewall-rules`, `gke-cluster`, `vpc-private`, `vpc-standard` |
+| AWS | `ecr`, `eks-cluster`, `rds`, `security-groups`, `vpc`, `vpc-private` |
+| Kubernetes | `argo-workflows`, `argo-workflows-airgap`, `ingress-nginx`, `network-policies`, `rbac-patterns`, `resource-quotas` |
 
-**Best Practice:** Always test in dev/staging first. The patterns are correct, but production environments have unique constraints (IAM, quotas, compliance) that can't be fully anticipated.
+Start with [modules/README.md](modules/README.md) for usage examples, provider parity notes, and module standards.
 
-Each lab includes a `VALIDATION-STATUS.md` file that transparently documents what's tested vs. what requires real deployment. [Learn more →](#-real-world-deployment-note)
+## Field Content
 
----
+The implementation content is supported by small, copy-ready field guides:
 
-## 🧪 Labs Overview
+| Area | Current guides |
+| --- | --- |
+| [Engagements](engagements/README.md) | Multi-workstream coordination for complex accounts |
+| [Pre-sales](pre-sales/README.md) | Account strategy and expansion planning |
+| [Internal](internal/README.md) | Product feedback capture and impact tracking |
+| [POC templates](labs/05-poc-sprint/templates/) | Scope document, success criteria, standup format, final report |
+| [Runbook templates](labs/08-handoff-runbooks/runbook-templates/) | Deployment, incident response, scaling, backup/restore, upgrades |
 
-| Lab | Name | Providers | Time | Cost | What You Learn |
-|-----|------|-----------|------|------|----------------|
-| 01 | Standard Deployment | GCP, AWS | 1-2h | $5-15 | Production Kubernetes baseline |
-| 02 | Air-Gapped Deployment | Kind | 2-3h | $0 | Deploy without internet access |
-| 03 | Private Network Deployment | GCP, AWS | 2-3h | $8-18 | Private clusters + bastion hosts |
-| 04 | Firewall-Restricted Deployment | GCP, AWS | 2-3h | $5-15 | Work within strict egress rules |
-| 05 | The POC Sprint | Kind, GCP, AWS | 1-2h | $0-5 | Scope and deliver POCs |
-| 06 | Multi-Tenant Deployment | Kind, GCP, AWS | 2-3h | $0-10 | Namespace isolation + RBAC |
-| 07 | Integration Patterns | GCP, AWS | 3-4h | $10-25 | Auth, databases, API gateways |
-| 08 | Handoff and Runbooks | Cloud-Agnostic | 2-3h | $0-5 | Production documentation |
-| 09 | Troubleshooting Scenarios | Cloud-Agnostic | 2-4h | $0 | Systematic debugging |
+## Continuous Integration
 
-[View detailed lab specifications →](./docs/04-labs/lab-specifications.md)
+Every pull request and push to `main` runs focused checks based on changed files:
 
----
+| Workflow | What it checks |
+| --- | --- |
+| `markdown-lint.yml` | Markdown formatting across project docs |
+| `validate-terraform.yml` | `terraform fmt`, `terraform init -backend=false`, `terraform validate`, and tflint |
+| `validate-manifests.yml` | Kubernetes YAML validation and kustomize builds |
 
-## 🏗️ Architecture
+Run the equivalent local scripts before opening a PR when possible.
 
-### Repository Structure
+## Contributing
 
-```
-implementation-studio/
-├── docs/                    # Documentation + SE guides
-│   ├── 01-getting-started/  # Start here
-│   ├── 02-multi-cloud/      # GCP vs AWS guides
-│   ├── 03-project-management/ # Roadmap, ADRs, quality standards
-│   ├── 04-labs/             # Lab specifications
-│   ├── 05-operations/      # Cost management, DR patterns
-│   └── adr/                 # Architectural Decision Records
-├── engagements/             # New customer, joining existing, inherited handoffs, multi-workstream
-├── pre-sales/               # Discovery, demos, POCs, technical deep-dives, account strategy
-├── implementation/          # Kickoff, mid-point checkpoints, troubleshooting, handoff
-├── environments/            # Air-gapped, private, restricted, multi-tenant, hybrid
-├── recovery/                 # Demo failures, POC recovery, escalation, scope creep
-├── internal/                # Team coordination, status updates, requesting help, product feedback
-├── templates/               # Customer emails, technical checklists, handoff docs
-├── lessons/                 # Retrospective templates for continuous improvement
-├── modules/                 # Reusable Terraform & K8s modules
-│   ├── gcp/                 # GCP infrastructure modules
-│   ├── aws/                 # AWS infrastructure modules
-│   └── kubernetes/          # Cloud-agnostic K8s modules
-├── labs/                    # 9 hands-on learning labs
-├── reference-app/           # Argo Workflows sample workloads
-└── tools/                   # Validation, setup, cleanup scripts
-```
+See [CONTRIBUTING.md](CONTRIBUTING.md) for PR expectations. New implementation content should have a clear home, a direct entry point from the nearest README, validation notes, and links to the relevant lab, module, or field guide.
 
-**45 complete guides and templates** covering the full SE lifecycle from first discovery call to strategic account management.
+## Related Projects
 
-### Multi-Cloud Support
+- [Solutions Playbook](https://github.com/WBHankins93/solutions-playbook) - SE/SA operating manual and companion field playbook.
+- [DevOps Studio](https://github.com/WBHankins93/DevOps-Studio) - DevOps learning labs and exercises.
+- [terraform-infra-platform](https://github.com/WBHankins93/terraform-infra-platform) - Infrastructure platform patterns.
 
-**GCP (GKE)** - Lower costs, simpler networking, faster setup  
-**AWS (EKS)** - Larger ecosystem, connection pooling, enterprise features  
-**Kind** - Zero cost, fastest iteration, perfect for learning
+## License
 
-Most labs support multiple providers. [Compare providers →](./docs/02-multi-cloud/provider-comparison.md)
-
----
-
-## 📚 Documentation
-
-> **📖 Start Here:** [Documentation Guide](./docs/README.md) - Organized docs with reading order
-
-**Essential Reading:**
-- [Getting Started](./docs/01-getting-started/getting-started.md) - Prerequisites, installation, first steps
-- [Learning Paths](./docs/01-getting-started/learning-paths.md) - Choose your path (SE, Platform, DevOps)
-- [Reference Application](./docs/01-getting-started/reference-application.md) - Why Argo Workflows
-
-**Multi-Cloud:**
-- [Provider Comparison](./docs/02-multi-cloud/provider-comparison.md) - GCP vs AWS technical deep-dive
-- [Migration Guide](./docs/02-multi-cloud/migration-guide.md) - How to migrate between providers
-- [Feature Parity Matrix](./docs/02-multi-cloud/feature-parity-matrix.md) - Detailed feature comparison
-
-**For Solutions Engineers:**
-- [SE Integration Guide](./docs/se-integration.md) - How implementation-studio connects to SE playbook
-- [SE Playbook](https://github.com/WBHankins93/se-playbook) - For discovery, scoping, handoff, account strategy
-- [Learning Paths](LEARNING-PATHS.md) - Skill development and self-assessment (SE playbook)
-
-**Operations:**
-- [Cost Management](./docs/05-operations/cost-management.md) - Cost estimates and optimization
-- [Multi-Region Patterns](./docs/05-operations/multi-region-patterns.md) - High availability patterns
-- [Disaster Recovery](./docs/05-operations/disaster-recovery.md) - DR strategies and patterns
-
----
-
-## 🤝 How to Engage
-
-**Star this repo** if you find it useful for your work.
-
-**Open an issue** if you want a pattern added or have questions about implementation.
-
-**Submit a PR** if you have real-world patterns from customer engagements that others can learn from.
-
-**Share feedback** on what's working and what could be improved.
-
-[Contributing Guidelines →](./CONTRIBUTING.md)
-
----
-
-## 📞 Contact & Related Projects
-
-**Project Owner:** Ben Hankins  
-**Repository:** [github.com/WBHankins93/implementation-studio](https://github.com/WBHankins93/implementation-studio)
-
-**Related Projects:**
-- [DevOps-Studio](https://github.com/WBHankins93/DevOps-Studio) - Production-grade DevOps learning labs
-- [deployment-patterns](https://github.com/WBHankins93/deployment-patterns)
-- [terraform-infra-platform](https://github.com/WBHankins93/terraform-infra-platform)
-
----
-
-## 📄 License
-
-MIT License - see [LICENSE](LICENSE) file for full text.
-
-### What This Means
-
-**You can:**
-- ✅ Use in commercial projects and customer engagements
-- ✅ Modify for your specific needs
-- ✅ Use in SaaS products or internal tools
-- ✅ Fork and create derivative works
-- ✅ Include in training materials
-- ✅ Use for consulting/implementation work
-
-**You must:**
-- Include the LICENSE file in substantial portions
-- Respect the MIT License terms (it's very permissive)
-
-**You should (but don't have to):**
-- Give credit if sharing publicly (blog, talks, courses)
-- Star the repo if it helped you
-- Consider sponsoring if your company benefited
-
-### Attribution Appreciated
-
-While MIT doesn't require attribution, if you:
-- Write a blog post using these patterns → Link back
-- Give a talk mentioning these deployments → Credit the repo
-- Build training materials → Acknowledge the source
-- Get promoted partly due to these skills → Star and sponsor 😊
-
-**Why?** It helps other SEs discover these patterns and motivates me to create more.
-
-### Commercial Use
-
-The MIT license explicitly allows commercial use. If your company:
-- Uses these patterns for customer deployments - Great!
-- Includes in internal training - Awesome!
-- Builds products using these patterns - Perfect!
-
-**Consider** GitHub Sponsors or hiring me for consulting - it helps maintain this project and supports the SE community.
-
----
-
-*Last Updated: February 2026*
+MIT License. See [LICENSE](LICENSE) for details.

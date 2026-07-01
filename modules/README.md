@@ -1,202 +1,125 @@
 # Implementation Studio Modules
 
-This directory contains reusable Terraform and Kubernetes modules designed for both learning labs and real customer engagements.
+This directory contains reusable infrastructure and Kubernetes building blocks used by the labs and intended to be adaptable for real implementation work.
 
-## Module Organization
+## Catalog
 
-### GCP Modules (`gcp/`)
+### GCP Terraform Modules
 
-Infrastructure modules for Google Cloud Platform:
+| Module | Purpose |
+| --- | --- |
+| [artifact-registry](gcp/artifact-registry/README.md) | Google Artifact Registry repository for container images |
+| [firewall-rules](gcp/firewall-rules/README.md) | Common GCP firewall patterns for restricted environments |
+| [gke-cluster](gcp/gke-cluster/README.md) | GKE cluster module for standard and private deployments |
+| [vpc-private](gcp/vpc-private/README.md) | Private GCP network baseline |
+| [vpc-standard](gcp/vpc-standard/README.md) | Standard GCP VPC with public/private subnet patterns |
 
-- `gke-cluster` - Standard GKE cluster with configurable options
-- `vpc-standard` - Public + private subnets, NAT gateway
-- `vpc-private` - Fully private, no external IPs
-- `artifact-registry` - Container registry
-- `airgap-registry` - Registry for disconnected environments
-- `firewall-rules` - Common firewall configurations
-- `private-service-connect` - Private GCP service access
+### AWS Terraform Modules
 
-### AWS Modules (`aws/`)
+| Module | Purpose |
+| --- | --- |
+| [ecr](aws/ecr/README.md) | Elastic Container Registry repository |
+| [eks-cluster](aws/eks-cluster/README.md) | EKS cluster module for standard and private deployments |
+| [rds](aws/rds/README.md) | Relational database module with production-oriented options |
+| [security-groups](aws/security-groups/README.md) | Security group patterns for EKS and restricted egress |
+| [vpc](aws/vpc/README.md) | Standard AWS VPC with public/private subnet patterns |
+| [vpc-private](aws/vpc-private/README.md) | Private AWS network baseline with endpoint-oriented design |
 
-Infrastructure modules for Amazon Web Services:
+### Kubernetes Pattern Bundles
 
-- `eks-cluster` - Standard EKS cluster with configurable options
-- `vpc` - Public + private subnets, NAT gateway
-- `vpc-private` - Fully private, no external IPs, VPC endpoints
-- `ecr` - Elastic Container Registry
-- `rds` - Relational Database Service (PostgreSQL/MySQL)
-- `security-groups` - Security groups for EKS nodes with strict egress control
+| Bundle | Purpose |
+| --- | --- |
+| [argo-workflows](kubernetes/argo-workflows/README.md) | Standard Argo Workflows Helm values |
+| [argo-workflows-airgap](kubernetes/argo-workflows-airgap/README.md) | Offline-friendly Argo Workflows values, images list, and chart packaging |
+| [ingress-nginx](kubernetes/ingress-nginx/README.md) | Public ingress-nginx values |
+| [network-policies](kubernetes/network-policies/README.md) | Deny-all, ingress, DNS egress, and namespace isolation policies |
+| [rbac-patterns](kubernetes/rbac-patterns/README.md) | Namespace admin, read-only, and deployment-only RBAC templates |
+| [resource-quotas](kubernetes/resource-quotas/README.md) | Standard and limited quota profiles for tenant isolation |
 
-### Kubernetes Modules (`kubernetes/`)
+## Provider Equivalents
 
-Kubernetes deployment patterns and configurations (cloud-agnostic):
+| Capability | GCP | AWS | Kubernetes |
+| --- | --- | --- | --- |
+| Kubernetes cluster | `gke-cluster` | `eks-cluster` | `argo-workflows` deploys onto either |
+| Standard network | `vpc-standard` | `vpc` | Network policies refine in-cluster behavior |
+| Private network | `vpc-private` | `vpc-private` | Internal access patterns live in labs |
+| Container registry | `artifact-registry` | `ecr` | Air-gap packaging supports offline registry use |
+| Egress/security controls | `firewall-rules` | `security-groups` | `network-policies` |
+| Tenant controls | Provider IAM plus cluster config | Provider IAM plus cluster config | `rbac-patterns`, `resource-quotas`, `network-policies` |
 
-- `argo-workflows` - Standard Argo Workflows deployment
-- `argo-workflows-airgap` - Offline-ready Argo (images list, packaging scripts)
-- `ingress-nginx` - Public ingress controller
-- `ingress-internal` - Internal-only ingress
-- `network-policies` - Isolation patterns (deny-all, namespace isolation)
-- `rbac-patterns` - Permission templates (namespace-admin, read-only)
-- `resource-quotas` - Multi-tenant resource limits
+## Usage
 
-## Multi-Cloud Support
-
-Implementation Studio supports both **GCP** and **AWS** for cloud deployments. All modules are designed with parity in mind, though some implementation differences exist due to provider-specific features.
-
-### Provider Comparison
-
-For detailed comparisons between GCP and AWS modules, see:
-- [Provider Comparison Guide](../docs/02-multi-cloud/provider-comparison.md) - Technical comparison of GCP vs AWS
-- [Feature Parity Matrix](../docs/02-multi-cloud/feature-parity-matrix.md) - Detailed feature comparison
-- [Migration Guide](../docs/02-multi-cloud/migration-guide.md) - How to migrate between providers
-
-### Module Equivalents
-
-| GCP Module | AWS Equivalent | Notes |
-|------------|----------------|-------|
-| `gke-cluster` | `eks-cluster` | Both support standard Kubernetes deployments |
-| `vpc-standard` | `vpc` | Similar functionality, different subnet design |
-| `vpc-private` | `vpc-private` | Both support fully private networks |
-| `artifact-registry` | `ecr` | Both support container registries |
-| `firewall-rules` | `security-groups` | Different security models, equivalent functionality |
-| N/A | `rds` | AWS-specific database module |
-
-## Using Modules
-
-### In Labs
-
-Labs import modules using standard Terraform module syntax with provider selection:
+Use modules from a lab or copy them into your own Terraform project.
 
 ```hcl
-# GCP Example
-module "gke_cluster" {
-  source = "../../modules/gcp/gke-cluster"
-  
-  project_id     = var.project_id
-  cluster_name   = var.cluster_name
-  region         = var.region
-  network        = module.vpc.network_name
-  subnetwork     = module.vpc.private_subnet_name
-  # ... other variables
+module "vpc" {
+  source = "../../modules/gcp/vpc-standard"
+
+  project_id = var.project_id
+  region     = var.region
+  name       = var.network_name
 }
 
-# AWS Example
-module "eks_cluster" {
-  source = "../../modules/aws/eks-cluster"
-  
-  cluster_name = var.cluster_name
-  region       = var.region
-  subnet_ids   = module.vpc.private_subnet_ids
-  # ... other variables
-}
-```
-
-### Provider Selection
-
-Most labs support both GCP and AWS via a `cloud_provider` variable:
-
-```hcl
-variable "cloud_provider" {
-  description = "Cloud provider: gcp or aws"
-  type        = string
-  default     = "gcp"
-  validation {
-    condition     = contains(["gcp", "aws"], var.cloud_provider)
-    error_message = "Cloud provider must be 'gcp' or 'aws'."
-  }
-}
-
-# Conditional module usage
 module "cluster" {
-  source = var.cloud_provider == "gcp" 
-    ? "../../modules/gcp/gke-cluster"
-    : "../../modules/aws/eks-cluster"
-  # ...
+  source = "../../modules/gcp/gke-cluster"
+
+  project_id  = var.project_id
+  region      = var.region
+  network     = module.vpc.network_name
+  subnetwork  = module.vpc.private_subnet_name
+  cluster_name = var.cluster_name
 }
 ```
 
-### In Real Projects
+For AWS, use the matching AWS module family:
 
-These modules are designed to be reusable in actual customer engagements. Each module includes:
+```hcl
+module "vpc" {
+  source = "../../modules/aws/vpc"
 
-- Comprehensive variable documentation
-- Output values for integration
-- README with usage examples
-- Best practices and security considerations
-- Provider-specific notes where applicable
+  region = var.region
+  name   = var.network_name
+}
+
+module "cluster" {
+  source = "../../modules/aws/eks-cluster"
+
+  cluster_name = var.cluster_name
+  subnet_ids   = module.vpc.private_subnet_ids
+}
+```
+
+## Validation
+
+Run these checks before changing modules:
+
+```bash
+terraform fmt -check -recursive
+tools/validate-terraform.sh
+tools/validate-modules.sh
+```
+
+The GitHub Actions workflow also runs Terraform format, init, validate, and tflint checks on Terraform changes.
 
 ## Module Standards
 
-All modules follow these standards:
+Every Terraform module should include:
 
-1. **Documentation**: Each module has a README.md with:
-   - Purpose and use cases
-   - Input variables (with descriptions)
-   - Output values
-   - Usage examples
-   - Requirements and dependencies
-   - Provider-specific considerations
+- `main.tf`, `variables.tf`, `outputs.tf`, and `versions.tf`.
+- A README with purpose, usage, inputs, outputs, and provider notes.
+- Typed variables with descriptions and sensible defaults when safe.
+- Outputs that support composition by labs and downstream projects.
+- No environment-specific hardcoding unless the README explains why.
 
-2. **Code Quality**:
-   - Terraform formatting (`terraform fmt`)
-   - Variable types and descriptions
-   - Output documentation
-   - Consistent naming conventions
+Every Kubernetes pattern bundle should include:
 
-3. **Testing**:
-   - Terraform validate passes
-   - TFLint checks pass
-   - Examples provided for common use cases
+- A README that explains when to use the pattern.
+- Manifests or Helm values that can be copied into labs.
+- Security and production notes where the pattern changes risk posture.
 
-4. **Multi-Cloud Considerations**:
-   - Document provider differences
-   - Provide equivalent examples
-   - Note feature gaps where applicable
+## Related Documentation
 
-## Provider-Specific Notes
-
-### GCP Modules
-
-**Advantages:**
-- Free control plane (GKE)
-- VPC-native networking (simpler)
-- Regional subnets
-- Built-in private clusters
-
-**Considerations:**
-- Requires GCP project
-- Google-specific terminology
-- Regional resource limits
-
-### AWS Modules
-
-**Advantages:**
-- Larger ecosystem
-- More global regions
-- RDS Proxy (connection pooling)
-- Automatic secrets rotation
-
-**Considerations:**
-- Control plane cost ($0.10/hour)
-- CNI plugin networking (more complex)
-- Zonal subnets
-- AWS-specific terminology
-
-## Contributing
-
-When adding new modules:
-
-1. Follow the existing module structure
-2. Include comprehensive README
-3. Add examples in the module directory
-4. Update this README with the new module
-5. Ensure all validation checks pass
-6. Consider multi-cloud parity (if applicable)
-7. Document provider differences
-
-## Additional Resources
-
-- [Provider Comparison Guide](../docs/02-multi-cloud/provider-comparison.md)
-- [Migration Guide](../docs/02-multi-cloud/migration-guide.md)
+- [Provider Comparison](../docs/02-multi-cloud/provider-comparison.md)
 - [Feature Parity Matrix](../docs/02-multi-cloud/feature-parity-matrix.md)
-- [Multi-Cloud Considerations](../docs/02-multi-cloud/multi-cloud-considerations.md)
+- [Migration Guide](../docs/02-multi-cloud/migration-guide.md)
+- [Module Maintenance](../docs/03-project-management/module-maintenance.md)
