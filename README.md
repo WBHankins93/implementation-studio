@@ -26,6 +26,7 @@ Run the local checks that match the files you changed:
 tools/validate-terraform.sh
 tools/validate-local.sh
 tools/validate-modules.sh
+npm run docs:build
 ```
 
 ## How To Navigate
@@ -100,6 +101,7 @@ Every pull request and push to `main` runs focused checks based on changed files
 
 | Workflow | What it checks |
 | --- | --- |
+| `docs-build.yml` | VitePress documentation build and GitHub Pages deployment |
 | `markdown-lint.yml` | Markdown formatting across project docs |
 | `validate-terraform.yml` | `terraform fmt`, `terraform init -backend=false`, `terraform validate`, and tflint |
 | `validate-manifests.yml` | Kubernetes YAML validation and kustomize builds |

@@ -41,7 +41,7 @@ Implementation Studio is organized for just-in-time use. Start from the situatio
 | Terraform module catalog | [modules/README.md](modules/README.md) |
 | Provider comparison | [provider comparison](docs/02-multi-cloud/provider-comparison.md) |
 | Migration between GCP and AWS | [migration guide](docs/02-multi-cloud/migration-guide.md) |
-| Operational patterns | [operations docs](docs/05-operations/) |
+| Operational patterns | [operations docs](docs/05-operations/cost-management.md) |
 | Architecture decisions | [ADR index](docs/adr/README.md) |
 
 ## I Need To Debug Something
@@ -49,10 +49,10 @@ Implementation Studio is organized for just-in-time use. Start from the situatio
 | Problem type | Use |
 | --- | --- |
 | Practice common failures | [Lab 09: Troubleshooting Scenarios](labs/09-troubleshooting-scenarios/README.md) |
-| Cluster health checks | [cluster health tool](labs/09-troubleshooting-scenarios/diagnostic-tools/cluster-health.sh) |
-| Connectivity checks | [connectivity tool](labs/09-troubleshooting-scenarios/diagnostic-tools/connectivity-check.sh) |
-| Log collection | [log collector](labs/09-troubleshooting-scenarios/diagnostic-tools/log-collector.sh) |
-| Resource inspection | [resource inspector](labs/09-troubleshooting-scenarios/diagnostic-tools/resource-inspector.sh) |
+| Cluster health checks | [diagnostic tools](labs/09-troubleshooting-scenarios/diagnostic-tools/README.md) |
+| Connectivity checks | [diagnostic tools](labs/09-troubleshooting-scenarios/diagnostic-tools/README.md) |
+| Log collection | [diagnostic tools](labs/09-troubleshooting-scenarios/diagnostic-tools/README.md) |
+| Resource inspection | [diagnostic tools](labs/09-troubleshooting-scenarios/diagnostic-tools/README.md) |
 
 ## Common Paths
 
