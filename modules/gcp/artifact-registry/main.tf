@@ -1,13 +1,3 @@
-terraform {
-  required_version = ">= 1.5"
-  required_providers {
-    google = {
-      source  = "hashicorp/google"
-      version = "~> 5.0"
-    }
-  }
-}
-
 # Artifact Registry Repository
 resource "google_artifact_registry_repository" "repo" {
   location      = var.region
@@ -27,4 +17,3 @@ resource "google_artifact_registry_repository_iam_member" "gke_reader" {
   role       = "roles/artifactregistry.reader"
   member     = "serviceAccount:${var.gke_service_account}"
 }
-

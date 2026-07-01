@@ -3,7 +3,7 @@
 
 set -e
 
-PROXY_PORT=${proxy_port:-3128}
+PROXY_PORT=${proxy_port}
 
 echo "Installing Squid proxy..."
 
@@ -18,7 +18,7 @@ cp /etc/squid/squid.conf /etc/squid/squid.conf.backup
 cat > /etc/squid/squid.conf <<EOF
 # Squid configuration for firewall-restricted environment
 # Port configuration
-http_port ${PROXY_PORT}
+http_port $${PROXY_PORT}
 
 # ACL definitions
 acl localnet src 10.0.0.0/8
@@ -74,6 +74,5 @@ systemctl restart squid
 # Verify Squid is running
 systemctl status squid
 
-echo "Squid proxy installed and configured on port ${PROXY_PORT}"
-echo "Proxy is accessible at: http://$(hostname -I | awk '{print $1}'):${PROXY_PORT}"
-
+echo "Squid proxy installed and configured on port $${PROXY_PORT}"
+echo "Proxy is accessible at: http://$(hostname -I | awk '{print $1}'):$${PROXY_PORT}"

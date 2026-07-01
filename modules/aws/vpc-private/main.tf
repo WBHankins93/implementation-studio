@@ -1,13 +1,3 @@
-terraform {
-  required_version = ">= 1.5"
-  required_providers {
-    aws = {
-      source  = "hashicorp/aws"
-      version = "~> 5.0"
-    }
-  }
-}
-
 # VPC (no internet gateway)
 resource "aws_vpc" "main" {
   cidr_block           = var.vpc_cidr
@@ -148,4 +138,3 @@ resource "aws_nat_gateway" "management" {
 
   depends_on = [aws_eip.management_nat]
 }
-

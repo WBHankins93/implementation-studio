@@ -1,13 +1,3 @@
-terraform {
-  required_version = ">= 1.5"
-  required_providers {
-    aws = {
-      source  = "hashicorp/aws"
-      version = "~> 5.0"
-    }
-  }
-}
-
 # ECR Repository
 resource "aws_ecr_repository" "repo" {
   name                 = var.repository_name
@@ -73,4 +63,3 @@ resource "aws_iam_role_policy" "ecr_pull" {
     ]
   })
 }
-

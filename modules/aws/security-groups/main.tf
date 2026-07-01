@@ -1,13 +1,3 @@
-terraform {
-  required_version = ">= 1.5"
-  required_providers {
-    aws = {
-      source  = "hashicorp/aws"
-      version = "~> 5.0"
-    }
-  }
-}
-
 # Security Group for EKS Nodes
 resource "aws_security_group" "eks_nodes" {
   name        = "${var.name_prefix}-nodes-sg"
@@ -148,4 +138,3 @@ resource "aws_security_group_rule" "allow_nodes_inbound" {
   security_group_id = aws_security_group.eks_nodes.id
   description       = "Allow inbound from other nodes"
 }
-

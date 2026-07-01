@@ -14,13 +14,11 @@ terraform {
 
 # Configure providers conditionally
 provider "google" {
-  count   = var.cloud_provider == "gcp" ? 1 : 0
   project = var.project_id
   region  = var.region
 }
 
 provider "aws" {
-  count  = var.cloud_provider == "aws" ? 1 : 0
   region = var.region
 }
 
@@ -202,7 +200,6 @@ module "eks_cluster" {
 
   # Private endpoint configuration
   private_endpoint = true
-  public_endpoint  = false
 
   node_count     = var.node_count
   instance_type  = var.instance_type
@@ -324,7 +321,7 @@ resource "aws_instance" "bastion" {
   count         = var.cloud_provider == "aws" ? 1 : 0
   ami           = data.aws_ami.bastion[0].id
   instance_type = var.bastion_instance_type
-  subnet_id     = module.vpc_aws[0].management_subnet_ids[0]
+  subnet_id     = module.vpc_aws[0].management_subnet_id
 
   vpc_security_group_ids = [aws_security_group.bastion[0].id]
   iam_instance_profile   = aws_iam_instance_profile.bastion[0].name
@@ -358,7 +355,6 @@ module "ecr" {
   source = "../../modules/aws/ecr"
 
   repository_name = "${var.cluster_name}-repo"
-  description     = "Container registry for ${var.cluster_name}"
 
   resource_tags = merge(var.resource_labels, {
     purpose = "private-network"

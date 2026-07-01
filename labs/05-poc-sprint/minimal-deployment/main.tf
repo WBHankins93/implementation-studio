@@ -14,13 +14,11 @@ terraform {
 
 # Configure providers conditionally
 provider "google" {
-  count   = var.cloud_provider == "gcp" ? 1 : 0
   project = var.project_id
   region  = var.region
 }
 
 provider "aws" {
-  count  = var.cloud_provider == "aws" ? 1 : 0
   region = var.region
 }
 
@@ -31,7 +29,7 @@ provider "aws" {
 # Minimal VPC (GCP)
 module "vpc_gcp" {
   count  = var.cloud_provider == "gcp" ? 1 : 0
-  source = "../../modules/gcp/vpc-standard"
+  source = "../../../modules/gcp/vpc-standard"
 
   network_name        = "${var.cluster_name}-vpc"
   region              = var.region
@@ -42,7 +40,7 @@ module "vpc_gcp" {
 # Minimal GKE Cluster (smallest viable for POC)
 module "gke_cluster" {
   count  = var.cloud_provider == "gcp" ? 1 : 0
-  source = "../../modules/gcp/gke-cluster"
+  source = "../../../modules/gcp/gke-cluster"
 
   project_id   = var.project_id
   cluster_name = var.cluster_name
@@ -68,7 +66,7 @@ module "gke_cluster" {
 # Artifact Registry (optional, can use public images for POC)
 module "artifact_registry" {
   count  = var.cloud_provider == "gcp" && var.create_registry ? 1 : 0
-  source = "../../modules/gcp/artifact-registry"
+  source = "../../../modules/gcp/artifact-registry"
 
   project_id    = var.project_id
   region        = var.region
@@ -85,7 +83,7 @@ module "artifact_registry" {
 # Minimal VPC (AWS)
 module "vpc_aws" {
   count  = var.cloud_provider == "aws" ? 1 : 0
-  source = "../../modules/aws/vpc"
+  source = "../../../modules/aws/vpc"
 
   network_name        = "${var.cluster_name}-vpc"
   vpc_cidr            = var.vpc_cidr
@@ -102,7 +100,7 @@ module "vpc_aws" {
 # Minimal EKS Cluster (smallest viable for POC)
 module "eks_cluster" {
   count  = var.cloud_provider == "aws" ? 1 : 0
-  source = "../../modules/aws/eks-cluster"
+  source = "../../../modules/aws/eks-cluster"
 
   cluster_name = var.cluster_name
   region       = var.region
@@ -125,10 +123,9 @@ module "eks_cluster" {
 # ECR Repository (optional, can use public images for POC)
 module "ecr" {
   count  = var.cloud_provider == "aws" && var.create_registry ? 1 : 0
-  source = "../../modules/aws/ecr"
+  source = "../../../modules/aws/ecr"
 
   repository_name = "${var.cluster_name}-repo"
-  description     = "Container registry for POC"
 
   resource_tags = merge(var.resource_labels, {
     purpose   = "poc"
