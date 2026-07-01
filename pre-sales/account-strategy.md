@@ -266,8 +266,7 @@ Good: "Based on our work with your team, we've validated that you can reduce dep
 
 ## 🔗 Links
 
-- [New customer engagement](../engagements/new-customer.md)
-- [Discovery call](discovery.md)
-- [POC scoping](poc-scoping.md)
 - [Multi-workstream management](../engagements/multi-workstream.md)
 - [Product feedback](../internal/product-feedback.md)
+- [POC Sprint](../labs/05-poc-sprint/README.md)
+- [Pre-sales guides](README.md)

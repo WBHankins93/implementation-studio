@@ -42,7 +42,7 @@ See [Provider Comparison Guide](../02-multi-cloud/provider-comparison.md) for de
 
 **Validation Status:** Kubernetes manifests testable locally; cloud infrastructure requires deployment
 
-[View Lab 01 →](../labs/01-standard-deployment/README.md)
+[View Lab 01 →](../../labs/01-standard-deployment/README.md)
 
 ---
 
@@ -81,7 +81,7 @@ See [Provider Comparison Guide](../02-multi-cloud/provider-comparison.md) for de
 
 **Validation Status:** Fully testable locally - this IS the target environment
 
-[View Lab 02 →](../labs/02-airgapped-deployment/README.md)
+[View Lab 02 →](../../labs/02-airgapped-deployment/README.md)
 
 ---
 
@@ -109,7 +109,7 @@ See [Provider Comparison Guide](../02-multi-cloud/provider-comparison.md) for de
 
 **Validation Status:** Kubernetes manifests testable locally; cloud infrastructure requires deployment
 
-[View Lab 03 →](../labs/03-private-network-deployment/README.md)
+[View Lab 03 →](../../labs/03-private-network-deployment/README.md)
 
 ---
 
@@ -143,7 +143,7 @@ See [Provider Comparison Guide](../02-multi-cloud/provider-comparison.md) for de
 
 **Validation Status:** Network policies testable locally; cloud firewall/security groups require deployment
 
-[View Lab 04 →](../labs/04-firewall-restricted-deployment/README.md)
+[View Lab 04 →](../../labs/04-firewall-restricted-deployment/README.md)
 
 ---
 
@@ -174,7 +174,7 @@ See [Provider Comparison Guide](../02-multi-cloud/provider-comparison.md) for de
 
 **Validation Status:** Fully testable - templates and all deployment options
 
-[View Lab 05 →](../labs/05-poc-sprint/README.md)
+[View Lab 05 →](../../labs/05-poc-sprint/README.md)
 
 ---
 
@@ -205,7 +205,7 @@ See [Provider Comparison Guide](../02-multi-cloud/provider-comparison.md) for de
 
 **Validation Status:** Fully testable locally with Kind; cloud options available
 
-[View Lab 06 →](../labs/06-multi-tenant-deployment/README.md)
+[View Lab 06 →](../../labs/06-multi-tenant-deployment/README.md)
 
 ---
 
@@ -239,7 +239,7 @@ See [Provider Comparison Guide](../02-multi-cloud/provider-comparison.md) for de
 
 **Validation Status:** Some patterns testable locally; cloud services require deployment
 
-[View Lab 07 →](../labs/07-integration-patterns/README.md)
+[View Lab 07 →](../../labs/07-integration-patterns/README.md)
 
 ---
 
@@ -270,7 +270,7 @@ See [Provider Comparison Guide](../02-multi-cloud/provider-comparison.md) for de
 
 **Validation Status:** Dashboards and rules testable locally; full stack testable in Kind or cloud
 
-[View Lab 08 →](../labs/08-handoff-runbooks/README.md)
+[View Lab 08 →](../../labs/08-handoff-runbooks/README.md)
 
 ---
 
@@ -306,7 +306,7 @@ See [Provider Comparison Guide](../02-multi-cloud/provider-comparison.md) for de
 
 **Validation Status:** Fully testable locally
 
-[View Lab 09 →](../labs/09-troubleshooting-scenarios/README.md)
+[View Lab 09 →](../../labs/09-troubleshooting-scenarios/README.md)
 
 ---
 
@@ -351,4 +351,4 @@ See [Provider Comparison Guide](../02-multi-cloud/provider-comparison.md) for de
 - [Provider Comparison Guide](../02-multi-cloud/provider-comparison.md) - Technical GCP vs AWS comparison
 - [Migration Guide](../02-multi-cloud/migration-guide.md) - How to migrate between providers
 - [Feature Parity Matrix](../02-multi-cloud/feature-parity-matrix.md) - Detailed feature comparison
-- [Multi-Cloud Considerations](./multi-cloud-considerations.md) - Strategic analysis
+- [Multi-Cloud Considerations](../02-multi-cloud/multi-cloud-considerations.md) - Strategic analysis
