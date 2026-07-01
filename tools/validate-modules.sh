@@ -21,19 +21,19 @@ WARNINGS=0
 # Function to print success
 success() {
   echo -e "${GREEN}✅ $1${NC}"
-  ((PASSED++))
+  ((PASSED += 1))
 }
 
 # Function to print failure
 failure() {
   echo -e "${RED}❌ $1${NC}"
-  ((FAILED++))
+  ((FAILED += 1))
 }
 
 # Function to print warning
 warning() {
   echo -e "${YELLOW}⚠️  $1${NC}"
-  ((WARNINGS++))
+  ((WARNINGS += 1))
 }
 
 # Function to validate a module
@@ -152,7 +152,7 @@ while IFS= read -r -d '' module_dir; do
   # Only process directories that look like modules (have main.tf)
   if [ -f "$module_dir/main.tf" ]; then
     validate_module "$module_dir"
-    ((MODULE_COUNT++))
+    ((MODULE_COUNT += 1))
   fi
 done < <(find "$PROJECT_ROOT/modules" -type d -print0)
 
@@ -176,4 +176,3 @@ else
   echo "✅ All modules validated successfully!"
   exit 0
 fi
-
