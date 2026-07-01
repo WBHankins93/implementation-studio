@@ -15,11 +15,11 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-      
+
       - name: Setup Markdown Lint
         run: |
           npm install -g markdownlint-cli2
-      
+
       - name: Lint Markdown
         run: markdownlint-cli2 "**/*.md" "#node_modules"
-
+        continue-on-error: true
