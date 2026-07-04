@@ -1,5 +1,10 @@
 import { defineConfig } from 'vitepress'
 
+const siteUrl = 'https://wbhankins93.github.io/implementation-studio/'
+const siteName = 'Implementation Studio'
+const tagline = 'Battle-tested implementation patterns for deploying software in constrained customer environments: air-gapped networks, private clusters, firewall restrictions, and multi-tenant platforms.'
+const ogImage = `${siteUrl}og-image.png`
+
 const seriesNav = {
   text: 'The Series',
   items: [
@@ -78,6 +83,25 @@ export default defineConfig({
   lastUpdated: true,
   ignoreDeadLinks: [/\/LICENSE$/, /^http:\/\/localhost:/],
   srcExclude: ['**/node_modules/**', '**/.terraform/**', '**/.vitepress/dist/**'],
+  sitemap: {
+    hostname: siteUrl,
+  },
+  head: [
+    ['meta', { name: 'theme-color', content: '#2563eb' }],
+    ['meta', { property: 'og:type', content: 'website' }],
+    ['meta', { property: 'og:site_name', content: siteName }],
+    ['meta', { property: 'og:title', content: siteName }],
+    ['meta', { property: 'og:description', content: tagline }],
+    ['meta', { property: 'og:url', content: siteUrl }],
+    ['meta', { property: 'og:image', content: ogImage }],
+    ['meta', { property: 'og:image:width', content: '1200' }],
+    ['meta', { property: 'og:image:height', content: '630' }],
+    ['meta', { property: 'og:image:alt', content: `${siteName} — ${tagline}` }],
+    ['meta', { name: 'twitter:card', content: 'summary_large_image' }],
+    ['meta', { name: 'twitter:title', content: siteName }],
+    ['meta', { name: 'twitter:description', content: tagline }],
+    ['meta', { name: 'twitter:image', content: ogImage }],
+  ],
   rewrites: {
     'docs/README.md': 'docs/index.md',
     'labs/README.md': 'labs/index.md',
