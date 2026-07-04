@@ -28,6 +28,10 @@ titleTemplate: Constrained deployment guides
   </div>
 </section>
 
+<section class="is-note">
+  <p><strong>Two studios, two jobs.</strong> Implementation Studio covers what changes when the customer's environment is constrained: air-gapped, firewall-restricted, private cluster, multi-tenant. For the core delivery competencies that apply across any engagement regardless of constraint &mdash; infrastructure as code, CI/CD, observability, security automation, platform engineering &mdash; see <a href="https://wbhankins93.github.io/devops-studio/">DevOps Studio</a>.</p>
+</section>
+
 <section class="is-section">
   <div class="is-section__head">
     <p class="is-eyebrow">Choose by situation</p>
