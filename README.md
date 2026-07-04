@@ -9,6 +9,8 @@ A practical implementation library for deploying software in real customer envir
 
 The repo combines reusable Terraform modules, Kubernetes manifests, Argo Workflows examples, field templates, and hands-on labs. It is meant to be useful in two modes: learn the patterns end to end, or copy the specific module, lab, checklist, or template you need for an implementation.
 
+> Implementation Studio covers what changes when the customer's environment is constrained: air-gapped, firewall-restricted, private cluster, multi-tenant. For the core delivery competencies that apply across any engagement regardless of constraint (infrastructure as code, CI/CD, observability, security automation, platform engineering), see [DevOps Studio](https://github.com/WBHankins93/DevOps-Studio).
+
 ## Quick Start
 
 ```bash

@@ -18,7 +18,8 @@
 
 .is-hero,
 .is-section,
-.is-closing {
+.is-closing,
+.is-note {
   max-width: 1120px;
   margin: 0 auto;
   padding: 0 24px;
@@ -93,6 +94,26 @@
   color: #fff;
   border-color: var(--vp-c-brand-1);
   background: var(--vp-c-brand-1);
+}
+
+.is-note {
+  margin-bottom: 2rem;
+}
+
+.is-note p {
+  margin: 0;
+  max-width: 760px;
+  padding: .85rem 1.1rem;
+  border-left: 3px solid var(--vp-c-brand-1);
+  border-radius: 6px;
+  background: var(--vp-c-bg-soft);
+  color: var(--vp-c-text-2);
+  font-size: .92rem;
+  line-height: 1.55;
+}
+
+.is-note strong {
+  color: var(--vp-c-text-1);
 }
 
 .is-map {
