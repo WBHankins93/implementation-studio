@@ -4,6 +4,8 @@ const siteUrl = 'https://wbhankins93.github.io/implementation-studio/'
 const siteName = 'Implementation Studio'
 const tagline = 'Battle-tested implementation patterns for deploying software in constrained customer environments: air-gapped networks, private clusters, firewall restrictions, and multi-tenant platforms.'
 const ogImage = `${siteUrl}og-image.png`
+const siteAuthor = 'Ben Hankins'
+const publishedDate = '2026-07-01T00:00:00Z'
 
 const seriesNav = {
   text: 'The Series',
@@ -88,6 +90,7 @@ export default defineConfig({
   },
   head: [
     ['meta', { name: 'theme-color', content: '#2563eb' }],
+    ['meta', { name: 'author', content: siteAuthor }],
     ['meta', { property: 'og:type', content: 'website' }],
     ['meta', { property: 'og:site_name', content: siteName }],
     ['meta', { property: 'og:title', content: siteName }],
@@ -97,6 +100,8 @@ export default defineConfig({
     ['meta', { property: 'og:image:width', content: '1200' }],
     ['meta', { property: 'og:image:height', content: '630' }],
     ['meta', { property: 'og:image:alt', content: `${siteName} — ${tagline}` }],
+    ['meta', { property: 'article:author', content: siteAuthor }],
+    ['meta', { property: 'article:published_time', content: publishedDate }],
     ['meta', { name: 'twitter:card', content: 'summary_large_image' }],
     ['meta', { name: 'twitter:title', content: siteName }],
     ['meta', { name: 'twitter:description', content: tagline }],
