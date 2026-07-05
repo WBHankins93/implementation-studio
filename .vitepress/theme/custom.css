@@ -223,6 +223,7 @@
 
 .is-card strong {
   margin-top: .55rem;
+  color: var(--vp-c-text-1);
   font-size: 1.03rem;
 }
 
